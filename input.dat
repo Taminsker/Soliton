@@ -1,0 +1,51 @@
+# input.dat file
+
+# ------------------------------------------------------------------------ #
+# SOLVER SOLITON
+# ------------------------------------------------------------------------ #
+
+dt      = 1.0                          # time step
+mouv    = free                         # free or fixed
+eq_type = poisson                      # poisson or wave
+zeta_0  = 1.0                          # free surface coor z
+beta_0  = 0.0                          # bed coor z
+
+# ------------------------------------------------------------------------ #
+# MESH
+# ------------------------------------------------------------------------ #
+
+xm     = 0.0                           # x minus
+xp     = 10.0                          # x sup
+ym     = 0.0                           # y minus
+yp     = 10.0                          # y sup
+hsize  = 0.1                           # space step
+
+# ------------------------------------------------------------------------ #
+# OBJECTS
+# ------------------------------------------------------------------------ #
+
+$BEGIN_OBJECT
+    type        = object
+    xc          = 5.0                  # x center
+    yc          = 5.0                  # y center
+    r           = 4.                   # radius-indicator
+    enableMover = true                 # enable displacement
+    gen         = false                # generate the object
+#    algo_gen    = 2                    # type of algorithme generator
+#    nbpts       = 100                  # number of points
+    file_msh    = ../data/flotteur_type_1.msh          # filename (need gen = false)
+$END_OBJECT
+
+
+#$BEGIN_OBJECT
+#    type        = object
+#    xc          = 5.0                  # x center
+#    yc          = 5.0                  # y center
+#    r           = 2.                   # radius-indicator
+##    enableMover = false                 # enable displacement
+#    gen         = true                # generate the object
+#    algo_gen    = 2                    # type of algorithme generator
+##    nbpts       = 100                  # number of points
+##    file_msh    = ../data/flotteur_type_4.msh          # filename (need gen = false)
+#$END_OBJECT
+

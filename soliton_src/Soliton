@@ -1,0 +1,10 @@
+#ifndef WAVER_H
+#define WAVER_H
+
+#include "Algorithms/algorithms.h"
+#include "Core/core.h"
+#include "IO/io.h"
+#include "Solver/solver.h"
+
+
+#endif // WAVER_H
