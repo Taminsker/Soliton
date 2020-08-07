@@ -1,0 +1,227 @@
+\section{Les lois de conservation}
+Les équations d'Euler sont issues des lois de conservations de certaines quantités physiques importantes, et elles permettent, par exemple, l'étude de la dynamique des gaz ou dans le cas présent l'étude d'écoulement de fluide. Ainsi, dans la suite, nous détaillerons les équations de conservation de la masse, de la quantité de mouvement et de l'énergie totale.\\
+\subsection{La dérivée particulaire ou matérielle}
+\noindent Selon \citep{toro_riemann_2009}, si nous considérons un champ scalaire $\phi$ dépendant de l'espace et du temps, les variations temporelles de $\phi$ peuvent être obtenues en regardant les variations par rapport à la vitesse du fluide $\velocity$. Nous obtenons la relation suivante :
+\begin{equation}
+	\frac{D\phi}{Dt} =  \partial_t \phi + \velocity \cdot \nabla \phi \label{eq:deriveetotale}
+\end{equation}
+La quantité $\frac{D \phi}{D t}$ désigne la dérivée particulaire de $\phi$ par rapport au temps $t$. Notons que cette relation peut être étendue et appliquée à n'importe quel champ vectoriel $\vec{w}$.\\
+Posons maintenant 
+\begin{equation}
+	\boldsymbol{\psi} (t) := \iiint_V \phi (x, y, z, t)\,d V \label{eq:volumeintegration}
+\end{equation}
+avec $\boldsymbol{\psi}$ un champ scalaire et un volume d'intégration $V$ dont la surface $A$ est considérée lipschitzienne au moins par morceaux. Et la dérivée particulaire (ou matérielle) de cette fonction est 
+\begin{equation}
+	\frac{D \bld{\psi}}{D t} = \iiint_V \partial_t \phi d V + \iint_A \left(\nvec\cdot\phi\velocity\right)d A, \label{eq:psiinte}
+\end{equation}
+avec $\nvec = (n_1, n_2, n_3)$ le vecteur normal sortant. Cette relation est l'extension de \eqref{eq:deriveetotale} à un champ vectoriel $\boldvec{\psi} (x, y, z, t)$. Nous rappelons aussi en annexe la formule de Green \eqref{op:greenfrm}.
+
+%\noindent Pour la suite, nous noterons l'opérateur de dérivée matérielle scalaire $\displaystyle \partial_{\text{Mat}}$ et vectorielle $\displaystyle \boldvec{\partial_{\text{Mat}}}$.
+
+\subsection{La conservation de la masse (équation de continuité)}
+\noindent La loi de conservation de la masse peut maintenant être établie, et la masse $m(t)$ dans un volume $V$ peut être exprimée comme
+\begin{equation}
+	m(t) = \iiint_V \rho\, d V.
+\end{equation} 
+où $\rho$ est la masse volumique du fluide.\\
+La conservation de la masse implique que \[ \frac{D m}{D t} = 0\]
+et donc par \eqref{eq:psiinte} que 
+\begin{equation}
+	\frac{D m}{D t} = \iiint_V \partial_t \rho\, d V + \iint_A \nvec \cdot \rho \velocity\, d A = 0
+\end{equation}
+ou encore par \eqref{op:greenfrm}
+\begin{equation}
+	\iiint_V \left[\partial_t \rho + \div\left(\rho \velocity\right)\right]\,d V = 0.
+\end{equation}
+\begin{refe}
+Or le volume $V$ est purement arbitraire et donc nous obtenons \textbf{l'équation de conservation de la masse} suivante
+\begin{equation}
+	\partial_t \rho + \div[\rho \velocity]= 0\label{eq:consmass}
+\end{equation}
+avec $\rho$ la masse volumique et $\velocity$ la vitesse du fluide. Remarquons que si $\rho$ est constante en temps et en espace alors cette équation est réduite à
+\begin{equation}
+	\div[\velocity] = 0 \hspace{1cm}\text{dans $\mathbb{R}^3$}.\label{eq:incompressible}
+\end{equation}
+Cette équation définit ce que nous appellerons \textbf{la contrainte d'incompressibilité} pour un fluide incompressible.
+\end{refe}
+
+\subsection{La conservation de la quantité de mouvement}
+\noindent Passons maintenant à la conservation de la quantité de mouvement $\boldvec{p}$. La quantité de mouvement est exactement
+\begin{equation}
+	\boldvec{p} = \rho \velocity. \label{eq:qtmouv}
+\end{equation}
+Cela nous conduit donc à poser la fonction suivante
+\[ \boldsymbol{\psi} (t) = \iiint_V \rho\velocity\,d V.\]
+D'après la loi de Newton 
+\begin{equation}
+	\frac{D \boldsymbol{\psi}}{D t} = \boldvec{f_S} + \boldvec{f_V}, \label{eq:newtonlaw}
+\end{equation}
+où $\boldvec{f_S}$ et $\boldvec{f_V}$ désignent respectivement les forces surfaciques et volumiques en jeu.\\
+En pratique, selon \citet{toro_riemann_2009}, nous avons
+\begin{equation}
+	\boldvec{f_S} = \iint_A \nvec \cdot S\,d A \hspace{1cm} \boldvec{f_V} = \iiint_V \rho \gvec \, dV. \label{eq:forces}
+\end{equation}
+avec $S = -P\id + \Psi$ (voir \citet{toro_riemann_2009} pour plus de détails) avec $P$ un terme de pression et $\Psi$ un terme de forces visqueuses.\\
+Remarquons déjà que $\boldvec{p}$ n'est plus un champ scalaire mais un champ vectoriel et cela nous conduit à utiliser la version généralisée de la dérivée particulaire \eqref{eq:psiinte}. Ainsi par \eqref{eq:newtonlaw} et \eqref{eq:psiinte}, nous avons
+\begin{equation}
+	\iiint_V \partial_t \left(\rho\velocity\right)\, d V + \iint_A \left(\nvec\cdot\rho\velocity\right)\velocity\,d A = \boldvec{f_S} + \boldvec{f_A}
+\end{equation}
+\begin{refe}
+Par application directe de la formule de Green \eqref{op:greenfrm}, en utilisant la relation \eqref{op:identitytensorvelocity}, en remplaçant $f_S+f_V$ par la relation établie en \eqref{eq:forces} et comme nous intégrons sur un volume $V$ arbitraire alors \textbf{l'équation de conservation de la quantité de mouvement} est 
+\begin{equation}
+	\partial_t \left(\rho\velocity\right) + \nabla \cdot \left[ \rho \velocity \otimes \velocity +P\id - \Psi\right]  = \rho \gvec \label{eq:NSC}
+\end{equation}
+Cette relation forme les équations de \textbf{Navier-Stokes} pour les fluides compressibles (\textbf{NSc}).\\
+Dans le cas d'un fluide parfait incompressible non visqueux subissant uniquement des forces de pression $P$, nous avons simplement
+\begin{equation}
+	\partial_t \velocity + \left(\velocity \cdot \nabla \right)\velocity + \frac{1}{\rho} \nabla P = \gvec. \label{eq:NSI}
+\end{equation}
+Cette équation constitue l'équation de Navier-Stokes incompressible (\textbf{NSi}) sans viscosité et avec une masse volumique constante $\rho\neq 0$.
+\end{refe}
+
+\subsection{La conservation de l'énergie}
+\noindent La conservation de l'énergie totale ($E_{tot}$) au cours du temps peut aussi être exprimée, c'est-à-dire que nous pouvons définir
+\begin{equation}
+	\boldsymbol{\psi} (t) = \iiint_V E_{tot} \, dV.
+\end{equation}
+Rappelons qu'une force $\boldvec{f}$ produit un travail $\velocity\cdot \boldvec{f}$ homogène à une énergie (selon \citet{toro_riemann_2009}). Donc si nous nous référons aux forces établies à \eqref{eq:forces}, et si nous rajoutons un effet thermique alors nous pouvons définir
+\begin{subequations}
+	\begin{itemize}[label=$\mybullet$]
+	\item l'énergie issue des forces de pression et de viscosité :
+	\begin{equation}
+		E_\text{surf} = \iint_A P\left(\velocity \cdot \nvec\right)\,d A + \iint_A\velocity \cdot \left(\nvec \cdot \Psi\right)\,d A\label{eq:Esurf},
+	\end{equation}
+	\item l'énergie issue du poids :
+	\begin{equation}
+		E_\text{volu} = \iiint_V \rho \left(\velocity\cdot \gvec\right)\, d V\label{Evolu},
+	\end{equation}
+	\item le flux d'énergie $\boldsymbol{\vec{Q}}$ (ici considéré comme un flux thermique) qui traverse la surface $A$:
+	\begin{equation}
+		E_\text{infl} = - \iint_A \nvec\cdot\boldsymbol{\vec{Q}}\, d A. \label{eq:Einfl}
+	\end{equation}
+	\end{itemize}
+\end{subequations}
+Nous avons donc, toujours par application de la loi de Newton, 
+\begin{equation}
+	\frac{D \boldsymbol{\psi}}{D t} =E_\text{surf} + E_\text{volu}+E_\text{infl}.
+\end{equation}
+Sous forme détaillée, selon \citet{toro_riemann_2009}, nous obtenons
+\begin{align}
+	&\iiint_V \partial_t E_{tot}\,dV + \iint_A \nvec \cdot E_{tot}\velocity \, d A =\nonumber\\
+	&\iint_A P\left(\velocity \cdot \nvec\right)\,d A + \iint_A\velocity \cdot \left(\nvec \cdot \Psi\right)\,d A + \iiint_V \rho \left(\velocity\cdot \gvec\right)\, d V - \iint_A \nvec\cdot\boldsymbol{\vec{Q}}\, d A.
+\end{align}
+\begin{refe}
+Grâce à la formule de Green \eqref{op:greenfrm}, et comme nous intégrons sur un volume $V$ purement arbitraire, nous avons \textbf{l'équation de conservation de l'énergie totale}
+\begin{equation}
+	\partial_t E_{tot} + \div[\left(E_{tot} + P\right)\velocity - \velocity\cdot\Psi + Q] = \rho \left(\velocity\cdot \gvec\right).\label{eq:consenergy}
+\end{equation}
+Dans le cas d'un fluide parfait incompressible sans viscosité subissant un échange adiabatique\footnote{sans transfert thermique.} nous avons simplement que
+\begin{equation}
+	\partial_t E_{tot} + \div[\left(E_{tot} + P\right)\velocity] = \rho \left(\velocity\cdot \gvec\right).\label{eq:consenergyI}
+\end{equation}
+\end{refe}
+
+\subsection{Les équations d'Euler}
+\subsubsection{Fluide compressible}
+\noindent Les équations d'Euler pour un fluide compressible ne sont ni plus ni moins que le regroupement des équations de conservation de la masse \eqref{eq:consmass}, de la quantité de mouvement (\textbf{NSc} sans le terme de viscosité) \eqref{eq:NSC} et de l'énergie totale \eqref{eq:consenergy} dans le cadre d'un fluide parfait compressible sans viscosité et qui subit une transformation adiabatique.\\
+Nous pouvons donc les regrouper sous la forme d'un système comme suit
+\begin{subequations}
+\begin{equation}
+	\left\{\begin{array}{l}
+	\partial_t \rho + \div[\rho \velocity] = 0,\\[1em]
+	\partial_t \left(\rho\velocity\right) + \div[ \rho \velocity \otimes \velocity +P\id]  = \rho \gvec,\\[1em]
+	\partial_t E_{tot} + \div[\left(E_{tot} + P\right)\velocity] = \rho \left(\velocity\cdot \gvec\right).
+	\end{array}\right. \label{eq:eulereqcompressible}
+\end{equation}
+En notant $\gvec = \left(g_1, g_2, g_3\right)$, nous avons
+\begin{equation}
+	\Longleftrightarrow 
+	\left[\begin{array}{c}
+	\rho\\
+	\rho u\\
+	\rho v\\
+	\rho w\\
+	E_{tot}
+	\end{array}\right]_t +
+	\left[\begin{array}{c}
+	\rho u\\
+	\rho u^2 + P\\
+	\rho u v\\
+	\rho u w\\
+	\left(E_{tot} + P\right)u
+	\end{array}\right]_x +
+	\left[\begin{array}{c}
+	\rho v\\
+	\rho u v\\
+	\rho v^2 + P\\
+	\rho v w\\
+	\left(E_{tot} + P\right)v
+	\end{array}\right]_y +
+	\left[\begin{array}{c}
+	\rho w\\
+	\rho u w\\
+	\rho v w\\
+	\rho w^2 + P\\
+	\left(E_{tot} + P\right)w
+	\end{array}\right]_z = 
+	\left[\begin{array}{c}
+	0\\
+	g_1\\
+	g_2\\
+	g_3\\
+	\rho \left(\velocity \cdot \gvec\right)
+	\end{array}\right] \label{eq:eulereqcompressible_sys}
+\end{equation}
+\end{subequations}
+
+\subsubsection{Fluide incompressible}
+\noindent Les équations d'Euler incompressible (pour le même fluide mais cette fois-ci incompressible) sont quant à elles les équations de conservation citées ci-dessus mais avec une masse volumique $\rho\neq 0$ constante en temps et en espace. L'équation de la conservation de la quantité de mouvement est donc exactement \eqref{eq:NSI}.\\
+Nous obtenons donc le système suivant
+\begin{subequations}
+	\begin{equation}
+	\left\{\begin{array}{l}
+	\div[ \velocity] = 0,\\[1em]
+	\partial_t \velocity + \left(\velocity\cdot \nabla\right)\velocity +  \frac{1}{\rho}\nabla P  = \gvec,\\[1em]
+	\partial_t E_{tot} + \div[\left(E_{tot} + P\right)\velocity] = \rho \left(\velocity\cdot \gvec\right).
+	\end{array}\right. \label{eq:eulereqincompressible}
+	\end{equation}
+
+%	\begin{equation}
+%	\Longleftrightarrow 
+%	\left[\begin{array}{c}
+%	0\\
+%	u\\
+%	v\\
+%	w\\
+%	E_{tot}
+%	\end{array}\right]_t +
+%	\left[\begin{array}{c}
+%	u\\
+%	u^2 + \frac{1}{\rho}P\\
+%	u v\\
+%	 u w\\
+%	\left(E_{tot} + P\right)u
+%	\end{array}\right]_x +
+%	\left[\begin{array}{c}
+%	 v\\
+%	u v\\
+%	v^2 + \frac{1}{\rho}P\\
+%	v w\\
+%	\left(E_{tot} + P\right)v
+%	\end{array}\right]_y +
+%	\left[\begin{array}{c}
+%	 w\\
+%	u w\\
+%	v w\\
+%	w^2 + \frac{1}{\rho}P\\
+%	\left(E_{tot} + P\right)w
+%	\end{array}\right]_z = 
+%	\left[\begin{array}{c}
+%	0\\
+%	g_1\\
+%	g_2\\
+%	g_3\\
+%	\velocity \cdot \gvec
+%	\end{array}\right] \label{eq:eulereqincompressible_sys}
+%	\end{equation}
+\end{subequations}

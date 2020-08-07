@@ -21,15 +21,15 @@
 
 //}
 
-std::string HashFunction (std::vector <Point*> pointlist)
+std::string HashFunction (std::vector <Point*>* pointlist)
 {
-    std::size_t numidx = pointlist.size ();
+    std::size_t numidx = pointlist->size ();
     std::string out = "";
 
-    std::sort (pointlist.begin (), pointlist.end ());
+    std::sort (pointlist->begin (), pointlist->end ());
 
     for (std::size_t id = 0; id < numidx; ++id)
-        out += std::to_string (pointlist.at (id)->GetGlobalIndex ())+",";
+        out += std::to_string (pointlist->at (id)->GetGlobalIndex ())+",";
 
 
     return out;
@@ -171,11 +171,13 @@ SOLITON_RETURN BuildEdgesWithHashMap (Mesh* mesh)
         // Compute key hash
 
         for (SolitonHashCell* obj : vectorHash)
-                    obj->id = HashFunction (obj->listpoints);
+                    obj->id = HashFunction (&obj->listpoints);
 
         SOLITON_RETURN error = AddToHashMap (&map, &vectorHash);
         USE_SOLITON_RETURN(error);
     }
+
+    Print(&map, "test.txt");
 
 #ifdef VERBOSE
     INFOS << "Hash table size : " << map.size () << ENDLINE;

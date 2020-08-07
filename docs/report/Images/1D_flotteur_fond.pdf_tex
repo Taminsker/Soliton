@@ -1,0 +1,87 @@
+%% Creator: Inkscape 1.0 (6e3e5246a0, 2020-05-07), www.inkscape.org
+%% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
+%% Accompanies image file '1D_flotteur_fond.pdf' (pdf, eps, ps)
+%%
+%% To include the image in your LaTeX document, write
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics{<filename>.pdf}
+%% To scale the image, write
+%%   \def\svgwidth{<desired width>}
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics[width=<desired width>]{<filename>.pdf}
+%%
+%% Images with a different path to the parent latex file can
+%% be accessed with the `import' package (which may need to be
+%% installed) using
+%%   \usepackage{import}
+%% in the preamble, and then including the image with
+%%   \import{<path to file>}{<filename>.pdf_tex}
+%% Alternatively, one can specify
+%%   \graphicspath{{<path to file>/}}
+%% 
+%% For more information, please see info/svg-inkscape on CTAN:
+%%   http://tug.ctan.org/tex-archive/info/svg-inkscape
+%%
+\begingroup%
+  \makeatletter%
+  \providecommand\color[2][]{%
+    \errmessage{(Inkscape) Color is used for the text in Inkscape, but the package 'color.sty' is not loaded}%
+    \renewcommand\color[2][]{}%
+  }%
+  \providecommand\transparent[1]{%
+    \errmessage{(Inkscape) Transparency is used (non-zero) for the text in Inkscape, but the package 'transparent.sty' is not loaded}%
+    \renewcommand\transparent[1]{}%
+  }%
+  \providecommand\rotatebox[2]{#2}%
+  \newcommand*\fsize{\dimexpr\f@size pt\relax}%
+  \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
+  \ifx\svgwidth\undefined%
+    \setlength{\unitlength}{285.85869977bp}%
+    \ifx\svgscale\undefined%
+      \relax%
+    \else%
+      \setlength{\unitlength}{\unitlength * \real{\svgscale}}%
+    \fi%
+  \else%
+    \setlength{\unitlength}{\svgwidth}%
+  \fi%
+  \global\let\svgwidth\undefined%
+  \global\let\svgscale\undefined%
+  \makeatother%
+  \begin{picture}(1,0.5467017)%
+    \lineheight{1}%
+    \setlength\tabcolsep{0pt}%
+    \put(0,0){\includegraphics[width=\unitlength,page=1]{1D_flotteur_fond.pdf}}%
+    \put(0.03746992,0.22895553){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\textcolor{blue}{\Omega_w(t)}$\end{tabular}}}}%
+    \put(0.54738908,0.41833578){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\textcolor{black}{\Omega_b}$\end{tabular}}}}%
+    \put(0.75798179,0.37217836){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\textcolor{blue}{\zeta(x, t)}$\end{tabular}}}}%
+    \put(0.79085402,0.19216323){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\textcolor{black}{h(x, t)}$\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=2]{1D_flotteur_fond.pdf}}%
+    \put(0.44162579,0.23935083){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\textcolor{red}{\theta(x)}$\end{tabular}}}}%
+    \put(0.40461114,0.32997265){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\textcolor{blue}{\zeta_{out}}$\end{tabular}}}}%
+    \put(0.4067459,0.28825219){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\textcolor{red}{\zeta_{in}}$\end{tabular}}}}%
+    \put(0.52455006,0.53075465){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\textcolor{black}{z}$\end{tabular}}}}%
+    \put(0.38449591,0.00114838){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\textcolor{red}{x_0}$\end{tabular}}}}%
+    \put(0.62105127,-0.00017802){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\textcolor{red}{x_1}$\end{tabular}}}}%
+    \put(0.50670562,0.00401191){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$0$\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=3]{1D_flotteur_fond.pdf}}%
+    \put(0.01016756,0.05165774){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$z=\fond_0$\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=4]{1D_flotteur_fond.pdf}}%
+    \put(0.53723437,0.10468797){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\textcolor{black}{h(x, t)}$\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=5]{1D_flotteur_fond.pdf}}%
+    \put(0.52332869,0.30959907){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\textcolor{MyGreen}{G}$\end{tabular}}}}%
+    \put(0.51389451,0.36001609){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\textcolor{MyGreen}{\boldvec{r}}$\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=6]{1D_flotteur_fond.pdf}}%
+    \put(0.00522407,0.30434525){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$z=\zeta_0$\end{tabular}}}}%
+    \put(0.9617112,0.00189188){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\textcolor{red}{x}$\end{tabular}}}}%
+    \put(0.17292109,0.08394766){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\fond(x, t)$\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=7]{1D_flotteur_fond.pdf}}%
+    \put(0.16369527,0.27227776){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$h_0$\end{tabular}}}}%
+    \put(0.63231641,0.22077341){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$\xi(t)$\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=8]{1D_flotteur_fond.pdf}}%
+    \put(0.33128897,0.27833583){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$D_{0}$\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=9]{1D_flotteur_fond.pdf}}%
+  \end{picture}%
+\endgroup%

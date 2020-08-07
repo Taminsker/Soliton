@@ -1,0 +1,232 @@
+\section{L'équation des ondes linéaire}
+\subsection{Présentation du problème}
+%\subsubsection{Problème physique}
+
+\begin{figure}[H]
+	\centering
+	\incfig{0.8}{Images/1D_flotteur_fond}
+	\caption{Modèle 1D bathymétrique : flotteur.}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\incfig{0.8}{Images/2D_flotteur_fond}
+	\caption{Situation 2D : flotteur et fond variable.}
+\end{figure}
+\noindent Nous nous plaçons dans un problème 2D, cette configuration est similaire à un problème de Saint-Venant \ref{fig:SaintVenant} comme dans la section \ref{sec:SaintVenant}.\\
+
+\noindent L'étude de ce problème sur un domaine $\Omega_f$ doit être divisée en deux parties distinctes mais qui doivent être \textbf{couplées} : 
+\begin{itemize}
+	\item une surface libre référencée par $w$ pour \textit{water} sur un domaine $\Omega_w := \Omega_f\backslash \Omega_b$ définissant \textit{le domaine extérieur}, et 
+	\item le flotteur, corps flottant sur la surface libre (fixé ou non), référencé par $b$ pour \textit{body}, et nous définissons \textit{le domaine intérieur} $\Omega_b := [-R_0, R_0]$ représentant la \textit{position} de ce corps.\\
+\end{itemize}
+Nous avons donc \[\Omega_f = \Omega_b \cup \Omega_w,\text{ dans le cas présent $\mathbb{R}$.}\]
+Nous notons aussi $h_0$ une constante positive qui représentera la hauteur d'eau moyenne sur $\Omega_f$ (axe $z$ croissant) à l'instant $t=0$, et $\zeta$ la taille de la perturbation verticale par rapport à la hauteur totale $h(x, t)$ de la surface libre dans $\Omega_f$ depuis le fond $\fond$ de sorte que, comme dans la section \ref{sec:SaintVenant} nous ayons
+\begin{equation}
+	h(\vec{x}, t) = h_0 + \zeta(\vec{x}, t) - \fond (\vec{x}) \label{eq:deep}
+\end{equation}\vspace{-5mm}
+\begin{refe}
+La perturbation $\zeta$ est soumise à un hypothèse essentielle : elle doit être négligeable devant $h_0$.
+\end{refe}
+Nous pouvons aussi définir $\zeta_b$ comme la restriction de $\zeta$ à $\Omega_b$ et nous supposons qu'il est tel que l'interface fluide-structure soit exactement contre le flotteur. Un problème survient alors lorsque nous regardons $\zeta$ sur tout le domaine $\Omega_f$ : il n'est plus continu car il y a des \textbf{sauts} à la jonction des deux domaines.\\
+
+\subsection{Réécriture des équations}
+\subsubsection{La surface libre}
+\noindent Reprenons donc l'équation de conservation de la masse du problème de Saint-Venant \eqref{eq:SWE_mass}
+\begin{equation}
+	\partial_t h + \nabla\cdot \left(h\velocity\right) \overset{\eqref{eq:deep}}{=} \partial_t \zeta + \nabla \cdot\left[\left( h_0 + \zeta - \fond\right)\velocity\right] = 0.
+\end{equation}
+En développant la divergence (rappelons quelle ne dépend que de $x$ et de $y$), nous avons
+\begin{equation}
+	\partial_t \zeta + \left( h_0 + \zeta - \fond\right) \nabla \cdot\velocity + \velocity \cdot \nabla \left(h_0 + \zeta - \fond\right)  = 0
+\end{equation}
+Or $|h_0| \gg |\zeta|$ donc nous avons $h_0 + \zeta \approx h_0$, par suite 
+\begin{equation}
+\partial_t \zeta + \left( h_0 - \fond\right) \nabla \cdot\velocity + \velocity \cdot \nabla \left(\zeta - \fond\right) = 0\label{eq:massreecrite}
+\end{equation}
+Ce qui nous donne que
+\begin{equation}
+	\partial_t \zeta + \left( h_0 - \fond\right) \nabla \cdot\velocity + \velocity \cdot \nabla \left(\zeta-\fond\right) = 0.\label{eq:massreecriture}
+\end{equation}
+\begin{refe}
+Reformulé comme tel sur le domaine $\Omega_w$,
+\begin{equation}
+\partial_t \zeta + h_0 \nabla \cdot\velocity + \velocity \cdot \nabla \zeta - \nabla \cdot \left(\fond\velocity\right) = 0.\label{eq:massreecriture2}
+\end{equation}
+\noindent Remarquons que dans le cas où $\fond \equiv 0$, cette équation est simplement
+\begin{equation}
+	\partial_t \zeta + h_0\nabla \cdot\velocity + \velocity \cdot \nabla \zeta = 0.
+\end{equation}
+\end{refe}
+
+\noindent Reprenons maintenant l'équation de conservation de la quantité de mouvement du problème de Saint-Venant \eqref{eq:SWE_momemtum},
+\begin{equation}
+	\partial_t \left(h\velocity\right) + \nabla \cdot \left[ h\velocity \otimes \velocity + \frac{1}{2}gh^2\id\right] = gh\nabla \fond
+\end{equation}
+En remplaçant $q$ par son expression $q:= gh$, et en divisant par $g$, nous obtenons
+\begin{equation}
+	\partial_t \left(h\velocity\right) + \nabla \cdot \left[ h \velocity \otimes \velocity + \frac{1}{2}gh^2\id\right] = gh\nabla \fond
+\end{equation}
+Ce qui formellement décomposé, en posant $\underline{\velocity} := \velocity \otimes \velocity$ s'écrit
+\begin{equation}
+	\velocity\partial_t h +h\partial_t\velocity + h \nabla \cdot \underline{\velocity} +\underline{\velocity}\cdot \nabla h + gh\nabla h = gh\nabla \fond
+\end{equation}
+	En remplaçant $h$ par $h_0 + \zeta - \fond$,
+\begin{align}
+	&\velocity\partial_t \zeta +\left(h_0+\zeta-\fond\right)\partial_t\velocity + \left(h_0+\zeta-\fond\right) \nabla \cdot \underline{\velocity} +\underline{\velocity}\cdot \nabla \left(h_0+\zeta-\fond\right)\nonumber \\
+	&\hspace{2cm}+ g\left(h_0+\zeta-\fond\right)\nabla \left(h_0+\zeta-\fond\right) = g\left(h_0+\zeta-\fond\right)\nabla \fond
+\end{align}
+ et sous l'hypothèse $h_0+\zeta \approx h_0$
+\begin{equation}
+	\velocity\partial_t \zeta +\left(h_0-\fond\right)\partial_t\velocity + \left(h_0-\fond\right) \nabla \cdot \underline{\velocity} +\underline{\velocity}\cdot \nabla \left(\zeta-\fond\right)+ g\left(h_0-\fond\right)\nabla \left(\zeta-\fond\right) = g\left(h_0-\fond\right)\nabla \fond \label{eq:momentumreecriture}
+\end{equation}
+Par \eqref{eq:massreecrite}, nous pouvons déduire que
+\begin{equation}
+	\partial_t \zeta = \left(\fond - h_0\right)\nabla \cdot \velocity + \velocity \cdot \nabla \left(\fond - \zeta\right).
+\end{equation}
+Ce qui insérer dans \eqref{eq:momentumreecriture} donne
+\begin{equation}
+	\velocity\left(\fond - h_0\right)\nabla \cdot \velocity +\left(h_0-\fond\right)\partial_t\velocity + \left(h_0-\fond\right) \nabla \cdot \underline{\velocity} + g\left(h_0-\fond\right)\nabla \left(\zeta-\fond\right) = g\left(h_0-\fond\right)\nabla \fond \label{eq:momentumreecriture_2}
+\end{equation}
+Mais nous avons \[ \nabla \cdot \underline{\velocity} = \divg \left(\velocity \otimes \velocity\right) = \velocity \left(\nabla\cdot\velocity\right) + \left(\velocity\cdot\nabla\right)\velocity \]
+Donc \eqref{eq:momentumreecriture_2} devient
+\begin{equation}
+	\left(h_0-\fond\right)\partial_t\velocity + \left(h_0 - \fond\right) \left(\velocity\cdot \nabla\right)\velocity + g\left(h_0-\fond\right) \nabla\left(\zeta-\fond\right) = g \left(h_0 - \fond\right)\nabla\fond
+\end{equation}
+Sous la condition $h_0 - \fond \neq 0$ (ce qui est vrai tant que le fond $\fond$ ne dépasse jamais la surface), nous avons
+\begin{equation}
+\partial_t\velocity +  \left(\velocity\cdot \nabla\right)\velocity + g \nabla\left(\zeta-\fond\right) = g \nabla\fond \label{eq:momentumreecriture_3}
+\end{equation}
+Remarquons que l'opérateur d'advection appliqué au champ de vitesse $\velocity$ peut être décomposé sous \textbf{la forme de Lamb}
+\begin{equation}
+	\left(\velocity\cdot\nabla\right)\velocity = \frac{1}{2}\nabla \velocity^2 + \left(\rot \velocity\right)\times\velocity
+\end{equation}
+Si le fluide est \textbf{irrotationnel} alors $\rot \velocity = 0$ et donc que $\left(\velocity\cdot\nabla\right)\velocity = \frac{1}{2}\nabla \velocity^2 = \velocity\cdot \nabla\velocity$. La vitesse du fluide, selon \citet{leveque_numerical_1992} étant considérée constante pour n'importe quelle section verticale.\\
+Par ailleurs, le terme convectif $\left(\velocity\cdot\nabla\right)\velocity$  peut être négligé. En effet
+\begin{refe}
+Ainsi \eqref{eq:momentumreecriture_3} sur le domaine $\Omega_w$ devient
+\begin{equation}
+	\partial_t\velocity + \velocity\cdot \nabla\velocity + g \nabla\zeta = -2g\nabla\fond. \label{eq:momentumreecriture_4}
+\end{equation}
+\noindent Remarquons que dans le cas où $\fond \equiv Cst$, cette équation est simplement
+\begin{equation}
+\partial_t\velocity + \velocity\cdot \nabla\velocity + g \nabla\zeta = \vec{0}.
+\end{equation}
+\end{refe}
+\begin{refe}
+Si nous regroupons les équations \eqref{eq:massreecriture2} et \eqref{eq:momentumreecriture_4} sous la forme du système sur le domaine $\Omega_w$
+\begin{subnumcases}{(S_w)}
+	\partial_t \zeta + h_0 \nabla \cdot\velocity + \velocity \cdot \nabla \zeta - \nabla \cdot \left(\fond\velocity\right) = 0\\
+	\partial_t\velocity + \velocity\cdot \nabla\velocity + g \nabla\zeta = -2g\nabla\fond
+\end{subnumcases}
+\end{refe}
+
+\subsubsection{L'influence du flotteur sur la surface libre}
+\noindent Concernant le domaine $\Omega_b$, c'est-à-dire à l'emplacement du corps, il nous faut rajouter le terme de pression $\archi$ de la surface libre sur le flotteur ; plus communément connue comme \textbf{la poussée d'Archimède}. Elle est habituellement exprimée comme 
+\begin{equation}
+	\archi(t) = - \rho \vol_F (t) \gvec
+\end{equation}
+où $\vol_F(t)$ désigne le volume du fluide déplacé par le flotteur. Ou plus simplement dans la direction $z$
+\begin{equation}
+	\nvarchi (t) = -\rho g \vol_F (t). 
+\end{equation}
+Cette pression est une pression \textit{globale} du fluide sur le flotteur et elle ne peut pas être exprimée en terme de coordonnées spatiales $(x, y)$.\\
+
+Reprenons l'équation de la pression \eqref{eq:pression} et ajoutons-y un terme de pression $\bpression$ du flotteur sur la surface libre. Ainsi nous avons
+\begin{equation}
+	P(z) = \rho g \left(h_0 + \zeta_b - z\right) + P_{atm} + \bpression
+\end{equation}
+En conséquence nous avons en remplacement de \eqref{eq:pressionw_x} et de \eqref{eq:pressionw_y},
+\begin{subnumcases}{}
+	\partial_x P = \rho g \partial_x \zeta_b + \partial_x \bpression\\
+	\partial_y P = \rho g \partial_y \zeta_b + \partial_y \bpression
+\end{subnumcases}
+Suite à cette modification, l'équation de conservation de la masse ne change pas, mais les équations de conservation de la quantité de mouvement \eqref{eq:momentumAxeX} et \eqref{eq:momentumAxeY} deviennent
+\begin{subequations}
+	\begin{align}
+	\partial_t u + u\partial_x + v\partial_yu = -g \partial_x\zeta_b + \partial_x\bpression\label{eq:momentumAxeXb}\\
+	\partial_t v + u\partial_xv + v\partial_yv = -g \partial_y\zeta_b + \partial_y\bpression\label{eq:momentumAxeYb}
+	\end{align}
+\end{subequations}
+
+\begin{refe}
+	Avec la même démarche que nous avions appliquée, c'est-à-dire notamment en intégrant entre le fond $\fond$ et la surface $h_0+\zeta_b$ (surface ici qui "colle" au flotteur), nous obtenons des \textbf{équations de Saint-Venant} différentes dans $\Omega_b$
+	\begin{subnumcases}{(SW)}
+	\partial_t h + \nabla \cdot \boldsymbol{\vec{q}} = 0,\label{eq:SWE_massb}\\
+	\partial_t \boldsymbol{\vec{q}} + \nabla \cdot \left(\boldsymbol{\vec{q}} \otimes\velocity + \frac{1}{2}gh^2\id\right) = gh \nabla\fond + \nabla\bpression, \label{eq:SWE_momemtumb}
+	\end{subnumcases}
+	toujours avec $\boldsymbol{\vec{q}}= h\velocity$,  $h:= h_0 + \zeta_b - \fond$, $\velocity = \left(u, v, w\right)$, $h$ la profondeur totale depuis la surface $h_0 + \zeta_b$ et jusqu'au sol $\fond$. Sous forme de système nous obtenons
+	\begin{equation}
+	\myvector{h}{hu}{hv}_t + \myvector{hu}{hu^2 + \frac{1}{2}gh^2}{hu v}_x + \myvector{hv}{hu v}{hv^2 + \frac{1}{2}gh^2}_y = gh\myvector{0}{\partial_x\fond}{\partial_y\fond} +\myvector{0}{\partial_x\bpression}{\partial_y\bpression}\label{eq:SWESYSb}.
+	\end{equation}
+	\noindent Nous obtenons alors le système dans $\Omega_b$ suivant
+	\begin{subnumcases}{(S_b)}
+	\partial_t \zeta + h_0 \nabla \cdot\velocity + \velocity \cdot \nabla \zeta - \nabla \cdot \left(\fond\velocity\right) = 0\\
+	\partial_t\velocity + \velocity\cdot \nabla\velocity + g \nabla\zeta = -2g\nabla\fond + \nabla\bpression
+	\end{subnumcases}
+\end{refe}
+Remarquons que si $\fond \equiv 0$, alors nous avons
+\begin{equation*}
+	(S_w)\left\{\begin{array}{l}
+	\partial_t \zeta + h_0 \nabla \cdot\velocity + \velocity \cdot \nabla \zeta = 0\\
+	\partial_t\velocity + \velocity\cdot \nabla\velocity + g \nabla\zeta = \boldsymbol{\vec{0}}
+	\end{array}\right.\hspace{1cm}\text{et}\hspace{1cm}
+	(S_b)\left\{\begin{array}{l}
+	\partial_t \zeta_b + h_0 \nabla \cdot\velocity + \velocity \cdot \nabla \zeta_b = 0\\
+	\partial_t\velocity + \velocity\cdot \nabla\velocity + g \nabla\zeta_b = \nabla\bpression
+	\end{array}\right.
+\end{equation*}
+
+\noindent Remarquons ensuite que si l'objet est fixé, c'est-à-dire que sa position en dépend pas du temps, alors $\partial_t \zeta_b = 0$ et donc le système $(S_b)$ précédent se reformule simplement comme
+\begin{equation}
+	(S^*_b)\left\{\begin{array}{l}
+	 h_0 \nabla \cdot\velocity + \velocity \cdot \nabla \zeta_b = 0\\
+	\partial_t\velocity + \velocity\cdot \nabla\velocity + g \nabla\zeta_b = \nabla\bpression
+	\end{array}\right.
+\end{equation}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\vspace*{6cm}
+\subsection{Vers l'équation des ondes}
+\noindent Par \eqref{eq:consmass_h0} dans $\Omega_f$, nous avons que
+\begin{equation}
+	\nabla\cdot \velocity = \frac{1}{h_0}\partial_t\zeta\label{eq:divvelocity}
+\end{equation}
+sous la condition $h_0\neq 0$ (qui est vérifiée).\\
+De plus, en prenant la divergence de part et d'autres dans l'équation \eqref{eq:consmomemtum_h0} et comme le champ de vitesse $\velocity$ est supposé continu sur $\Omega_f$, alors nous avons
+\begin{equation*}
+	\nabla\cdot\left(\partial_t \velocity + g\nabla\zeta + \mathds{1}_{\Omega_b}\nabla \Pi\right) = 0\hspace{3mm}
+	\Longleftrightarrow\hspace{3mm} \partial_t \nabla\cdot\velocity + g\Delta\zeta_b + \mathds{1}_{\Omega_b}\Delta \Pi = 0
+\end{equation*}
+Mais par \eqref{eq:divvelocity}
+\begin{equation}
+	\mathds{1}_{\Omega_b}\Delta \Pi = \frac{1}{h_0}\partial_{tt}\zeta_b - g\Delta\zeta_b
+\end{equation}
+En posant $c_0^2 := gh_0$ et en multipliant par $h_0$, nous avons que
+\begin{equation}
+	\Longleftrightarrow\hspace{3mm} h_0\mathds{1}_{\Omega_b}\Delta \Pi =\partial_{tt}\zeta_b - c_0^2\Delta\zeta_b\hspace{3mm} \Longleftrightarrow\hspace{3mm} \mathds{1}_{\Omega_b}\nabla \cdot \left(h_0\nabla\Pi\right) = \partial_{tt}\zeta_b - c_0^2\Delta\zeta_b
+\end{equation}
+
+\noindent Donc nous avons
+\begin{equation}
+	\left\{
+	\begin{array}{l}
+	\partial_t\zeta - h_0\nabla\cdot\velocity = 0\\
+	\partial_{tt}\zeta - c_0^2\Delta\zeta = \mathds{1}_{\Omega_b} \nabla \cdot \left(h_0\nabla \Pi\right)
+	\end{array}
+	\right.
+\end{equation}
+
+\citet[chap 2]{toro_riemann_2009}

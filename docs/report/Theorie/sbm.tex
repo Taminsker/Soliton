@@ -1,0 +1,241 @@
+\section{La méthode \textit{Shifted Boundary}}
+\noindent Cette section est inspirée de \citet{main_shifted_2018, main_shifted_2018_2}, de \citet{burman_ghost_2010} et de \citet{nouveau_high-order_2019}.\\
+
+\noindent La méthode \textit{Shifted Boundary}, abrégée \textbf{(SB)}, est une méthode de déplacement de conditions de bords : la méthode se résume à introduire un bord $\widetilde{\Gamma}$ substitut au bord physique $\Gamma$ dans l'objectif que les conditions de bord pourront être imposés sur des n\oe uds du maillage déjà présents. Comme le précise l'article \citet{main_shifted_2018}, il serait judicieux que ce déplacement de frontière ne réduise pas l'ordre de convergence de la méthode globale. Les conditions de bords seront donc modifiées et imposées dans la formulation variationnelle grâce à une méthode de pénalisation qui à fait ses preuves : la pénalisation de Nitsche; c'est la méthode employée dans \citet{nouveau_high-order_2019} pour le problème de Poisson notamment.
+
+\subsection{Définitions}
+\begin{figure}[H]
+	\centering
+	\incfig{0.8}{Images/surrogate}
+	\caption{La méthode \textit{Shifted Boundary} (SB).}
+	\label{fig:sbm_method}
+\end{figure}
+
+Nous donnons donc plusieurs définitions
+\begin{itemize}[label=$\mybullet$]
+	\item Le domaine $\Omega_b\subset \Omega_f \subset \mathbb{R}^2$ est, rappelons-le, le domaine associé au flotteur. De plus, nous avons noté la frontière de $\Omega_b$
+	\begin{equation}
+		\Gamma := \partial\Omega_b.
+	\end{equation}  
+	\item Nous posons aussi le bord $\widetilde{\Gamma}$ défini comme le substitut au bord physique $\Gamma$, nous conduisant à définir le domaine substitut $\widetilde{\Omega}_b$ tel que
+	\begin{equation}
+		\widetilde{\Gamma} = \partial \widetilde{\Omega}_b, \hspace{1cm}\text{et}\hspace{1cm} \widetilde{\Omega}_b \subset \Omega_b.
+	\end{equation}
+	\item Le vecteur sortant normal $\outngamma$ à $\Gamma$ et le vecteur tangent associé $\outtgamma$.
+	\item La carte $\mapgamma : \widetilde{\Gamma}\to\Gamma$ telle que $\mapgamma(\bld{\widetilde{x}}) = \bld{x}$. Celle-ci peut être construite de plusieurs manières comme le rappelle \citet{main_shifted_2018} : analytiquement, via une fonction de \textit{level-set} ou explicitement.
+	\item Le vecteur sortant normal $\widetilde{\outngamma}$ à $\widetilde{\Gamma}$ et le vecteur tangent associé $\widetilde{\outtgamma}$ tels que
+	\begin{equation}
+		\widetilde{\outngamma}(\widetilde{x}) = \outngamma(\mapgamma (\widetilde{x})) \hspace{1cm}\text{ et }\hspace{1cm}\widetilde{\outtgamma}(\widetilde{x}) = \outtgamma(\mapgamma (\widetilde{x})).
+	\end{equation}
+	\item Le vecteur distance $\dgamma$ tel que $\forall \bld{\widetilde{x}}\in\widetilde{\Gamma}$
+	\begin{equation}
+		\dgamma (\bld{\widetilde{x}}) = \bld{x} - \bld{\widetilde{x}} = \left[\mapgamma - \id\right]\left(\bld{\widetilde{x}}\right) 
+	\end{equation}
+	Dans la suite nous aurons, 
+	\begin{equation}
+		\dgamma = \|\dgamma\|\outngamma.
+	\end{equation}
+\end{itemize}
+
+\noindent Sous ces définitions, comme le présente \citet{main_shifted_2018}, nous avons
+\begin{subnumcases}{}
+	\nabla \varphi (\widetilde{x}) \cdot \widetilde{\outngamma} = \nabla \varphi (\widetilde{x}) \cdot \outngamma(\mapgamma (\widetilde{x}))\label{eq:newnormal}\\
+	\nabla \varphi (\widetilde{x}) \cdot \widetilde{\outtgamma} = \nabla \varphi (\widetilde{x}) \cdot \outtgamma(\mapgamma (\widetilde{x}))\label{eq:newtangent}
+\end{subnumcases}
+
+\begin{figure}[H]
+	\centering
+	\incfig{0.8}{Images/domain}
+	\caption{Les différents bords.}
+	\label{fig:defbords}
+\end{figure}
+
+\noindent La nouveauté ici correspond à la zone d'amortissement \textit{(damping area)} $\Omega_{dam} \subset \Omega_w$. Et nous définissons aussi plusieurs bords
+\begin{itemize}[label=$\mybullet$]
+	\item La frontière entre $\Omega_b$ et $\Omega_w$ que nous avons appellé $\Gamma$.
+	\item Deux murs, avec une condition d'imperméabilité $\Gamma^{ext}_{\wall{\pm}}$ correspondant aux murs haut et bas sur la figure \ref{fig:defbords}.
+	\item Le bord d'entrée des vagues $\Gamma^{ext}_{in}$, et le bord de sortie "officiel" des vagues $\Gamma^{ext}_{out}$.
+\end{itemize}
+
+\subsection{Exemple d'application : problème de Poisson sur domaine simple}
+\noindent Dans  cette section tirée de \citet{main_shifted_2018} nous illustrerons le problème suivant
+\begin{subnumcases}{}
+	-\Delta u = f, &\hspace{1cm}\text{dans $\Omega$}\\
+	u = u_D, &\hspace{1cm}\text{sur $\Gamma_D$}\\
+	\nabla u \cdot \nvec = t_N, &\hspace{1cm}\text{sur $\Gamma_N$}
+\end{subnumcases}
+avec $\Gamma_D,\Gamma_N$ une partition de $\partial\Omega$. Nous traiterons exclusivement $\Gamma_D$ par la méthode (SB) et le bord $\Gamma_N$ par maillage conforme.\\
+
+\noindent Par utilisation des formules de Taylor, selon \citet{main_shifted_2018}, il est possible de montrer que
+\begin{equation}
+	\widetilde{u_D}(\widetilde{x})  = u_D (\mapgamma(\widetilde{x})) = u(\widetilde{x}) + \nabla u(\widetilde{x}) \cdot \dgamma (\widetilde{x}) + \underbrace{\OLandau{\|\dgamma(\widetilde{x})\|_2^2}}_{ = \OLandau{h^2}} \label{eq:newu}
+\end{equation}
+%en particulier
+%\begin{equation}
+%\piper{u(\widetilde{x})}_{\Gamma_D} \approx u_D (\mapgamma(\widetilde{x})) - \nabla u(\widetilde{x}) \cdot \dgamma (\widetilde{x}) \label{eq:newuD}
+%\end{equation}
+La formulation faible obtenue selon Nitsche est\\
+\begin{refe}
+\textit{Trouver $u^h\in V^h (\Omega)$ tel que $\forall w^h \in V^h (\Omega)$,}
+\begin{align}
+	&\underbrace{\scal{\nabla w^h}{\nabla u^h}_\Omega}_{ =: I_1} - \underbrace{\scal{w^h}{\nabla u^h \cdot \outngamma}_{\Gamma_D}}_{ =: I_{2}} +
+	\underbrace{\scal{w^h}{\nabla u^h \cdot \outngamma - t_N}_{\Gamma_N}}_{ =: I_{3}}\nonumber\\
+	&\hspace{3cm}-  \underbrace{\scal{\nabla w^h \cdot \outngamma}{u^h - u_D}_{\Gamma_D}}_{ =: I_{4}} +  \underbrace{\scal{\frac{\alpha}{h^{\perp}} w^h}{u^h - u_D}_{\Gamma_D}}_{ =: I_{5}}= \underbrace{\scal{w^h}{f}_{\Omega}}_{ =: I_6}
+\end{align}
+\end{refe}
+Ce qui en utilisant \eqref{eq:newnormal} et \eqref{eq:newu}, nous donne
+%\begin{align*}
+%	&I_1 = \scal{\nabla w^h}{\nabla u^h}_\Omega =\scal{\nabla w^h}{\nabla u^h}_{\widetilde{\Omega}}\\
+%	&I_{2} =  \scal{w^h}{\nabla u^h \cdot \outngamma}_{\Gamma_D}  = \scal{w^h + \nabla w^h \cdot \dgamma}{\nabla u^h \cdot \widetilde{\outngamma}}_{\widetilde{\Gamma_D}}\\
+%%	&I_{2N} =  \scal{w^h}{\nabla u^h \cdot \outngamma}_{\Gamma_N}  \overset{\text{\cite{main_shifted_2018}}}{=} \scal{w^h}{\left(t_N - \nabla \left(\nabla u^h\right)\cdot \dgamma \cdot \outngamma\right)\outngamma\cdot\widetilde{\outngamma}}_{\widetilde{\Gamma_N}} + \scal{w^h}{\left(\nabla u^h\cdot \outtgamma\right)\outtgamma\cdot\widetilde{\outngamma}}_{\widetilde{\Gamma_N}}\\
+%	&I_{3a} =  \scal{\nabla w^h \cdot \outngamma}{u^h - u_D}_{\Gamma_D} = \scal{\nabla w^h \cdot \widetilde{\outngamma}}{u^h + \nabla u^h \cdot \dgamma - \widetilde{u_D}}_{\widetilde{\Gamma_D}}\\
+%	&I_{3b} =  \scal{\frac{\alpha}{h^{\perp}} w^h}{u^h - u_D}_{\Gamma_D} = \scal{\frac{\alpha}{h^{\perp}} \left(w^h + \nabla w^h \cdot \dgamma\right)}{u^h + \nabla u^h \cdot \dgamma - \widetilde{u_D}}_{\widetilde{\Gamma_D}}\\
+%	&I_4 = \scal{w^h}{f}_{\Omega} = \scal{w^h}{f}_{\widetilde{\Omega}}
+%\end{align*}
+\begin{subnumcases}{}
+	I_1  = \scal{\nabla w^h}{\nabla u^h}_{\widetilde{\Omega}}\\
+	I_{2} = \scal{w^h + \nabla w^h \cdot \dgamma}{\nabla u^h \cdot \widetilde{\outngamma}}_{\widetilde{\Gamma_D}} - \scal{\nabla w^h \cdot \dgamma}{\nabla u^h \cdot \widetilde{\outngamma}}_{\widetilde{\Gamma_D}}\\
+%	I_{2} = \scal{w^h}{\nabla u^h \cdot \widetilde{\outngamma}}_{\widetilde{\Gamma_D}}\\
+	I_{3} = \scal{w^h}{\nabla u^h \cdot \outngamma}_{\Gamma_N} - \scal{w^h}{t_N}_{\Gamma_N}\\
+	I_{4} = \scal{\nabla w^h \cdot \widetilde{\outngamma}}{u^h + \nabla u^h \cdot \dgamma}_{\widetilde{\Gamma_D}} - \scal{\nabla w^h \cdot \widetilde{\outngamma}}{\widetilde{u_D}}_{\widetilde{\Gamma_D}}\\
+	I_{5} = \scal{\frac{\alpha}{h^{\perp}} \left(w^h + \nabla w^h \cdot \dgamma\right)}{u^h + \nabla u^h \cdot \dgamma}_{\widetilde{\Gamma_D}} - \scal{\frac{\alpha}{h^{\perp}} \left(w^h + \nabla w^h \cdot \dgamma\right)}{ \widetilde{u_D}}_{\widetilde{\Gamma_D}}\\
+	I_6 = \scal{w^h}{f}_{\widetilde{\Omega}}
+\end{subnumcases}
+auquel nous pouvons ajouter un terme de pénalisation tangentielle (optionnel)
+\begin{equation}
+	I_7 = \underbrace{\scal{\beta h^{T} \nabla w^h \cdot \outtgamma}{\nabla u^h\cdot \outtgamma}_{\widetilde{\Gamma_D}}}_{ =: I_{7a}} - \underbrace{\scal{\beta h^{T} \nabla w^h \cdot \outtgamma}{\nabla \widetilde{u_D}\cdot \outtgamma}_{\widetilde{\Gamma_D}}}_{ =: I_{7L}}
+\end{equation}
+Permettant de réécrire tout le problème variationnel comme
+\begin{refe}
+	\textit{Trouver $u^h\in V^h (\Omega)$ tel que $\forall w^h \in V^h (\Omega)$,}
+	\begin{equation}
+		\bld{a(w^h, u^h)} = \bld{L(w^h)}
+	\end{equation}
+	\begin{align*}
+	&\bld{a(w^h, u^h)} := \scal{\nabla w^h}{\nabla u^h}_{\widetilde{\Omega}} + \bld{a_{sb}^{\Gamma_{D}}}(w^h, u^h) + \bld{a_{pen}^{\Gamma_{D}}} + \bld{a_{conf}^{\Gamma_{N}}}\\
+	&\bld{L(w^h)} := \scal{w^h}{f}_{\widetilde{\Omega}} + \bld{L_{sb}^{\Gamma_{D}}} (\varphi) + \bld{L_{pen}^{\Gamma_{D}}} (\varphi)  + \bld{L_{conf}^{\Gamma_{N}}} (\varphi) 
+	\end{align*}
+	avec 
+	\begin{align*}
+		&\bld{a_{sb}^{\Gamma_{D}}} := -\scal{w^h}{\nabla u^h \cdot \widetilde{\outngamma}}_{\widetilde{\Gamma_D}} - \scal{\nabla w^h \cdot \widetilde{\outngamma}}{u^h}_{\widetilde{\Gamma_D}} -  \scal{\nabla w^h \cdot \widetilde{\outngamma}}{\nabla u^h \cdot \dgamma}_{\widetilde{\Gamma_D}}\\
+		&\bld{a_{pen}^{\Gamma_{D}}} := \scal{\frac{\alpha}{h^{\perp}} \left(w^h + \nabla w^h \cdot \dgamma\right)}{u^h + \nabla u^h \cdot \dgamma}_{\widetilde{\Gamma_D}}\\
+		&\bld{a_{conf}^{\Gamma_{N}}} :=\scal{w^h}{\nabla u^h \cdot \nvec}_{\Gamma_N}\\[1em]
+		&\bld{L_{sb}^{\Gamma_{D}}} (\varphi) := - \scal{\nabla w^h \cdot \widetilde{\outngamma}}{\widetilde{u_D}}_{\widetilde{\Gamma_D}}\\
+		&\bld{L_{pen}^{\Gamma_{D}}} (\varphi) := \scal{\frac{\alpha}{h^{\perp}} \left(w^h + \nabla w^h \cdot \dgamma\right)}{ \widetilde{u_D}}_{\widetilde{\Gamma_D}}\\
+		&\bld{L_{conf}^{\Gamma_{N}}} (\varphi) := \scal{w^h}{t_N}_{\Gamma_N}
+	\end{align*}
+\end{refe}
+Il est utile de remarquer que $\bld{a}$ n'est pas symétrique à cause de la présence de terme $\scal{\nabla u^h \cdot \widetilde{\outngamma}}{\nabla w^h \cdot \dgamma}_{\widetilde{\Gamma_D}}$. En se rappelant que $\dgamma = \| \dgamma\|\outngamma$, comme dans \citet{main_shifted_2018}, il est possible de symétriser la fonction $\bld{a}$.
+%\begin{equation}
+%	\nabla u^h \cdot \widetilde{\outngamma} = \left(\left(\nabla u^h \cdot \outngamma\right)\outngamma + \left(\nabla u^h \cdot \outtgamma\right)\outtgamma\right)\cdot \widetilde{\outngamma}
+%\end{equation}
+%puis
+%\begin{equation}
+%	\nabla u^h \cdot \widetilde{\outngamma} = \frac{\outngamma \cdot \widetilde{\outngamma}}{\|\dgamma\|}\nabla u^h \cdot \dgamma  + \left(\nabla u^h \cdot \outtgamma\right)\outtgamma \cdot \widetilde{\outngamma}
+%\end{equation}
+%et comme 
+%\begin{equation}
+%	\nabla u^h \cdot \outtgamma \approx \nabla \widetilde{u_D}\cdot\outtgamma
+%\end{equation}
+%donc
+%\begin{equation}
+%	\nabla u^h \cdot \widetilde{\outngamma} = \frac{\outngamma \cdot \widetilde{\outngamma}}{\|\dgamma\|}\nabla u^h \cdot \dgamma  + \left(\nabla \widetilde{u_D}\cdot\outtgamma\right)\outtgamma \cdot \widetilde{\outngamma}
+%\end{equation}
+%
+%\begin{refe}
+%	Ainsi nous pouvons symétriser $\bld{a_2}$ comme\\
+%	\begin{equation}
+%		\bld{a_{sb}^{\Gamma_{D}}} \longrightarrow \scal{\nabla w^h \cdot \dgamma}{\frac{\outngamma \cdot \widetilde{\outngamma}}{\|\dgamma\|} \nabla u^h \cdot \dgamma}_{\widetilde{\Gamma_D}}\\
+%	\end{equation}
+%	et le second membre devient
+%	\begin{equation}
+%		\bld{L(w^h)} \longrightarrow \bld{L(w^h)} - \scal{\nabla w^h \cdot \dgamma}{\left(\nabla\widetilde{u_D}\cdot \outtgamma\right)\outtgamma \cdot \widetilde{\outngamma}}_{\widetilde{\Gamma_D}}
+%	\end{equation}
+%\end{refe}
+
+\subsection{Réécriture de l'équation de ondes sous forme variationnelle}
+\noindent Reprenons l'équation des ondes \eqref{eq:ondes} avec les conditions de bords établies naturellement au vu des définitions précédentes dans un modèle sans rotations.
+\begin{subnumcases}{}
+	\partial_{tt}\zeta - c_0^2 \Delta \zeta +\chi_{dam}\zeta_t = 0&\hspace{1cm}\text{dans $\Omega_w$}\\
+	\chi_{dam}(\boldvec{x}) = \frac{\mathds{1}_{\Omega_{dam}}(\boldvec{x})}{\text{dist}\left(\boldvec{x}, \Gamma_{out}^{ext}\right)}&\hspace{1cm}\text{dans $\Omega_w$}\\
+	\zeta = \zeta_{inlet}&\hspace{1cm}\text{sur $\Gamma_{in}^{ext}$}\\
+	\zeta = \zeta_{outlet} = 0 &\hspace{1cm}\text{sur $\Gamma_{out}^{ext}$}\\
+%	\nabla \zeta = \boldvec{0}&\hspace{1cm}\text{sur $\Gamma_{out}^{ext}$}\\
+	\nabla\zeta \cdot \nvec = 0&\hspace{1cm}\text{sur $\Gamma_{\wall{+}}^{ext} \bigcup \Gamma_{\wall{-}}^{ext}$}\\[1em]
+	d_0 \Delta \bpression = \partial_{tt}\zeta - c_0^2 \Delta \zeta &\hspace{1cm}\text{dans $\Omega_b$}\\
+	\zeta_{tt} = \boldvec{a}_\mathcal{G}\cdot \myvector{-\nabla \zeta}{1}{}&\hspace{1cm}\text{dans $\Omega_b$ \eqref{eq:surfaceflotteur_new} \& \eqref{eq:massadded}}\\
+	g\zeta_{out} = g\zeta_{in} + \bpression_{in}&\hspace{1cm}\text{sur $\Gamma$}
+\end{subnumcases}
+
+\noindent Nous utiliserons la notation produit scalaire sur $\ell^2$, les indices $w, b$ et $f$ font respectivement référence aux domaines $\Omega_w$, $\Omega_b$ et $\Omega_f$. Nous partons de l'équation des ondes \eqref{eq:ondes}. Et nous appliquons la formulation trouvée dans la section précédente pour une frontière déplacée $\widetilde{\Gamma}$ correspondant à $\Gamma = \Omega_w \bigcap \Omega_b$.\\
+
+\noindent Dans $\Omega_w$, nous avons la formulation variationnelle suivante, obtenue par la section précédente en remplaçant la taille maximale des cellules $h^{\perp}$ par $\lambda$, et nous omettrons volontairement les exposants $\cdot^h$, de plus nous prendrons la forme non-symétrique de la formule dégagée dans la section précédente,
+
+\begin{refe}
+\noindent \textit{Trouver $\zeta\in V^h (\Omega_f)$ tel que $\forall \varphi \in V^h (\Omega_f)$,}
+	\begin{equation}
+	\bld{a^{time/dam}_{\un}}(\varphi, \zeta) + \bld{a^{space}_{\un}}(\varphi, \zeta) = \bld{L_{\un}}(\varphi)
+	\end{equation}
+\end{refe}
+l'indice $\cdot_\un$ fait ici référence à la formulation variationnelle dans $\Omega_w$, les exposants $time$ $space$ et $dam$ font respectivement référence à au temps, à la partie spatiale et à la partie "amortissement" de la formulation variationnelle.
+\begin{itemize}[label=$\mybullet$]
+\item pour les dérivées temporelles
+\begin{equation}
+	\bld{a^{time/dam}_{\un}}(\varphi, \zeta):=\partial_{tt}\scal{\varphi}{\zeta}_{\widetilde{\Omega_w}} + \partial_{t}\scal{\varphi}{\chi_{dam}\zeta}_{\widetilde{\Omega_w}}\label{eq:a_time_dam_1}
+\end{equation}
+\item pour la partie spatiale
+\begin{equation}
+\bld{a^{space}_{\un}}(\varphi, \zeta) := \scal{\nabla \varphi}{\nabla \zeta}_{\widetilde{\Omega_w}} + \bld{a_{sb, \un}^{\Gamma}} (\varphi, \zeta) + \bld{a_{conf, \un}^{\Gamma^{ext}}} (\varphi, \zeta) + \bld{a_{pen, \un}} (\varphi, \zeta)\label{eq:a_space_1}
+\end{equation}
+\item le second membre
+\begin{equation}
+	\bld{L_\un}(\varphi) := \bld{L_{sb, \un}^{\Gamma}}(\varphi) + \bld{L_{conf,\un}^{\Gamma^{ext}}} (\varphi) + \bld{L_{pen, \un}}(\varphi)\label{eq:L_1}
+\end{equation}
+\end{itemize}
+où nous avons
+\begin{subequations}
+	\begin{align}
+		&\bld{a_{sb,\un}^{\Gamma} } (\varphi, \zeta) := -\scal{\varphi}{\nabla \zeta \cdot \widetilde{\outngamma}}_{\widetilde{\Gamma}} - \scal{\nabla \varphi \cdot \widetilde{\outngamma}}{\zeta}_{\widetilde{\Gamma}} - \scal{\nabla \varphi \cdot \widetilde{\outngamma}}{\nabla \zeta \cdot \dgamma}_{\widetilde{\Gamma}}\label{eq:a_sb_1}\\
+		&\bld{a_{conf, \un}^{\Gamma^{ext}}} (\varphi, \zeta) := -\scal{\varphi}{\nabla \zeta \cdot \nvec}_{\Gamma^{ext}_{\wall{+}} \bigcup \Gamma^{ext}_{\wall{-}}}  - \scal{\nabla \varphi \cdot \nvec}{\zeta}_{\Gamma^{ext}_{in}\bigcup\Gamma^{ext}_{out}}\label{eq:a_conf_1}\\
+		&\bld{a_{pen, \un}} (\varphi, \zeta) := \scal{\frac{\alpha}{\lambda} \left(\varphi + \nabla \varphi \cdot \dgamma\right)}{\zeta + \nabla \zeta \cdot \dgamma}_{\widetilde{\Gamma}} + \scal{\frac{\alpha}{\lambda}\varphi}{\zeta}_{\Gamma^{ext}_{in}\bigcup\Gamma^{ext}_{out}}\label{eq:a_pen_1}\\[1em]
+		&\bld{L_{sb, \un}^{\Gamma}}(\varphi) := -\scal{\nabla \varphi \cdot \widetilde{\outngamma}}{\widetilde{\zeta_{out}}}_{\widetilde{\Gamma}}\label{eq:L_sb_1}\\
+		&\bld{L_{conf, \un}^{\Gamma^{ext}}} (\varphi) := - \scal{\nabla \varphi\cdot \nvec}{\zeta_{inlet}}_{\Gamma_{in}^{ext}} - \cancelto{0}{\scal{\nabla \varphi\cdot \nvec}{\zeta_{outlet}}_{\Gamma_{out}^{ext}}}\label{eq:L_conf_1}\\
+		&\bld{L_{pen, \un}} (\varphi) :=  \scal{\frac{\alpha}{\lambda} \left(\varphi + \nabla \varphi \cdot \dgamma\right)}{ \widetilde{\zeta_{out}}}_{\widetilde{\Gamma}} + \scal{\frac{\alpha}{\lambda}\varphi}{\zeta_{inlet}}_{\Gamma^{ext}_{in}} + \cancelto{0}{\scal{\frac{\alpha}{\lambda}\varphi}{\zeta_{outlet}}_{\Gamma^{ext}_{out}}}\label{eq:L_pen_1}
+	\end{align}
+\end{subequations}
+\vspace{5mm}
+\noindent Tandis que dans $\Omega_b$ nous avons le problème variationnel suivant
+\begin{refe}
+	\noindent \textit{Trouver $\bpression\in V^h (\Omega_f)$ tel que $\forall \varphi \in V^h (\Omega_f)$,}
+	\begin{equation}
+	\bld{a_{\deux}}(\varphi, \bpression) = \bld{L_{\deux}}(\varphi)
+	\end{equation}
+\end{refe}
+l'indice $\cdot_\deux$ fait ici référence à la formulation variationnelle dans $\Omega_b$. Et nous avons
+avec
+\begin{equation}
+	\bld{a_{\deux}}(\varphi, \bpression) := \scal{\nabla \varphi}{\nabla \bpression}_{\widetilde{\Omega_b}} + \bld{a_{sb, \deux}^{\Gamma}} (\varphi, \bpression) + \bld{a_{pen, \deux}^{\Gamma}} (\varphi, \bpression)\label{eq:a_2}\\
+\end{equation}
+et 
+\begin{equation}
+	\bld{L_{\deux}}(\varphi) := \bld{L_{\zeta, \deux}} (\varphi)  + \bld{L_{sb, \deux}^{\Gamma}}(\varphi) + \bld{L_{pen, \deux}^{\Gamma}}(\varphi)\label{eq:L_2}
+\end{equation}
+où 
+\begin{subequations}
+\begin{align}
+	&\bld{a_{sb, \deux}^{\Gamma} } (\varphi, \bpression) := -\scal{\varphi + \nabla \varphi \cdot \dgamma}{\nabla \bpression \cdot \widetilde{\outngamma}}_{\widetilde{\Gamma}} - \scal{\nabla \varphi \cdot \widetilde{\outngamma}}{\bpression + \nabla \bpression \cdot \dgamma}_{\widetilde{\Gamma}} + \scal{\nabla \varphi \cdot \dgamma}{\nabla \bpression \cdot \outngamma}_{\widetilde{\Gamma}}\label{eq:a_sb_2}\\
+	&\bld{a_{pen, \deux}^{\Gamma}} (\varphi, \bpression) := \scal{\frac{\alpha}{\lambda} \left(\varphi + \nabla \varphi \cdot \dgamma\right)}{\bpression + \nabla \bpression \cdot \dgamma}_{\widetilde{\Gamma}}\label{eq:a_pen_2}\\[1em]
+	&\bld{L_{\zeta, \deux}}(\varphi) := \frac{\ddot{z}_\mathcal{G}}{d_0}\scal{\varphi}{1}_{\widetilde{\Omega_b}} - \frac{\ddot{x}_\mathcal{G}}{d_0}\scal{\varphi}{\partial_x \zeta}_{\widetilde{\Omega_b}} - \frac{\ddot{y}_\mathcal{G} }{d_0}\scal{\varphi}{\partial_y \zeta}_{\widetilde{\Omega_b}} - g\scal{\varphi}{ \Delta \zeta}_{\widetilde{\Omega_b}}\label{eq:L_zeta_2}\\
+	&\bld{L_{sb, \deux}^{\Gamma}}(\varphi) := -\scal{\nabla \varphi \cdot \widetilde{\outngamma}}{\widetilde{\bpression_{in}}}_{\widetilde{\Gamma}}\label{eq:L_sb_2}\\
+	&\bld{L_{pen, \deux}^{\Gamma}}(\varphi) :=  \scal{\frac{\alpha}{\lambda} \left(\varphi + \nabla \varphi \cdot \dgamma\right)}{ \widetilde{\bpression_{in}}}_{\widetilde{\Gamma}}\label{eq:L_pen_2}
+\end{align}
+\end{subequations}
+
+
+
+
+
+
+
+
+

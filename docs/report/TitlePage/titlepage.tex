@@ -1,0 +1,53 @@
+\newenvironment{novspacecenter}
+{\parskip=0pt\par\nopagebreak\centering}
+{\par\noindent\ignorespacesafterend}
+
+\definecolor{charitegray}{RGB}{160 165 169}
+\definecolor{charitegrayarea}{RGB}{229 229 229}
+
+ \begin{titlepage}
+	\begin{novspacecenter}
+		\includegraphics[width=80mm]{Images/logo_inria.png}\hfill
+		\includegraphics[width=80mm]{Images/logo_universite.png}
+	\end{novspacecenter}
+	\vskip19mm
+	\begin{tikzpicture}[remember picture, overlay]         
+	\fill [charitegrayarea, opacity=1] (-3.0,0.0) rectangle (19,-25);
+	\end{tikzpicture}
+	\raggedright
+	\vskip18mm
+	{
+		\fontsize{22}{26.4}
+		\bfseries
+		\boldmath
+%		\sffamily
+		La méthode \textit{Shifted Boundary} pour un problème d'ondes linéaire avec zones de congestion
+		\par
+	}
+	\vskip18mm
+	{
+		\fontsize{20}{24}
+		\boldmath
+		\textbf{Rapport de stage}
+		\par
+	}
+	\vskip18mm
+	{%
+		\fontsize{15}{18}
+		\boldmath
+%		\sffamily
+		\textsc{Pannetier Valentin}\\
+		sous la direction de \textsc{Mr Mario Ricchiuto}.
+		\par
+	}
+	\vfill
+	{
+		\large
+		\vfill
+			
+		Inria Bordeaux-Sud-Ouest \& Université de Bordeaux - \today\\
+		Année 2019-2020, Master Modélisation EDP
+	}
+\end{titlepage}
+
+%\newpage

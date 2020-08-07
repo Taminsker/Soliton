@@ -1,0 +1,70 @@
+\section{Inertie et rotations}
+
+\noindent La matrice d'inertie $\tensor{\mathfrak{I}}(t)$, aussi appelée tenseur d'inertie, est obtenue selon \citet{lannes_dynamics_2017} comme
+\begin{equation}
+\tensor{\mathfrak{I}}(t) = \mathbf{\Theta} (t)\tensor{\mathfrak{I}_0}\mathbf{\Theta}^{T} (t)
+\end{equation}
+avec $\tensor{\mathfrak{I}}_0 = \tensor{\mathfrak{I}}(t=0)$ l'état initial et $\mathbf{\Theta}$ une matrice de rotation 3D solution de l'EDO 
+\begin{equation}
+\frac{d}{dt} \mathbf{\Theta} = \boldvec{\omega} \times \mathbf{\Theta}, \hspace{1cm}\mathbf{\Theta}_{0} = \mathbf{\Theta}(t=0) = \id_{3}.
+\end{equation}
+Nous noterons que
+\begin{equation}
+	\mathbf{\Theta} = \left[\mathbf{\Theta}\right]_{1 \leq i, j \leq 3}\in O_3(\mathbb{R}) , \text{ et }\hspace{1cm} \tensor{\mathfrak{I}} = \left[\mathfrak{I}_{i, j}\right]_{1 \leq i, j \leq 3}\in M_3(\mathbb{R})
+\end{equation}
+D'autre part, nous avons une équation de conservation sur la quantité de mouvement angulaire fournie par le théorème du moment cinétique appliqué au flotteur
+\begin{equation}
+	\frac{d}{dt} \left(\tensor{\mathfrak{I}}\,\boldvec{\omega}\right) = \overset{\hookrightarrow}{\mathcal{M}}_\mathcal{P} \label{eq:angularmomentum}
+\end{equation}
+avec $\overset{\hookrightarrow}{\mathcal{M}}_\mathcal{P}$ le moment vectoriel de la force de pression $\mathcal{P}$ calculé comme
+\begin{equation}
+	\overset{\hookrightarrow}{\mathcal{M}}_\mathcal{P} = \iint_{\Omega_b}\,\mathcal{P}\, \left[\boldvec{\mathcal{G}\zetasurf} \times \normalvec \right]\,dxdy \label{eq:momentvectoriel}
+\end{equation}
+avec $\mathcal{P}$ la pression hydrostatique totale et $\normalvec$ le vecteur normal sortant à la surface immergée du flotteur défini comme 
+\begin{equation}
+\normalvec \propto \myvector{-\nabla \zeta}{1}{}.
+\end{equation}
+\noindent Nous pouvons réécrire l'équation \eqref{eq:angularmomentum} comme
+\begin{equation}
+	\tensor{\mathfrak{I}}\dot{\boldvec{\omega}} +  \dot{\tensor{\mathfrak{I}}}\, \boldvec{\omega}  = \overset{\hookrightarrow}{\mathcal{M}}_P
+\end{equation}
+or 
+\begin{equation}
+	\dot{\tensor{\mathfrak{I}}}\boldvec{\omega} = \frac{d}{dt}\left( \mathbf{\Theta} \mathfrak{I}_0\mathbf{\Theta}^{T}\right)\boldvec{\omega} = \dot{\mathbf{\Theta}}\mathfrak{I}_0\mathbf{\Theta}^{T}\boldvec{\omega} + \mathbf{\Theta}\mathfrak{I}_0\dot{\mathbf{\Theta}}^{T}\boldvec{\omega}.
+\end{equation}
+Or $\mathbf{\Theta}^{T}\dot{\mathbf{\Theta}}\mathbf{\Theta}^{T} = \mathbf{\Theta}^{T}\mathbf{\Theta}\dot{\mathbf{\Theta}}^{T} = \id \dot{\mathbf{\Theta}}^{T} = \dot{\mathbf{\Theta}}^{T}$ donc
+\begin{equation}
+	\dot{\tensor{\mathfrak{I}}}\boldvec{\omega} = \boldvec{\omega}\times \mathfrak{I}\boldvec{\omega} - \mathfrak{I}\dot{\mathbf{\Theta}}\mathbf{\Theta}^{T}\boldvec{\omega}.
+\end{equation}
+Mais $\dot{\mathbf{\Theta}}\mathbf{\Theta}^{T}\boldvec{\omega} = \boldvec{\omega}\times \mathbf{\Theta}\mathbf{\Theta}^{T}\boldvec{\omega} = \boldvec{\omega}\times\boldvec{\omega} = 0$ donc nous avons
+\begin{equation}
+	\tensor{\mathfrak{I}}\dot{\boldvec{\omega}} + \boldvec{\omega}\times \mathfrak{I}\boldvec{\omega}  = \overset{\hookrightarrow}{\mathcal{M}}_\mathcal{P},
+\end{equation}
+ou encore
+\begin{equation}
+	\tensor{\mathfrak{I}}\dot{\boldvec{\omega}} =  \mathfrak{I}\boldvec{\omega}\times\boldvec{\omega} + \overset{\hookrightarrow}{\mathcal{M}}_\mathcal{P}.
+\end{equation}
+\noindent Maintenant, reprenons la définition de la pression $\mathcal{P} = \rho g \zeta + \bpression$ \eqref{eq:pressiondefinition} et insérons-la dans \eqref{eq:momentvectoriel}
+\begin{equation}
+\overset{\hookrightarrow}{\mathcal{M}}_P = \rho g \iint_{\Omega_b}\,\zeta\, \left[\boldvec{\mathcal{G}\zetasurf} \times \normalvec\right] \,dxdy + \rho \iint_{\Omega_b}\,\bpression\, \left[\boldvec{\mathcal{G}\zetasurf} \times \normalvec\right] \,dxdy
+\end{equation}
+ainsi
+\begin{equation}
+	\tensor{\mathfrak{I}}\dot{\boldvec{\omega}} =  \tensor{\mathfrak{I}}\boldvec{\omega}\times\boldvec{\omega} + \rho g \iint_{\Omega_b}\,\zeta\, \left[\boldvec{\mathcal{G}\zetasurf} \times \normalvec\right] \,dxdy + \rho \iint_{\Omega_b}\,\bpression\, \left[\boldvec{\mathcal{G}\zetasurf} \times \normalvec\right] \,dxdy\label{eq:momentumflotteur_1}
+\end{equation}
+
+\subsection{Condition d'imperméabilité du flotteur}
+
+\noindent Par ailleurs, nous pouvons donner une condition d'imperméabilité différente dans $\Omega_b$ à la surface $S$ (comparativement à \eqref{eq:surfacecondition})
+\begin{equation}
+\piper{\frac{D (\bld{S} - z)}{Dt}}_{z = \bld{S}} = \piper{\left(\bld{S} - z\right)_t + \velocity_b \cdot \nabla \left(\bld{S} - z\right)}_{z=\bld{S}}  \label{eq:surfaceconditionflotteur}
+\end{equation}
+conduisant à
+\begin{equation}
+\zeta_t + \left(\velocity_\mathcal{G} + \boldvec{\omega}\times \boldvec{\mathcal{G}\zetasurf}\right) \cdot \myvector{\nabla \zeta}{-1}{} = 0.
+\end{equation}
+Donc \eqref{eq:surfaceconditionflotteur} se réécrit comme 
+\begin{equation}
+	\zeta_t - \left(\velocity_\mathcal{G} + \boldvec{\omega}\times \boldvec{\mathcal{G}\zetasurf}\right) \cdot \normalvec = 0.\label{eq:surfaceflotteurcond}
+\end{equation}
+

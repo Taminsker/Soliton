@@ -1,0 +1,88 @@
+\chapter{Aide-mémoire}
+
+\section{Opérateurs et coordonnées}
+Dans ce rapport nous utiliserons un système de coordonnées cartésiennes $(x, y, z)$ orthonormée sur $\mathbb{R}^3$ et une variable temporelle désignée par $t$. Les systèmes de coordonnées \textit{sphériques} et \textit{cylindriques} peuvent être obtenus par simple dérivation à l'aide de la formule de dérivées en chaîne : 
+\begin{equation}
+	\frac{\partial y}{\partial x} = \frac{\partial y}{\partial u}\cdot\frac{\partial u}{\partial v}\cdot\frac{\partial v}{\partial x}.\label{op:chainder}
+\end{equation}
+Soit la quantité $\phi$ qui dépend des coordonnées spatiales et temporelle dénotée \[\phi (x, y, z, t).\]
+Les équations qui gouvernent les phénomènes physiques peuvent faire apparaître des \textit{dérivées partielles de $\phi$} et en conséquence elles seront abrégées \textbf{PDEs} pour \textbf{partial differential equations}.\\
+
+\noindent Nous utiliserons donc les notations suivantes 
+\[\phi_\alpha = \partial_\alpha\phi = \frac{\partial \phi}{\partial \alpha} \lhs \text{et}\lhs \partial_\alpha^2\phi = \partial_{\alpha\alpha}\phi = \partial_\alpha\phi_\alpha = \frac{\partial^2 \phi}{\partial \alpha^2}\hspace{1cm}\alpha= x, y, z, t\]
+\noindent Ainsi que de multiples opérateurs, tels que
+\begin{itemize}[label=$\mybullet$]
+	\item le \textbf{produit scalaire} entre $\vec{v} = \left(v_1, v_2, v_3\right)$ et $\vec{u} = \left(u_1, u_2, u_3\right)$
+\[ \vec{v}\cdot\vec{u} = v_1u_1+v_2u_2+v_3u_3,\]
+	\item le \textbf{produit vectoriel} entre $\vec{v}$ et $\vec{u}$
+\[ \vec{v}\times\vec{u} = \myvector{v_2u_3-v_3u_2}{v_3u_1-v_1u_3}{v_1u_2-v_2u_1},\]
+	\item le \textbf{produit tensoriel} entre $\vec{v}$ et $\vec{u}$
+\[ \vec{v}\otimes \vec{u} = \myvector{v_1u_1\lhs v_1u_2\lhs v_1u_3}{v_2u_1\lhs v_2u_2\lhs v_2u_3}{v_3u_1\lhs v_3u_2\lhs v_3u_3}, \hspace{1cm} \vec{v}\otimes\vec{v} = \myvector{v_1^2\lhs v_1v_2\lhs v_1v_3}{v_2v_1\lhs v_2^2\lhs v_2v_3}{v_3v_1\lhs v_3v_2\lhs v_3^2},\hspace{1cm} \id = \myvector{\thvector{1}{0}{0}}{\thvector{0}{1}{0}}{\thvector{0}{0}{1}}, \]
+	\item l'opérateur \textbf{gradient} pour une quantité scalaire $\phi$
+\[\grad\phi = \nabla \phi = \left(\phi_x, \phi_y, \phi_z\right), \]
+	\item l'opérateur de \textbf{divergence} appliqué à un vecteur $\vec{v} = \left(v_1, v_2, v_3\right)$
+\[\div\vec{v} = \nabla\cdot\vec{v} = \partial_x v_1 + \partial_y v_2 + \partial_z v_3, \]
+	\item l'opérateur \textbf{rotationnel} appliqué à $\vec{v}$
+\[ \rot \vec{v} = \nabla \times \vec{v} = \myvector{\partial_y v_3-\partial_z v_2}{\partial_z v_1-\partial_x v_3}{\partial_x v_2-\partial_y v_1}, \]
+	\item l'opérateur \textbf{laplacien}
+\[\Delta\vec{v} = \partial_x^2 v_1 + \partial_y^2 v_2 + \partial_z^2 v_3. \]
+	\item l'opérateur\textbf{ d'advection}
+	\[\left(\vec{v}\cdot \nabla \right)\vec{v} = \myvector{v_1 \partial_x v_1 + v_2 \partial_y v_1 + v_3 \partial_z v_1}{v_1 \partial_x v_2 + v_2 \partial_y v_2 + v_3 \partial_z v_2}{v_1 \partial_x v_3 + v_2 \partial_y v_3 + v_3 \partial_z v_3} \]
+\end{itemize} 
+\noindent \textbf{Le théorème de Gauss (aussi appelé formule de Green), nous avons}
+\begin{equation}
+\iint_A \nvec \cdot \tilde{\psi}\,d A = \iiint_V \div \tilde{\psi} \,d V \label{op:greenfrm}
+\end{equation}
+où $\tilde{\psi}$ est un champ vectoriel et $\boldvec{n}$ un vecteur normal sortant à la surface $A$.\\
+\noindent \textbf{Décomposition grâce au produit tensoriel :}
+\begin{equation}
+\left(\nvec\cdot \rho\velocity\right)\velocity = \nvec \cdot \rho\velocity \otimes \velocity \label{op:identitytensorvelocity}
+\end{equation}
+\noindent\textbf{Divergence d'un produit tensoriel :}
+\begin{equation}
+\div[\boldvec{v}\otimes\boldvec{u}] = \boldvec{u} \left(\div \boldvec{v}\right) + \left(\boldvec{v}\cdot \onabla{}\right)\boldvec{u} \label{op:divprodvec}
+\end{equation}
+\noindent\textbf{Décomposition de Lamb :}
+\begin{equation}
+\left(\velocity\cdot\nabla\right)\velocity = \frac{1}{2}\nabla \velocity^2 + \left(\rot \velocity\right)\times\velocity\label{op:lamb}
+\end{equation}
+\noindent\textbf{Théorème d'intégration de Leibniz} avec $f$, $\partial_{x, y, z}f$ continues et $\alpha (x, y, t)$ et $\beta (x, y, t)$ des fonctions différentiables de $x, y$ et $z$ et donc à $\star = (x, y)$ fixé nous avons
+\begin{equation}
+	\int_{\alpha(\star, t)}^{\beta(\star, t)}\, \partial_x\,f (\star, z, t)\,dz = \partial_x\left[\int_{\alpha(\star, t)}^{\beta(\star, t)}\, f (\star,z, t)\,dz\right]+ f(\star, \alpha(\star, t))\,\alpha_x (\star, t)- f(\star,\beta(\star, t), t)\,\beta_x(\star, t)\label{op:leibniz}
+\end{equation}
+\noindent\textbf{Changement de variable dans une intégrale} avec $f$ une fonction continue, $\Phi$ un $C^1$-difféomorphisme
+\begin{equation}
+	\iint_{\Phi(I)} f(\boldvec{x}) \, d\boldvec{x} = \iint_{I} f\left(\Phi(\boldvec{u})\right) \left| \text{det}\, J_{\Phi} (\boldvec{u})\right|\, d\boldvec{u}\label{op:changementdevariables}
+\end{equation}
+\noindent \textbf{Formule de Green dans $u, v\in\sob{1}$}
+\begin{equation}
+	\iiint_\Omega\,\frac{\partial u}{\partial x_k} \cdot v \, d \boldvec{x} = - \iiint_\Omega\,u\frac{\partial v}{\partial x_k}\, d \boldvec{x} + \iint_{\Gamma = \partial \Omega}\, \gamma_0\left(u\right) \cdot \gamma_0\left(v\right)\cdot \boldvec{n}_k\,d \boldvec{\sigma},\hspace{1cm}k=1,\dots, N. \label{op:greenh1}
+\end{equation}
+\noindent \textbf{Formules de Green dans $\sob{2}$}\\
+\begin{subequations}
+	$\mybullet$ $u, v\in\sob{2}$ 
+	\begin{equation}
+	\iiint_\Omega\,\Delta u \cdot v \, d \boldvec{x} =  \iiint_\Omega\,u\cdot\Delta v\, d \boldvec{x} + \iint_{\Gamma = \partial \Omega}\, \left[\frac{\partial u }{\partial \boldvec{n}} \cdot \frac{\partial v}{\partial \boldvec{n}}\right]\,d \boldvec{\sigma}. \label{op:greenh2_delta}
+	\end{equation}
+	$\mybullet$ $u\in\sob{2}$ et $v\in\sob{1}$ 
+	\begin{equation}
+	\iiint_\Omega\,\Delta u \cdot v \, d \boldvec{x} = -  \iiint_\Omega\,\nabla u\cdot\nabla v\, d \boldvec{x} + \iint_{\Gamma = \partial \Omega}\, \left[\frac{\partial u }{\partial \boldvec{n}} \cdot \gamma_0\left(v\right)\right]\,d \boldvec{\sigma}. \label{op:greenh2_nablas}
+	\end{equation}
+\end{subequations}
+\section{Quantités physique}
+Pour un fluide nous pouvons être amené à étudier différentes quantités physiques telles que
+\begin{itemize}[label=$\mybullet$]
+	\item sa masse notée $m$,
+	\item la masse volumique $\rho$,
+	\item sa vitesse $\velocity = \left(u, v, w\right)$,
+	\item la quantité de mouvement $\vec{p} = \rho\velocity$,
+	\item la pression thermodynamique $P$,
+	\item l'énergie total par unité de masse, notée $E$,
+	\item l'énergie interne massique $e$, 
+	\item l'entropie $s$,
+	\item l'enthalpie $\boldsymbol{h}$,
+	\item la température $T$, et
+	\item l'accélération gravitationnelle terrestre $g$ de $9.81\,m/s^2$.
+\end{itemize}
+La pression $P$, le volume et la température $T$ forment les \textbf{variables d'état} d'un système. Chacune de ces variables peut être extensive ou intensive, respectivement définie sur l'ensemble du système considéré ou considérée égale en tout point du système.\\
+Les autres variables apparaissant dans le système peuvent toujours être exprimée à partir des variables d'état par une \textbf{fonction d'état}.

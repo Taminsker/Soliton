@@ -1,0 +1,56 @@
+\section{L'équation des ondes linéaire}
+\subsection{Présentation du problème}
+%\subsubsection{Problème physique}
+
+\begin{figure}[H]
+	\centering
+	\incfig{0.8}{Images/1D_flotteur_fond}
+	\caption{Modèle 1D bathymétrique : flotteur.}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\incfig{0.8}{Images/2D_flotteur_fond}
+	\caption{Situation 2D : flotteur et fond variable.}
+\end{figure}
+\noindent Nous nous plaçons dans un problème 2D, cette configuration est similaire à un problème de Saint-Venant \ref{fig:SaintVenant} comme dans la section \ref{sec:SaintVenant}.\\
+
+\noindent L'étude de ce problème sur un domaine $\Omega_f$ doit être divisée en deux parties distinctes mais qui doivent être \textbf{couplées} : 
+\begin{itemize}
+	\item une surface libre référencée par $w$ pour \textit{water} sur un domaine $\Omega_w := \Omega_f\backslash \Omega_b$ définissant \textit{le domaine extérieur}, et 
+	\item le flotteur, corps flottant sur la surface libre (fixé ou non), référencé par $b$ pour \textit{body}, et nous définissons \textit{le domaine intérieur} $\Omega_b := [-R_0, R_0]$ représentant la \textit{position} de ce corps.\\
+\end{itemize}
+Nous avons donc \[\Omega_f = \Omega_b \cup \Omega_w,\text{ dans le cas présent $\mathbb{R}$.}\]
+Nous notons aussi $h_0$ une constante positive qui représentera la hauteur d'eau moyenne sur $\Omega_f$ (axe $z$ croissant) à l'instant $t=0$, et $\zeta$ la taille de la perturbation verticale par rapport à la hauteur totale $h(x, t)$ de la surface libre dans $\Omega_f$ depuis le fond $\fond$ de sorte que, comme dans la section \ref{sec:SaintVenant} nous ayons
+\begin{equation}
+	h(\vec{x}, t) = h_0 + \zeta(\vec{x}, t) - \fond (\vec{x}) \label{eq:deep}
+\end{equation}\vspace{-5mm}
+\begin{refe}
+La perturbation $\zeta$ est soumise à un hypothèse essentielle : elle doit être négligeable devant $h_0$.
+\end{refe}
+Nous pouvons aussi définir $\zeta_b$ comme la restriction de $\zeta$ à $\Omega_b$ et nous supposons qu'il est tel que l'interface fluide-structure soit exactement contre le flotteur. Un problème survient alors lorsque nous regardons $\zeta$ sur tout le domaine $\Omega_f$ : il n'est plus continu car il y a des \textbf{sauts} à la jonction des deux domaines.\\
+Remarquons que 
+\begin{equation}
+	\partial_t h = \partial_t h_0 + \partial_t \zeta + \partial_t \fond = \partial_t \zeta \label{eq:der_t_h}
+\end{equation}
+\subsection{Réécriture des équations}
+\subsubsection{La surface libre}
+\noindent Reprenons donc l'équation de conservation de la masse du problème de Saint-Venant \eqref{eq:SWE_mass}
+\begin{equation}
+	\partial_t h + \nabla\cdot \qvec \overset{\eqref{eq:der_t_h}}{=} \partial_t \zeta + \nabla \cdot\qvec = 0. \label{eq:massSWE}
+\end{equation}
+\noindent Reprenons maintenant l’équation de conservation de la quantité de mouvement du problème de Saint-
+Venant \eqref{eq:SWE_momemtum}\\
+\begin{equation}
+	\partial_t \boldvec{q} + \nabla \cdot \left(\boldvec{q} \otimes\velocity + \frac{1}{2}gh^2\id\right) = gh\nabla\fond
+\end{equation}
+Par \eqref{op:divprodvec},
+\begin{equation}
+h \partial_t \velocity + \velocity \partial_t h + \velocity \left(\onabla{} \cdot \boldvec{q}\right) + \left(\boldvec{q}\cdot \onabla{}\right)\velocity + gh\nabla h= gh\nabla\fond
+\end{equation}
+Par \eqref{eq:massSWE} nous avons
+\begin{equation}
+\partial_t \velocity + \left(\velocity\cdot\onabla{}\right)\velocity + g\nabla h= g\nabla\fond
+\end{equation}
+
+

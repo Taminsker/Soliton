@@ -1,0 +1,89 @@
+\section{Couplage des domaines}
+\noindent Cette section est basée sur la thèse \citet{bosi_spectral_2019}.\\
+
+\noindent Premièrement nous définissons la notion de \textit{saut d'une quantité scalaire $Q$ à travers une interface $\Gamma$} comme
+\begin{equation}
+	 \mbrac{Q}_{b} = Q_w - Q_b \hspace{3mm}\text{et}\hspace{3mm}\mbrac{Q}_{w} = Q_b - Q_w
+\end{equation}
+où les quantités $Q_b$ et $Q_w$ sont définies telles que
+\begin{equation}
+	Q_b = \lim_{\substack{\vec{x}\to\Omega_w \\ \vec{x}\in\Omega_b}} Q(\vec{x})\hspace{1cm}\text{et}\hspace{1cm} Q_w = \lim_{\substack{\vec{x}\to\Omega_b \\ \vec{x}\in\Omega_w}} Q(\vec{x}).
+\end{equation}
+Pour des quantités scalaires il est trivial que
+\begin{equation}
+	\mbrac{Q}_{w} + \mbrac{Q}_{b} = 0.
+\end{equation}
+Remarquons que nous attribuons une notation spécifique aux valeurs de $Q = \zeta$. En accord avec les figures \ref{fig:1dbathy} et \ref{fig:2dbathy}, nous posons
+\begin{equation}
+	\zeta_{in}(t) := \lim_{\substack{\left(x, y\right)\to\Omega_w \\ \left(x, y\right)\in\Omega_b}} \zeta(x, y, t)\hspace{1cm}\text{et}\hspace{1cm} \zeta_{out}(t) := \lim_{\substack{\left(x, y\right)\to\Omega_b \\ \left(x, y\right)\in\Omega_w}} \zeta(x, y, t).
+\end{equation}
+Nous définissons donc les vecteurs sortants unitaires $\boldvec{n}_b$ et $\boldvec{n}_w$ relatifs respectivement à $\Omega_b$ et à $\Omega_w$ de telle sorte que
+\begin{equation}
+	\boldvec{n}_b + \boldvec{n}_w = \boldvec{0}.
+\end{equation}
+En conséquence nous définissons
+\begin{equation}
+	\mbrac{\boldvec{Q}} := \boldvec{Q}_w\cdot\boldvec{n}_w + \boldvec{Q}_b\cdot\boldvec{n}_b.
+\end{equation}
+
+\noindent Nous chercherons à exhiber les conditions de couplage possible à partir des équations formant le système. Nous discuterons des quantités apparaissant dans le système formé par \eqref{eq:mass}, \eqref{eq:massflux}, \eqref{eq:energysw} et par l'équation des ondes \eqref{eq:ondes}.
+
+\subsection{L'équation de conservation de la masse}
+\noindent L'équation de conservation \eqref{eq:mass} peut être réécrite en intégrant sur une surface $\surf$ arbitraire à cheval sur $\Gamma$. Nous supposons qu'il existe une subdivision $\left\{\surf_w, \surf_b \right\}$ de $\surf$ telle que $\surf_w \cap \surf_b = \Gamma$. Nous supposons aussi que $\surf \subsetneq \Omega_f$, ainsi nous pouvons considérer que la masse totale est conservée au cours du temps : $\piper{\boldvec{q}}_{\partial \surf} = \boldvec{0}$. Ainsi
+\begin{equation}
+	\iint_{\surf}\zeta_t + \div[\boldvec{q}] \,d\bld{s} = 0\label{eq:nulflux_1}
+\end{equation}
+réécrit grâce à \eqref{op:greenfrm}
+\begin{equation}
+	\underbrace{\iint_{\surf}\zeta_t\,d\bld{s} + \int_{\partial\surf}\boldvec{q}\cdot\nvec \,d\bld{a}}_{=0 \text{ par } \eqref{eq:nulflux_1}.} + \iint_{\Gamma} \boldvec{q}\cdot \nvec\,d\bld{a} = 0
+\end{equation}
+impliquant
+\begin{equation}
+	\iint_{\Gamma} \boldvec{q}\cdot \nvec\,d\bld{a} = 0.
+\end{equation}
+Ainsi, nous avons
+\begin{equation}
+	\mbrac{\boldvec{q}} = \boldvec{q}_w\cdot\nvec_w + \boldvec{q}_b \cdot \nvec_b = 0. \label{eq:nulflux}
+\end{equation} 
+
+\subsection{La continuité de la pression hydrostatique totale}
+\noindent La pression hydrostatique totale $\mathcal{P}$ telle que définie à partir de l'équation \eqref{eq:pressiondynamiquedefinition} est : $\rho g\zeta + \underline{P}$. Cette quantité doit être aussi continue en $\Gamma$ c'est-à-dire que
+\begin{equation}
+	\mbrac{\mathcal{P}}_{b}^{\Gamma} = \mbrac{\rho g \zeta + \underline{P}}_{b}^{\Gamma} = 0 \label{eq:pressionhydronulleinterface}
+\end{equation}
+Autrement dit
+\begin{align}
+	&  \rho g \mbrac{\zeta}_{b}^{\Gamma} + \mbrac{\underline{P}}_{b}^{\Gamma} = 0\\
+	\overset{\text{Déf. de $\bpression$}}{\hfill\Longrightarrow}\hspace{1cm}&  \rho g \left(\zeta_{out} - \zeta_{in}\right) - \rho \bpression_{in} = 0
+	\intertext{Donc nous avons}
+	&  g\zeta_{out} = g\zeta_{in} + \bpression_{in}\label{eq:couplagepression}
+\end{align}
+
+%
+%\subsection{L'équation de conservation de la quantité de mouvement}
+%\noindent La partie dérivée spatiale dans l'équation \eqref{eq:massflux} conduit à la continuité de la variation de la quantité de mouvement
+%\begin{equation}
+%\mbrac{d_0 \nabla \left(g\zeta + \frac{1}{\rho}\bpression\right) \cdot \nvec}_{\Gamma} = 0.
+%\end{equation}
+%c'est-à-dire
+%\begin{equation}
+%(d_0)_b \nabla \left(g\zeta_b + \frac{1}{\rho}\bpression_b\right)\nvec_b + (d_0)_w \nabla \left(g\zeta_{w} +\frac{1}{\rho} \bpression_w\right)\nvec_w = 0.
+%\end{equation}
+%Sous la notation $\zeta_{in} = \zeta_b$ et $\zeta_{out} = \zeta_w$ et sous les définitions même de $\bpression$ et de $d_0$ alors
+%\begin{equation}
+%(h_0 + D_0) \nabla \left(g\zeta_{in} + \bpression_{b}\right)\nvec_b + h_0 g \nabla \zeta_{out}\,\nvec_w = 0.
+%\end{equation}
+%Par \eqref{eq:couplagepression}, nous obtenons
+%\begin{equation}
+%	D_0 \nabla\left(g\zeta_{in} + \bpression_{b}\right) = \boldvec{0}.
+%\end{equation}
+%
+%\subsection{Conditions de couplage retenues}
+%\noindent Nous retiendrons les deux conditions de couplage suivantes
+%\begin{subnumcases}{}
+%		\boldvec{q}_w = \boldvec{q}_b\\
+%		g\zeta_{out} = g\zeta_{in} + \bpression_{in}
+%\end{subnumcases}
+
+
+

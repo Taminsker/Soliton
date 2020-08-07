@@ -1,0 +1,157 @@
+\section{Notion de masse et d'inertie ajoutée}
+\noindent La mise en équation dans \eqref{eq:momentumflotteur_1} et \eqref{eq:massflotteur_1} a fait apparaître des intégrales dépendantes de 
+\begin{equation}
+	\normalvec \hspace{1cm}\text{ et }\hspace{1cm}\boldvec{\mathcal{G}\zetasurf} \times \normalvec.
+\end{equation}
+\noindent Partant de là, nous pouvons appliquer la même stratégie que dans \citet{lannes_dynamics_2017}, c'est-à-dire définir des potentiels tels que
+\begin{center}
+	\begin{minipage}{0.45\linewidth}
+		\begin{subnumcases}{}
+		- \div[d_0 \nabla \boldvec{\varPhi}] = -d_0 \Delta \boldvec{\varPhi} = \boldvec{\mathfrak{n}},\\
+		\piper{\boldvec{\varPhi}}_{\Gamma} = \boldvec{0}.
+		\end{subnumcases}
+	\end{minipage}
+\hfill
+	\begin{minipage}{0.54\linewidth}
+		\begin{subnumcases}{}
+		- \div[d_0 \nabla \boldvec{\varPsi}] = -d_0 \Delta \boldvec{\varPsi} = \boldvec{\mathcal{G}\zetasurf} \times \normalvec,\\
+		\piper{\boldvec{\varPsi}}_{\Gamma} = \boldvec{0}.
+		\end{subnumcases}
+	\end{minipage}
+\end{center}
+Ce qui nous permet de réécrire les équations  \eqref{eq:momentumflotteur_1} et \eqref{eq:massflotteur_1} comme
+\begin{equation}
+	\tensor{\mathfrak{J}}\dot{\boldvec{\omega}} =  \tensor{\mathfrak{J}}\boldvec{\omega}\times\boldvec{\omega} -d_0 \rho g \iint_{\Omega_b}\,\zeta\, \Delta \boldvec{\varPsi} \,dxdy -d_0 \rho \iint_{\Omega_b}\,\bpression\, \Delta \boldvec{\varPsi} \,dxdy\label{eq:momentumflotteur_2}
+\end{equation}
+et 
+\begin{equation}
+	\mass{b}\boldvec{a}_\mathcal{G} = - g\mass{b}\boldvec{e}_z - d_0 \rho g\iint_{\Omega_b}\zeta\, \Delta\boldvec{\varPhi}\,dxdy - d_0 \rho \iint_{\Omega_b}\bpression\, \Delta\boldvec{\varPhi}\,dxdy \label{eq:massflotteur_2}
+\end{equation}
+en termes de laplaciens vectoriels. Grâce à la formule d'intégration dans $\sob[]{2}$ \eqref{op:greenh2_delta}, attention ici dans $\mathbb{R}^3$, nous pouvons réécrire
+\begin{align}
+	\iint_{\Omega_b}\,\zeta\, \Delta \boldvec{\varPsi} \,dxdy &=  	\iint_{\Omega_b}\,\boldvec{\varPsi}\,\Delta\zeta \,dxdy + \textcolor{MyRed}{\underbrace{\iint_{\Gamma = \partial\Omega_b}\,\left(\nabla\boldvec{\varPsi} \cdot \nvec\right) \cdot \left( \nabla\zeta \cdot \nvec\right) \,dxdy}_{= 0}}
+	\intertext{Par l'équation des ondes \eqref{eq:ondes}, }
+	&= \iint_{\Omega_b}\,\boldvec{\varPsi}\,\frac{1}{c_0^2}\left(\zeta_{tt} - d_0 \Delta\bpression\right) \,dxdy\\
+	&= \frac{1}{c_0^2}\iint_{\Omega_b}\,\boldvec{\varPsi}\,\zeta_{tt}\,dxdy - \frac{1}{g}\iint_{\Omega_b}\,\boldvec{\varPsi}\,\Delta \bpression\,dxdy.
+\end{align}
+De plus,
+\begin{align}
+	\iint_{\Omega_b}\,\bpression\, \Delta \boldvec{\varPsi} \,dxdy &=  	\iint_{\Omega_b}\,\boldvec{\varPsi}\,\Delta\bpression \,dxdy + \textcolor{MyRed}{\underbrace{\iint_{\Gamma = \partial\Omega_b}\,\left(\nabla\boldvec{\varPsi} \cdot \nvec\right)\cdot \left(\nabla \bpression \cdot \nvec\right) \,dxdy}_{= 0}}.
+\end{align}
+En remplaçant, nous avons ainsi
+\begin{equation}
+\tensor{\mathfrak{J}}\dot{\boldvec{\omega}} =  \tensor{\mathfrak{J}}\boldvec{\omega}\times\boldvec{\omega} -\rho\iint_{\Omega_b}\,\boldvec{\varPsi}\,\zeta_{tt}\,dxdy,\label{eq:momentumflotteur_3}
+\end{equation}
+et 
+\begin{equation}
+\mass{b}\boldvec{a}_\mathcal{G} = - g\mass{b}\boldvec{e}_z  - \rho \iint_{\Omega_b}\bld{\varPhi} \zeta_{tt}\,dxdy. \label{eq:massflotteur_3}
+\end{equation}
+
+\noindent Mais $\zeta_{tt}$ peut être exprimée à partir de la condition du surface \eqref{eq:surfaceconditionflotteur} selon \citet{lannes_dynamics_2017} comme
+\begin{equation}
+	\zeta_{tt} = \left(\boldvec{a}_\mathcal{G} + \dot{\boldvec{\omega}} \times \boldvec{\mathcal{G}\underline{\zeta}}\right)\cdot \normalvec\label{eq:surfaceflotteur_new}
+\end{equation}
+Ainsi, et comme $\boldvec{a}$ et $\dot{\boldvec{\omega}}$ ne dépendent pas de $x$ ni de $y$,
+\begin{align}
+	\iint_{\Omega_b}\,\boldvec{\varPsi}\,\zeta_{tt}\,dxdy &= -d_0\iint_{\Omega_b}\,\left(\boldvec{\varPsi} \otimes \Delta \boldvec{\varPhi}\right)\,dxdy\boldvec{a}_\mathcal{G}-d_0\iint_{\Omega_b}\,\left(\boldvec{\varPsi}\otimes\Delta \boldvec{\varPsi}\right)\,dxdy\dot{\boldvec{\omega}}\\
+	\iint_{\Omega_b}\,\boldvec{\varPhi}\,\zeta_{tt}\,dxdy &= -d_0\iint_{\Omega_b}\,\left(\boldvec{\varPhi} \otimes \Delta \boldvec{\varPhi}\right)\,dxdy\boldvec{a}_\mathcal{G}-d_0\iint_{\Omega_b}\,\left(\boldvec{\varPhi}\otimes\Delta \boldvec{\varPsi}\right)\,dxdy\dot{\boldvec{\omega}}
+\end{align}
+De plus $\forall \boldvec{\varLambda_1}, \boldvec{\varLambda_2} \in \left\{\boldvec{\varPhi}, \boldvec{\varPsi}\right\}$ et par \eqref{op:greenh2_nablas}
+\begin{align*}
+	\iint_{\Omega_b}\,\left[\boldvec{\varLambda_1} \otimes \left(-d_0\Delta \boldvec{\varLambda_2}\right)\right]\,dxdy &= \iint_{\Omega_b}\,\frac{1}{d_0}\left[\left(-d_0\nabla \boldvec{\varLambda_1}\right) \otimes \left(-d_0\nabla \boldvec{\varLambda_2}\right)\right]\,dxdy \\
+	&\hspace{1cm}+ \textcolor{MyRed}{\iint_{\Gamma = \partial\Omega_b}\,\left(\nabla\boldvec{\varLambda_1} \cdot \nvec\right)\cdot \underbrace{\gamma_0\left(\boldvec{\varLambda_2}\right)}_{= 0} \,dxdy}.
+\end{align*}
+Ainsi, nous pouvons réécrire \eqref{eq:momentumflotteur_3} et \eqref{eq:massflotteur_3} comme
+\begin{equation}
+	\left[\mathbf{M}(t) + \madd(t)\right]\myvector{\boldvec{a}_\mathcal{G}}{\dot{\boldvec{\omega}}}{} = \myvector{-g\mass{b}\boldvec{e}_z}{\tensor{\mathfrak{J}}\boldvec{\omega} \times\boldvec{\omega}}{}\label{eq:massadded}
+\end{equation}
+avec
+\begin{equation}
+	\mathbf{M}(t) = \begin{bmatrix}
+	\mass{b}\id_3 & 0\\
+	0 & \tensor{\mathfrak{J}}(t)
+	\end{bmatrix} \in \mathbb{R}^{6\times 6}
+\end{equation}
+et sous la notation $\boldvec{\pi} = \myvector{\boldvec{\varPhi}}{\boldvec{\varPsi}}{}\in \mathbb{R}^{6}$,
+\begin{equation}
+	\left(\madd(t)\right)_{1\leq ij \leq 6} = 	\rho\iint_{\Omega_b}\,\frac{1}{d_0}\left[\left(-d_0\nabla \boldvec{\pi_i}\right) \cdot\left(-d_0\nabla \boldvec{\pi_j}\right)\right]\,dxdy.
+\end{equation}
+La matrice $\mathbf{M}(t)$ est une matrice de taille $6\times 6$ qui représente la matrice de masse et d'inertie, tandis que $\madd(t)$ aussi de taille $6\times 6$, désigne la matrice de masse et d'inertie ajoutée.\\
+
+\noindent Avec la notation : $\mathcal{N}_i = -d_0 \nabla \boldvec{\pi_i}$ nous avons
+\begin{subnumcases}{}
+	\div[\mathcal{N}_i] = \left(\normalvec\right)_i  &\text{$\forall i = 1, 2, 3$}\\
+	\div[\mathcal{N}_i] = \left(\boldvec{\mathcal{G}\zetasurf} \times \normalvec\right)_{i-3}  &\text{$\forall i = 4, 5, 6$}
+\end{subnumcases}
+ainsi
+\begin{equation}
+	\left(\madd(t)\right)_{1\leq ij \leq 6} = 	\frac{\rho}{d_0}\iint_{\Omega_b}\,\mathcal{N}_i \cdot\mathcal{N}_j\,dxdy.
+\end{equation}
+
+\noindent Dans le cas où nous négligeons toutes les rotations, nous obtenons simplement
+\begin{equation}
+	\boldvec{\omega} = \boldvec{0},\hspace{5mm}\velocity_b = \velocity_\mathcal{G} \text{ et }\hspace{5mm} \zeta_{tt} = \boldvec{a}_\mathcal{G} \cdot \normalvec
+\end{equation}
+et 
+\begin{equation}
+	\left(\mass{b}\id_3 + \madd(t)\right)\boldvec{a}_\mathcal{G}= -g\mass{b}\boldvec{e}_z
+\end{equation}
+avec
+\begin{equation}
+	\left(\madd(t)\right)_{1\leq ij \leq 3} = 	\frac{\rho}{d_0}\iint_{\Omega_b}\,\mathcal{N}_i \cdot\mathcal{N}_j\,dxdy.
+\end{equation}
+
+%\section{Notion de masse ajoutée}
+%\noindent Cette partie est inspirée de \citet{bosi_spectral_2019}, de \citet{bocchi_compressible-incompressible_2019} et de \citet{lannes_dynamics_2017}.\\
+%
+%\noindent À partir de maintenant, nous noterons
+%\begin{equation}
+%	\boldvec{a}_b(t) = \partial_t \velocity_b (t)
+%\end{equation}
+%comme l'accélaration du flotteur.\\
+%\noindent Premièrement, rappelons la seconde loi de Newton 
+%\begin{equation}
+%	\mass{b} \boldvec{a}_b = \sum_{i}\,\boldvec{F_i}
+%\end{equation}
+%où $\mass{b}$ désigne la masse du flotteur et $\sum_{i}\,\boldvec{F_i}$ la somme des forces extérieures subit par le corps. Dans notre cas, seules les forces découlant de la pression totale entre en jeu : le poids et la pression totale $P$. C'est-à-dire que nous avons
+%\begin{subnumcases}{}
+%	\boldvec{F_1} = \boldvec{g} \mass{b} = - g\mass{b}\boldvec{e}_z \hspace{1cm}&\text{(poids)},\\
+%	\boldvec{F_2} = \iint_{\Omega_b}P\, \nvec_b\,dxdy&\text{(force issue de la pression $P$)}.
+%\end{subnumcases}
+%avec $P$ calculée comme
+%\begin{equation}
+%	P = \rho g\zeta + \bpression
+%\end{equation}
+%Deuxièmement reprenons l'équation \eqref{eq:ondes} permettant d'exprimer
+%\begin{equation}
+%	d_ 0 \Delta \bpression = \zeta_{tt} - c_0^2\Delta\zeta
+%\end{equation}
+%en notant que 
+%\begin{equation}
+%	\zeta_{tt} = \left(\zeta_t\right)_t = \left(h_t\right)_t = h_{tt} = \boldvec{a}
+%\end{equation}
+%où $\boldvec{a}$ est le vecteur accélaration. Ainsi
+%\begin{equation}
+%	\Delta \bpression = \frac{1}{d_0}\boldvec{a} - g\Delta\zeta
+%\end{equation}
+%Conduisant à 
+%\begin{equation}
+%	\bpression = \Delta^{-1} \left(\frac{1}{d_0}\boldvec{a} - g \Delta \zeta\right).
+%\end{equation}
+%Ainsi nous avons
+%\begin{equation}
+%	\mass{b}\boldvec{a} = -g\mass{b} - \rho\iint_{\Omega_b}\left(\Delta^{-1} \left(\frac{1}{d_0}\boldvec{a} - g \Delta \zeta\right)+ g \zeta \right)\, \boldvec{e}_{z}\,dxdy
+%\end{equation}
+%aussi reformulé comme
+%\begin{equation}
+%	\mass{b} \boldvec{a} + \frac{\rho}{d_0}\iint_{\Omega_b}\,\Delta^{-1}(\boldvec{a}) \boldvec{e_z}\,dxdy = -g\mass{b}
+%\end{equation}
+%Selon \citet{bosi_spectral_2019}, l'accélaration $\boldvec{a}$ ne dépend pas de $x$ ou de $y$, en conséquence de quoi,
+%\begin{equation}
+%	\left(\mass{b} + \frac{\rho}{d_0}\iint_{\Omega_b}\,\Delta^{-1}(\boldsymbol{1}) \boldvec{e_z}\,dxdy\right)\boldvec{a} = -g\mass{b}.
+%\end{equation}
+%Nous noterons \textit{la masse ajoutée} $\madd$ telle que
+%\begin{equation}
+%	\madd = \frac{\rho}{d_0}\iint_{\Omega_b}\,\upsilon \boldvec{e_z}\,dxdy
+%\end{equation}
+%avec $\Delta \upsilon = 1$.

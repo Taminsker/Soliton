@@ -5,6 +5,8 @@
 
 int main(int argc, char *argv[])
 {
+    HEADERFUN("main");
+
     (void)argc;
     (void)argv;
     auto _err_ = system ("clear");
@@ -26,7 +28,6 @@ int main(int argc, char *argv[])
 #endif
     std::cout << ENDLINE;
 
-    HEADERFUN("main");
 
     Sto4Sol store;
     InputDatStruct inputdatfile;
@@ -42,7 +43,7 @@ int main(int argc, char *argv[])
     USE_SOLITON_RETURN(error);
 
     //    size_t numObjects = store.listobjects.size ();
-    //    store.mesh->Print();
+        store.mesh->Print();
 
     for (Mesh* object : store.listobjects)
     {
@@ -77,12 +78,12 @@ int main(int argc, char *argv[])
 
     for (int cellId = 0; cellId < numCells; ++cellId)
     {
-        Cell* cell = store.mesh->GetCell (cellId);
+//        Cell* cell = store.mesh->GetCell (cellId);
 //        constexpr VTKCellType type = VTK_LINE;
-        const VTKCellType type = cell->GetTypeVTK ();
+//        const VTKCellType type = cell->GetTypeVTK ();
 
 
-        auto* element = festruct.GetElementFor (type);
+//        auto* element = festruct.GetElementFor (type);
 
 //        tripletList.push_back(T(i,j,v_ij));
     }

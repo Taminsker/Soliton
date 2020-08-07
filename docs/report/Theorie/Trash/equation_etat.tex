@@ -1,0 +1,35 @@
+\section{L'équation d'état (EOS)}
+Selon le livre de \citet{toro_riemann_2009}, un système en état d'équilibre thermodynamique peut être complètement décrit à l'aide des variables thermodynamiques de base comme la pression $P$ et un volume massique $\vol$. Une famille d'états dans un équilibre thermodynamique peut être décrit par une courbe dans un plan $P-\vol$, chacun caractérisé par une valeur particulière de la variable $T$ qui représente la température : le système décrit est appelé un système $P-\vol-T$.\\
+Une façon de relier ces variables est sous la forme de \textit{l'équation thermique d'état}
+\begin{equation}
+	T = T(P, \vol), \text{ ou } P = P(T, \vol), \text{ ou }\vol = \vol(T, P)
+\end{equation}
+Cette relation d'état change de nature selon le fluide que nous étudions. 
+Selon le premier principe de la thermodynamique, dans le cas d'un système fermé\footnote{échange d'énergie, mais pas de matière, avec le milieu extérieur.}, l'énergie interne $e$ d'un système, fonction d'état (donc exprimable à l'aide des variables d'état) vérifie la relation suivante établie pour une transformation élémentaire
+\[ de = \delta W + \delta Q\]
+où $W$ est la travail mécanique et $Q$ la quantité de chaleur reçue. Cette relation est important en thermodynamique, et définit la première loi de la thermodynamique 
+\begin{equation}
+	de = Tds-Pd\vol\label{eq:firstlawthermo}
+\end{equation}
+avec $de$ la variation d'énergie interne massique, $ds$ la variation d'entropie, $d\vol$ la variation de volume massique, $T$ la température et $P$ la pression.\\
+Dans le cas d'un fluide adiabatique \footnote{sans aucun transfert thermique.}, seule l'équation d'état calorifique est nécessaire, c'est-à-dire que 
+\[ e = e (P, \vol) = \frac{P\vol}{\gamma - 1} = \frac{P}{\rho\left(\gamma - 1\right)} \]
+Cette relation est appelé équation d'état pour les gaz polytropiques\footnote{échange thermique partiel entre le système et l'extérieur.}. La quantité $\gamma$ est appelé l'\textbf{indice adiabatique} du système définit comme $\gamma :=\frac{C_P}{C_\vol}$ avec les capacités calorifiques $C_P$ (à pression constante) et $C_\vol$ (à volume constant).\\ 
+Ainsi, nous pouvons décomposer l'énergie totale $E$ comme une  fonction de l'énergie potentielle $E_p$, de l'énergie cinétique $E_c$ et de l'énergie interne massique.\\
+De plus d'après le théorème de Bernoulli, qui traduit le principe d'énergie adapté aux fluides parfaits\footnote{viscosité et conduction thermique non pris en compte.} en mouvement, nous avons
+\begin{equation}
+	\frac{1}{2}\rho\velocity^2 + \rho g z + P = P_{tot}\label{eq:bernoulli}
+\end{equation}
+avec les unités habituelles, $P$ la pression thermodynamique, $z$ la dénivelé vertical et $P_{tot}$ est la pression totale constante le long d'une ligne de courant. Le terme $\rho g z$ est la pression de pesanteur ou énergie potentielle, $P+\rho g z$ est la pression statique et $\frac{1}{2}\rho \velocity^2$ la pression dynamique ou énergie cinétique.\\
+
+\noindent Ainsi l'énergie totale $E_{tot}$ est 
+\begin{equation}
+	E_{tot} = E_c + E_p = \frac{1}{2}\rho\velocity^2 + \rho g z \label{eq:energytotal}
+\end{equation}
+er l'énergie interne massique est 
+\begin{equation}
+	e = \frac{P}{\gamma - 1} \label{eq:energyintern}
+\end{equation}
+Selon \citet{leveque_numerical_1992}, dans le cas d'un fluide isentropique (c'est-à-dire à entropie $s$ constante partout) la pression $P$ s'écrit comme
+\[ P = \hat{\kappa}\rho^\gamma\]
+avec $\hat{\kappa}$ une constante dépendant uniquement de l'entropie initiale et $\gamma$ le coefficient adiabatique. Et cette relation est valable \textit{partout} dans le système.

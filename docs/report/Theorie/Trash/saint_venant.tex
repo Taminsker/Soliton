@@ -1,0 +1,344 @@
+
+
+%\noindent Les équations de Saint-Venant sont issues des relations de conservation de la masse et de la quantité de mouvement et si  nous rajoutons l'équation de conservation de l'énergie, nous obtenons les équations d'Euler pour un fluide.\\
+%
+%\noindent Le partie qui suit permettra de comprendre aux équations de Saint-Venant.
+
+\section{Les lois de conservation}
+Les équations d'Euler sont issues des lois de conservations de certaines quantités physiques importantes, et elles permettent, par exemple, l'étude de la dynamique des gaz ou dans le cas présent l'étude d'écoulement de fluide. Ainsi, dans la suite, nous détaillerons les équations de conservation de la masse, de la quantité de mouvement et de l'énergie.\\
+\subsection{La dérivée particulaire}
+Selon \citep{toro_riemann_2009}, si nous considérons un champs scalaire $\phi$ dépendant de l'espace et du temps, les variations temporelle de $\phi$ peuvent être obtenue en regardant les variations par rapport à la vitesse du fluide $\velocity$. Nous obtenons la relation suivante
+\begin{equation}
+	\frac{D\phi}{Dt} = \partial_t \phi + \velocity \cdot \grad \phi \label{eq:deriveetotale}
+\end{equation}
+La quantité $\frac{D \phi}{D t}$ désigne la dérivée particulaire de $\phi$ par rapport au temps $t$. Notons que cette relation peut être étendue et appliqué à n'importe quel champ vectoriel $\vec{w}$.\\
+Posons maintenant 
+\begin{equation}
+	\boldsymbol{\psi} (t) := \iiint_V \phi (x, y, z, t)\,d V \label{eq:volumeintegration}
+\end{equation}
+avec $\phi$ un champ scalaire et un volume d'intégration $V$ dont la surface $A$ est considérée lipschitzienne au moins par morceaux. Et la dérivée particulaire (ou materielle) de cette fonction est 
+\begin{equation}
+	\frac{D \psi}{D t} = \iiint_V \partial_t \phi d V + \iint_A \left(\nvec\cdot\phi\velocity\right)d A, \label{eq:psiinte}
+\end{equation}
+avec $\nvec = (n_1, n_2, n_3)$ le vecteur normal sortant. Cette relation peut être aussi étendue à un champ vectoriel $\psi (x, y, z, t)$.\\
+Selon le théorème de Gauss (aussi appelé formule de Green), nous avons
+\begin{equation}
+	\iint_A \nvec \cdot \tilde{\psi}\,d A = \iiint_V \div \tilde{\psi} \,d V \label{eq:greenfrm}
+\end{equation}
+où $\tilde{\psi}$ est un champ vectoriel.
+
+\subsection{La conservation de la masse (équation de continuité)}
+\noindent La loi de conservation de la masse peut maintenant être établie, et la masse $m(t)$ dans un volume $V$ peut être exprimée comme
+\[ m(t) = \iiint_V \rho\, d V.\] où $\rho$ est la masse volumique du fluide.\\
+La conservation de la masse implique que \[ \frac{D m}{D t} = 0\]
+et donc par \eqref{eq:psiinte} que 
+\begin{equation}
+	\frac{D m}{D t} = \iiint_V \partial_t \rho\, d V + \iint_A \nvec \cdot \rho \velocity\, d A = 0
+\end{equation}
+ou encore par \eqref{eq:greenfrm}
+\begin{equation}
+	\iiint_V \left[\partial_t \rho + \div\left(\rho \velocity\right)\right]\,d V = 0.
+\end{equation}
+\begin{refe}
+Or le volume $V$ est purement arbitraire et donc nous obtenons \textbf{l'équation de conservation de la masse} suivante
+\begin{equation}
+	\partial_t \rho + \nabla \cdot \left(\rho \velocity\right) = 0\label{eq:consmass}
+\end{equation}
+avec $\rho$ la masse volumique et $\velocity$ la vitesse du fluide.
+\end{refe}
+
+\subsection{La conservation de la quantité de mouvement}
+Passons maintenant à la conservation de la quantité de mouvement $\vec{p}$. La quantité de mouvement est exactement
+\begin{equation}
+	\vec{p} = \rho \velocity. \label{eq:qtmouv}
+\end{equation}
+Cela nous conduit donc à poser la fonction suivante
+\[ \boldsymbol{\psi} (t) = \iiint_V \rho\velocity\,d V.\]
+D'après la loi du Newton 
+\begin{equation}
+	\frac{D \boldsymbol{\psi}}{D t} = f_S + f_V, \label{eq:newtonlaw}
+\end{equation}
+où $f_S$ et $f_V$ désignent respectivement les forces surfaciques et volumiques en jeu.\\
+En pratique, selon \citet{toro_riemann_2009}, nous avons
+\begin{equation}
+	f_S = \iint_A \nvec \cdot S\,d A \hspace{1cm} f_V = \iiint_V \rho \gvec \, dV. \label{eq:forces}
+\end{equation}
+avec $S = -P\id + \Pi$ (voir \citet{toro_riemann_2009} pour plus de détails) avec $\Pi$ un terme de forces visqueuses.\\
+Remarquons déjà que $\vec{p}$ n'est plus un champ scalaire mais un champ vectoriel et cela nous conduit à utiliser un version généralisé de \eqref{eq:psiinte} 
+\begin{equation}
+	\frac{D \boldsymbol{\psi}}{D t} = \iiint_V \partial_t \phi \, dV + \iint_A \phi \left(\nvec \cdot \velocity \right)\, d V. \label{eq:psiinte_2}
+\end{equation}
+Ainsi par \eqref{eq:newtonlaw} et \eqref{eq:psiinte_2}, nous avons
+\begin{equation}
+	\iiint_V \partial_t \left(\rho\velocity\right)\, d V + \iint_A \left(\nvec\cdot\rho\velocity\right)\velocity\,d A = f_S + f_A
+\end{equation}
+Or nous avons
+\begin{equation}
+	\left(\nvec\cdot \rho\velocity\right)\velocity = \nvec \cdot \rho\velocity \otimes \velocity \label{eq:identitytensorvelocity}
+\end{equation}
+\begin{refe}
+Par application directe de la formule de Green \eqref{eq:greenfrm}, en remplaçant $f_S+f_V$ par la relation établie en \eqref{eq:forces} et comme nous intégrons sur un volume $V$ arbitraire alors \textbf{l'équation de conservation de la quantité de mouvement} est 
+\begin{equation}
+	\partial_t \left(\rho\velocity\right) + \nabla \cdot \left[ \rho \velocity \otimes \velocity +P\id - \Pi\right]  = \rho \gvec \label{eq:NSC}
+\end{equation}
+Cette relation forme les équations de \textbf{Navier-Stokes} pour les fluides compressibles. Dans le cas d'un fluide parfait incompressible nous avons simplement
+\begin{equation}
+	\partial_t \left(\rho\velocity\right) + \nabla \cdot \left[ \rho \velocity \otimes \velocity +P\id\right]  = \rho \gvec \label{eq:NSI}
+\end{equation}
+\end{refe}
+
+\subsection{La conservation de l'énergie}
+\noindent La conservation de l'énergie totale ($E_{tot}$) au cours du temps peut aussi être exprimée, c'est-à-dire que nous pouvons définir
+\begin{equation}
+	\boldsymbol{\psi} (t) = \iiint_V E_{tot} \, dV.
+\end{equation}
+Rappelons qu'une force $\boldsymbol{f}$ produit un travail $\velocity\cdot \boldsymbol{f}$ homogène à une énergie (selon \citet{toro_riemann_2009}). Donc si nous nous référons aux forces établies à \eqref{eq:forces}, et que nous rajoutons un effet thermique alors nous pouvons définir\\
+\begin{subequations}
+	- l'énergie issue des forces de pression et de viscosité :
+	\begin{equation}
+		E_\text{surf} = \iint_A P\left(\velocity \cdot \nvec\right)\,d A + \iint_A\velocity \cdot \left(\nvec \cdot \Pi\right)\,d A\label{eq:Esurf},
+	\end{equation}
+	- l'énergie issue du poids :
+	\begin{equation}
+		E_\text{volu} = \iiint_V \rho \left(\velocity\cdot \gvec\right)\, d V\label{Evolu},
+	\end{equation}
+	- le flux d'énergie $\boldsymbol{\vec{Q}}$ qui traverse la surface $A$:
+	\begin{equation}
+		E_\text{infl} = - \iint_A \nvec\cdot\boldsymbol{\vec{Q}}\, d A. \label{eq:Einfl}
+	\end{equation}
+\end{subequations}
+Nous avons donc, toujours par application de la loi de Newton, 
+\begin{equation}
+	\frac{D \boldsymbol{\psi}}{D t} =E_\text{surf} + E_\text{volu}+E_\text{infl}.
+\end{equation}
+Sous forme détaillée, selon \citet{toro_riemann_2009}, nous obtenons
+\begin{align}
+	&\iiint_V \partial_t E_{tot}\,dV + \iint_A \nvec \cdot E_{tot}\velocity \, d A =\nonumber\\
+	&\iint_A P\left(\velocity \cdot \nvec\right)\,d A + \iint_A\velocity \cdot \left(\nvec \cdot \Pi\right)\,d A + \iiint_V \rho \left(\velocity\cdot \gvec\right)\, d V - \iint_A \nvec\cdot\boldsymbol{\vec{Q}}\, d A.
+\end{align}
+\begin{refe}
+Grâce à la formule de Green \eqref{eq:greenfrm}, et comme nous intégrons sur un volume $V$ purement arbitraire, nous avons \textbf{l'équation de conservation de l'énergie totale}
+\begin{equation}
+	\partial_t E_{tot} + \nabla \cdot \left[\left(E_{tot} + P\right)\velocity - \velocity\cdot\Pi + Q\right] = \rho \left(\velocity\cdot \gvec\right).\label{eq:consenergy}
+\end{equation}
+Dans le cas d'un fluide parfait incompressible nous avons simplement que
+\begin{equation}
+	\partial_t E_{tot} + \nabla \cdot \left[\left(E_{tot} + P\right)\velocity \right] = \rho \left(\velocity\cdot \gvec\right).\label{eq:consenergyI}
+\end{equation}
+\end{refe}
+
+\section{Les équations d'Euler}
+\noindent Les équations d'Euler sont ni plus ni moins que le regroupement des équations de conservation de la masse, de la quantité de mouvement et de l'énergie totale dans le cadre d'un fluide parfait incompressible adiabatique.\\
+Nous pouvons donc les regrouper sous la forme d'un système comme suit
+\begin{subequations}
+\begin{equation}
+	\left\{\begin{array}{l}
+	\partial_t \rho + \nabla \cdot \left(\rho \velocity\right) = 0,\\
+	\partial_t \left(\rho\velocity\right) + \nabla \cdot \left[ \rho \velocity \otimes \velocity +P\id\right]  = \rho \gvec,\\
+	\partial_t E_{tot} + \nabla \cdot \left[\left(E_{tot} + P\right)\velocity \right] = \rho \left(\velocity\cdot \gvec\right).
+	\end{array}\right. \label{eq:eulereq}
+\end{equation}
+En notant $\gvec = \left(g_1, g_2, g_3\right)$, nous avons
+\begin{equation}
+	\Longleftrightarrow 
+	\left[\begin{array}{c}
+	\rho\\
+	\rho u\\
+	\rho v\\
+	\rho w\\
+	E_{tot}
+	\end{array}\right]_t +
+	\left[\begin{array}{c}
+	\rho u\\
+	\rho u^2 + P\\
+	\rho u v\\
+	\rho u w\\
+	\left(E_{tot} + P\right)u
+	\end{array}\right]_x +
+	\left[\begin{array}{c}
+	\rho v\\
+	\rho u v\\
+	\rho v^2 + P\\
+	\rho v w\\
+	\left(E_{tot} + P\right)v
+	\end{array}\right]_y +
+	\left[\begin{array}{c}
+	\rho w\\
+	\rho u w\\
+	\rho v w\\
+	\rho w^2 + P\\
+	\left(E_{tot} + P\right)w
+	\end{array}\right]_z = 
+	\left[\begin{array}{c}
+	0\\
+	g_1\\
+	g_2\\
+	g_3\\
+	\rho \left(\velocity \cdot \gvec\right)
+	\end{array}\right] \label{eq:eulereq_sys}
+\end{equation}
+\end{subequations}
+
+
+\section{Les équations de Saint-Venant}\label{sec:SaintVenant}
+Les équations de Barré de Saint-Venant sont obtenues en 1871 par le mathématicien français du même nom\footnote{Ingénieur, physicien et mathématicien français du XIXième siècle (1797-1886).}.  Ce système d'équations visant l'étude \textbf{des écoulements en eau peu profonde} donnera le nom communément admis en anglais pour les désigner : \textit{shallow water}. Elles permettent notamment l'étude de plusieurs phénomènes physiques associés à des ondes tels que les courants de marée ou les tsunamis.\footnote{Source \textbf{Wikipedia}.}\\ 
+
+Lors de l'étude d'écoulement en eau peu profonde, le système obtenu est similaire aux équations d'Euler puisque ce sont les mêmes quantités qui sont conservées. Rappelons en premier lieu que dans ce modèle nous étudions un écoulement incompressible à structure horizontale et que la \textit{vitesse verticale} du fluide est négligée.\\
+
+\begin{figure}
+	\centering
+	\incfig{0.5}{Images/SWE_Fond}
+	\caption{Coupe 1D : Saint-Venant.}
+	\label{fig:SaintVenant}
+\end{figure}
+
+\noindent Le vecteur de force gravitationnelle $\gvec$ est tel que $\gvec  = \left(0, 0, -g\right)$ avec l'accélération gravitationnelle. Le point d'équilibre du système est établi à $z = h_0$ et un vecteur vitesse $\velocity = \left(0, 0, \cdot\right)$.\\
+
+\subsection{Conservation de la masse}
+Un fluide incompressible est caractérisé par la relation suivante (équation de continuité associé)
+\begin{equation}
+	\div \velocity = 0\label{eq:incompressible}
+\end{equation}
+Ainsi, l'équation de conservation de la masse \eqref{eq:consmass} devient
+\begin{equation}
+	\partial_t \rho + \nabla \cdot \left(\rho \velocity \right) = \partial_t \rho + \velocity \cdot \nabla \rho  + \rho \nabla \cdot \velocity \overset{\eqref{eq:incompressible}}{=} \partial_t \rho + \velocity \cdot \nabla \rho =  0.\label{eq:consmassSW}
+\end{equation}
+
+\subsection{Conservation de la quantité de mouvement}
+\noindent L'équation de conservation de la quantité de mouvement \eqref{eq:NSI} devient quant à elle
+\begin{align}
+	&\partial_t \left(\rho\velocity\right) + \nabla \cdot \left[ \rho \velocity \otimes \velocity +P\id\right]  = \rho \gvec\\
+	\Longleftrightarrow\lhs& \rho\partial_t \velocity + \velocity\partial_t \rho + \rho\,\nabla\cdot\left(\velocity\otimes\velocity\right) + \left(\velocity\otimes\velocity\right)\nabla\cdot \rho = \rho \gvec - \nabla\cdot \left(P\id\right)
+	\intertext{La masse volumique (densité) $\rho$ étant constant en espace et en temps, nous avons alors}
+	\Longleftrightarrow\lhs& \partial_t \velocity + \nabla\cdot\left(\velocity\otimes\velocity\right)  =  \gvec - \frac{1}{\rho}\nabla P\\
+	\Longleftrightarrow\lhs& \partial_t \velocity + \velocity \left(\nabla \cdot \velocity\right) + \left(\velocity \cdot \nabla\right)\velocity  =  \gvec - \frac{1}{\rho}\nabla P\\
+	\Longleftrightarrow\lhs& \partial_t \velocity + \left(\velocity \cdot \nabla\right)\velocity  =  \gvec - \frac{1}{\rho}\nabla P\label{eq:consmomentum_freesurface}
+\end{align}
+Deux conditions de bords sont requises (voir figure \ref{fig:SaintVenant}) :
+\begin{itemize}
+	\item En $z = h(x, y, t) + \fond(x, y) = h_0 + \zeta (x, y, t)$, qui correspond à la surface :\\
+	\begin{equation}	
+	\frac{D (h - z)}{D t} = \frac{D (h_0 + \zeta - z)}{D t} = 0,\lhs P = P_{atm}.
+	\end{equation}
+	avec $P_{atm}$ désigne la pression atmosphérique, prise à $0$ en pratique.\\
+	En vertu de la formule des dérivées particulaires \eqref{eq:deriveetotale}, nous avons
+	\begin{equation}
+		\frac{D (h_0 + \zeta - z)}{D t} = \partial_t \left(h_0 + \zeta -z\right) + \velocity \cdot \grad \left(h_0 + \zeta -z \right)
+	\end{equation}
+	Or $\partial_z \zeta = 0$ car $\zeta$ ne dépend pas de la coordonnée $z$, donc nous avons
+	\begin{equation}	
+		\Longrightarrow\lhs u\partial_x \zeta + v \partial_y \zeta - \left( w - \partial_t\zeta\right) = 0
+	\end{equation}
+	Nous évaluons maintenant cette expression en $z= h_0 + \zeta (x, y, t)$, c'est-à-dire que
+	\begin{equation}	
+	 \piper{\left(u\partial_x \zeta + v \partial_y \zeta - \left(w - \partial_t\zeta\right)\right)}_{z = h_0 + \zeta} = 0 \label{eq:condmasssurf}
+	\end{equation}
+	\item En $z=\fond(x, y)$
+	\begin{equation}
+	\frac{D (\fond+z)}{D t} = 0.
+	\end{equation}
+	Grâce à \eqref{eq:deriveetotale}, nous avons
+	\begin{equation}
+		\frac{D \left(\fond + z\right)}{D t} = \partial_t \left( \fond + z\right) + \velocity \cdot \grad \left(\fond+z\right) = 0
+	\end{equation}
+	Donc nous avons
+	\begin{equation}
+		\piper{\left(u\partial_x \fond + v \partial_y \fond + w\right)}_{z = \fond} = 0 \label{eq:condmasssol}
+	\end{equation}
+\end{itemize}
+Si nous négligeons la vitesse verticale, nous avons dans l'équation de la coordonnée $z$ du système \eqref{eq:consmomentum_freesurface}, nous obtenons
+\begin{equation}
+	\partial_z P = - g\rho
+\end{equation}
+Sous la condition $P = P_{atm}$ en $z = h_0 + \zeta$ nous avons
+\begin{equation}
+	P(z) = \rho g \left(\zeta+h_0 - z\right) + P_{atm}\label{eq:pression}
+\end{equation}
+Cette relation définit ce qui est appelé la \textbf{relation de pression hydrostatique} selon \citet{toro_riemann_2009}. Cette relation découle directement du principe de Blaise Pascal\footnote{Mathématicien, physicien, philosophe et théologien français du XVIIième siècle (1623-1662).}.\\
+Ainsi nous avons
+\begin{subnumcases}{}
+	\partial_x P = \rho g \partial_x \zeta \label{eq:pressionw_x}\\
+	\partial_y P = \rho g \partial_y \zeta\label{eq:pressionw_y}
+\end{subnumcases}
+Ainsi l'équation de conservation de la quantité de mouvement \eqref{eq:consmomentum_freesurface} devient
+\begin{subequations}
+	\begin{align}
+		\partial_t u + u\partial_x + v\partial_yu = -g \partial_x\zeta \label{eq:momentumAxeX}\\
+		\partial_t v + u\partial_xv + v\partial_yv = -g \partial_y\zeta\label{eq:momentumAxeY}
+	\end{align}
+\end{subequations}
+Passons à un méthode importante décrite dans \citet{leveque_numerical_1992} et dans \citet{toro_riemann_2009} : intégrer l'équation de continuité \eqref{eq:incompressible} selon l'axe $z$ (verticalement). Nous obtenons donc 
+\begin{equation}
+	\int_{\fond}^{h_0 + \zeta} \partial_x u\,dz + \int_{\fond}^{h_0 + \zeta} \partial_y v\,dz + \piper{w}_{z = \fond}^{z= h_0+\zeta} = 0.\label{eq:intevertical}
+\end{equation}
+Qui regroupé avec les conditions de bords \eqref{eq:condmasssurf} (et de surface) et \eqref{eq:condmasssol} (de sol) donne
+\begin{equation}
+	\int_{\fond}^{h_0 + \zeta} \partial_x u\,dz + \int_{\fond}^{h_0 + \zeta} \partial_y v\,dz  + \piper{\left(u\partial_x \zeta + v \partial_y \zeta + \partial_t\zeta\right)}_{z = h_0 + \zeta} - \piper{\left(u\partial_x \fond + v \partial_y \fond\right)}_{z = \fond} = 0 \label{eq:SWWithCond}
+\end{equation}
+Or nous avons
+\begin{align*}
+	&\frac{\partial}{\partial x} \int_{\fond(x, y)}^{h_0 + \zeta (x, y, t)} u \, dz = \int_{\fond(x, y)}^{h_0 + \zeta(x, y, t)} \partial_x u\,dz + \piper{\left(u\partial_x \zeta\right)}_{z = h_0 + \zeta} - \piper{\left(u\partial_x \fond\right)}_{z = \fond}\\
+	&\frac{\partial}{\partial y} \int_{\fond(x, y)}^{h_0 + \zeta (x, y, t)} v \, dz = \int_{\fond(x, y)}^{h_0 + \zeta(x, y, t)} \partial_y v\,dz + \piper{\left(v\partial_y \zeta\right)}_{z = h_0 + \zeta} - \piper{\left(v\partial_y \fond\right)}_{z = \fond}.
+\end{align*}
+Ainsi \eqref{eq:SWWithCond} devient
+\begin{equation}
+	\partial_t \zeta + \frac{\partial}{\partial x} \int_{\fond(x, y)}^{h_0 + \zeta(x, y, t)} u\,dz + \frac{\partial}{\partial y} \int_{\fond(x, y)}^{h_0 + \zeta(x, y, t)} v \, dz = 0.\label{eq:SWWithCond_2}
+\end{equation}
+Selon \citet{toro_riemann_2009}, l'équation \eqref{eq:SWWithCond_2} peut être simplifiée en remarquant que les coordonnées $u$ et $v$ du vecteur $\velocity$ sont indépendantes de $z$ et réécrit comme
+\begin{equation}
+	\partial_t \zeta + \partial_x\left[\left(h_0 + \zeta - \fond \right)u\right] + \partial_y\left[\left(h_0 + \zeta - \fond \right)v\right] = 0.
+\end{equation}
+Nous avons précédemment posé $h = h_0 + \zeta - \fond$, et nous avons $\partial_t \zeta = \partial_t \left(h_0 + \zeta-\fond\right)$, donc l'équation est strictement équivalente à
+\begin{equation}
+\partial_t \left(h_0 + \zeta-\fond\right) + \partial_x\left[\left(h_0 + \zeta - \fond \right)u\right] + \partial_y\left[\left(h_0 + \zeta - \fond \right)v\right] = 0.\label{eq:firstSWE}
+\end{equation}
+En multipliant cette équation par $u$ et en l'ajoutant à l'équation \eqref{eq:momentumAxeX} auparavant multipliée par $h_0 + \zeta - \fond$ nous obtenons après réduction des produits dérivés
+\begin{equation}
+	\partial_t \left[\left(h_0 + \zeta - \fond\right) u \right] + \partial_x \left[\left(h_0 + \zeta - \fond\right)u^2\right] + \partial_y \left[\left(h_0+\zeta-\fond\right)uv\right] = - g \left(h_0 + \zeta - \fond \right)\partial_x\zeta.\label{eq:SWE_temp1}
+\end{equation}
+De manière analogue avec \eqref{eq:momentumAxeY} nous avons
+\begin{equation}
+\partial_t \left[\left(h_0 + \zeta - \fond\right) v \right] + \partial_x \left[\left(h_0 + \zeta - \fond\right)uv\right] + \partial_y \left[\left(h_0+\zeta-\fond\right)v^2\right] = - g \left(h_0 + \zeta - \fond \right)\partial_y\zeta.\label{eq:SWE_temp2}
+\end{equation}
+Nous pouvons réécrire les termes de droite comme
+\begin{align}
+	&- g \left(h_0 + \zeta - \fond \right)\partial_x\zeta = g\left( h_0 + \zeta - \fond\right)\partial_x \fond - g\frac{1}{2}\partial_x\left[\left(h_0 + \zeta - \fond\right)^2\right] \\
+	& - g \left(h_0 + \zeta - \fond \right)\partial_y\zeta = g\left( h_0 + \zeta - \fond\right)\partial_y \fond - g\frac{1}{2}\partial_y\left[\left(h_0 + \zeta - \fond\right)^2\right]
+\end{align}
+qui permettent de réécrire \eqref{eq:SWE_temp1} comme
+\begin{equation}
+	\partial_t \left(hu\right) + \partial_x \left(hu^2 + \frac{1}{2}gh^2\right) + \partial_y \left(h u v\right) = gh \partial_x \fond
+\end{equation}
+et \eqref{eq:SWE_temp2} comme
+\begin{equation}
+\partial_t \left(hv\right) + \partial_x \left(h u v\right) + \partial_y \left(hv^2 + \frac{1}{2}gh^2\right) = g h \partial_y \fond
+\end{equation}
+%\subsection{Équation de conservation de l'énergie}
+%L'énergie totale est conservée selon la relation établie à l'équation \eqref{eq:consenergyI} avec $E_{tot} = \frac{1}{2}\rho\velocity^2 + \rho g z $ selon \eqref{eq:energytotal}, et $e$ (selon \eqref{eq:energyintern} avec $\gamma = 2$) est déjà inclue dans la relation. La pression $P$ a été calculée à \eqref{eq:pression} et nous prenons $P_{atm} = 0$.\\
+%Or $\rho$ est constant en temps et en espace et la , donc nous avons 
+%\begin{equation}
+%	\partial_t \left(\frac{1}{2}\velocity^2 + g z\right) + \nabla \cdot \left[\left(\frac{1}{2}\velocity^2 +  g \left(\zeta+h_0\right)\right)\velocity \right] = g w
+%\end{equation}
+%Après simplification de la dérivée particulaire sur la vitesse $\velocity$ et simplifiant ensuite par $g$, nous n'avons plus que
+%\begin{equation}
+%\partial_t z + \nabla \cdot \left[ \left(\zeta+h_0\right)\velocity \right] = \partial_t z + \nabla \cdot \left(\zeta\velocity \right) + h_0 \nabla \cdot \velocity =w
+%\end{equation}
+%Or le fluide est incompressible, donc $\nabla \cdot \velocity = 0$, donc
+%\begin{equation}
+%\partial_t z + \velocity \cdot \nabla \zeta =w
+%\end{equation}
+%\begin{equation}
+%\partial_t \left(h_0+\zeta - \fond\right) + \int_{\fond}^{h_0+\zeta}\velocity \cdot \nabla \zeta = \piper{w}_{\fond}^{h_0 + \zeta}
+%\end{equation}
+%\vspace*{6cm}
+\begin{refe}
+Ainsi \textbf{les équations de Saint-Venant} peuvent être écrite comme
+\begin{subnumcases}{(SW)}
+	\partial_t h + \nabla \cdot \boldsymbol{\vec{q}} = 0,\label{eq:SWE_mass}\\
+	\partial_t \boldsymbol{\vec{q}} + \nabla \cdot \left(\boldsymbol{\vec{q}} \otimes\velocity + \frac{1}{2}gh^2\id\right) = gh \nabla\fond, \label{eq:SWE_momemtum}
+\end{subnumcases}
+avec $\boldsymbol{\vec{q}}= h\velocity$,  $h:= h_0 + \zeta - \fond$, $\velocity = \left(u, v, w\right)$, $h$ la profondeur totale depuis la surface $h_0 + \zeta$ et jusqu'au sol $\fond$. Sous forme de système nous obtenons
+\begin{equation}
+	\myvector{h}{hu}{hv}_t + \myvector{hu}{hu^2 + \frac{1}{2}gh^2}{hu v}_x + \myvector{hv}{hu v}{hv^2 + \frac{1}{2}gh^2}_y = gh\left(\myvector{0}{\fond}{0}_x + \myvector{0}{0}{\fond}_y\right)\label{eq:SWESYS}.
+\end{equation}
+\end{refe}

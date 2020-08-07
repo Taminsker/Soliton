@@ -1,0 +1,485 @@
+\section{L'équation des ondes linéaire}
+\subsection{Présentation du problème}
+%\subsubsection{Problème physique}
+
+\begin{figure}[H]
+	\centering
+	\incfig{0.8}{Images/1D_flotteur_fond}
+	\caption{Modèle 1D bathymétrique avec flotteur.}
+	\label{fig:1dbathy}	
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\incfig{0.8}{Images/2D_flotteur_fond}
+	\caption{Modèle 2D bathymétrique avec flotteur.}
+	\label{fig:2dbathy}
+\end{figure}
+%\noindent Nous nous plaçons dans un problème 2D, cette configuration est similaire à un problème de Saint-Venant \ref{fig:SaintVenant} comme dans la section \ref{sec:SaintVenant}.\\
+
+\noindent L'étude de ce problème 3D, sur un domaine $\Omega_f$ est réduite à du 2D en intégrant les équations obtenues selon l'axe $z$, et le domaine doit être divisé en deux parties distinctes mais qui doivent être \textbf{couplées} : 
+\begin{itemize}[label=$\mybullet$]
+	\item une surface libre référencée par $w$ pour \textit{water} sur un domaine $\Omega_w := \Omega_f\backslash \Omega_b$ définissant \textit{le domaine extérieur}, et
+	\item le flotteur, corps flottant sur la surface libre (fixé ou non), référencé par $b$ pour \textit{body}, et nous définissons \textit{le domaine intérieur} $\Omega_b$ représentant la \textit{position} de ce corps.
+	\item La frontière partagée par $\Omega_b$ et $\Omega_w$ est dénotée $\Gamma$.\\
+\end{itemize}
+Nous avons ainsi par décomposition du domaine \[\Omega_f := \Omega_b \cup \Omega_w.\]
+\subsubsection{Domaine surface libre}
+Dans $\Omega_w$, nous notons aussi
+\begin{itemize}[label=$\mybullet$]
+	\item $\zeta_0$, $\fond_0$ et $h_0 = \zeta_0 - \fond_0$ des constantes positives qui représentent la coordonnée $z$ (axe $z$ croissant) respectivement de la surface libre à un état stationnaire, du fond moyenné et de la hauteur d'eau moyenne dans un état stationnaire,
+	\item $\zeta$ la taille de la perturbation verticale de la surface libre par rapport à $\zeta_0$ ($\zeta$ étant par hypothèse négligeable devant $\zeta_0$), 
+	\item $\fond$ la taille de la perturbation verticale du fond par rapport à $\fond_0$ ($\fond$ étant par hypothèse négligeable devant $\fond_0$), et
+	\item la hauteur totale $h(x, t)$ de la surface libre dans $\Omega_w$ depuis le fond $\fond$, de sorte que
+	\begin{equation}
+	h(x, y, t) = h_0 + \zeta(x, y, t) - \fond (x, y) \label{eq:deep}
+	\end{equation}
+\end{itemize}
+\noindent Nous supposons que la perturbation $\zeta$ est telle que l'interface fluide-structure soit exactement contre le flotteur.\\
+Nous pouvons d'ores et déjà remarquer que $\zeta$ n'a pas de raison d'être continue sur le domaine $\Omega_f$. En effet des \textbf{sauts} peuvent survenir en $\Gamma_0$.\\
+
+\begin{refe}
+Remarquons que dans l'expression de $h$ seul $\zeta$ dépend du temps et donc que 
+\begin{equation}
+	h_t  \equiv \zeta_t \label{eq:der_t_h}
+\end{equation}
+\end{refe}
+
+\subsubsection{Domaine flotteur}
+Dans $\Omega_b$ nous introduisons les quantités suivantes
+\begin{itemize}[label=$\mybullet$]
+	\item $\xi_0$ une fonction dépendant uniquement du temps qui représente la hauteur moyenne du fluide sous la partie immergée du flotteur, 
+	\item $\xi$ la taille de la perturbation verticale de la hauteur du fluide sous le flotteur par rapport à $\xi_0$ au temps $t$ ($\xi$ étant par hypothèse négligeable devant $\xi_0$),
+	\item la relation de moyenne liant la hauteur moyenne de la surface libre dans $\Omega_w$ $h_0$, dans $\Omega_w$ $\xi_0(t)$ et la hauteur moyenne du fond $\fond_0$ de sorte que
+	\begin{equation}
+	h_0 \equiv d_{+}(t) + d_{-}(t) \text{ avec } d_{+}(t) = \zeta_0 - \xi_0(t), \text{ et } d_{-}(t) = \xi_0(t) - \fond_0,
+	\end{equation} 
+	\item la hauteur totale de $d(x, t)$ de la colonne de fluide sous le flotteur dans $\Omega_b$ depuis le fond $\fond$ de sorte que
+	\begin{equation}
+		d(x, y, t) = d_{-}(t) + \xi(x, y, t) - \fond(x, y)
+	\end{equation}
+	\item le saut de hauteur de la colonne de fluide entre $\Omega_w$ et $\Omega_b$ en $\Gamma$
+	\begin{equation}
+		\mathbb{S}(t) = d_{+}(t) + \zeta_{\Gamma}(t) - \xi_{\Gamma}(t)
+	\end{equation}
+	\item le centre de gravité du flotteur $C_b$,
+	\item le vecteur $\boldvec{r}(t)$ représentant la perturbation angulaire subi au cours du temps dans le repère cartésien habituel.
+\end{itemize}
+
+\begin{refe}
+	Faisons de plus quelques remarques concernant les dérivées temporelles
+	\begin{equation}
+		d_t = \left(d_{-}\right)_t + \xi_t = \left(\xi_0\right)_t + \xi_t
+	\end{equation}
+	\begin{equation}
+		\left(d_{+}\right)_t + \left(d_{-}\right)_t = 0
+	\end{equation}
+\end{refe}
+
+%À la différence d'une surface libre simple, la pression à la surface dépend de l'endroit où nous nous trouvons dans le domaine : zone sous le flotteur ou en dehors. Nous pouvons dès lors introduire un terme de pression inconnue supplémentaire traduisant l'action du flotteur sur la surface libre.\\
+
+\subsubsection{Conditions au fond et à la surface}
+
+\noindent En premier lieu deux conditions d'imperméabilité essentielles aux bords sont à exhiber dans $\Omega_w$ et dans $\Omega_b$, comme le rappelle \citet{Pons2018}.\\
+Pour cela rappelons que le vecteur vitesse $\velocity$ dans le repère cartésien est formé respectivement des $u, v,$ et $w$ et que pour toute fonction $\phi$ ne dépendant pas de $z$ nous avons $\partial_z \phi = 0$. La notation $\phi (z = \cdots)$ désignera dans la suite l'évaluation de $\phi$ en $z=\cdots$.
+\begin{itemize}[label=$\mybullet$]
+	\item En $z = \zeta_0 + \zeta(x, y, t)$ : 
+	\begin{itemize}[label=$\mybullet\mybullet$]
+		\item \textit{une particule en surface reste en surface}. Ce qui correspond à une vitesse verticale nulle pour une particule de fluide en tout point de la surface : 
+		\begin{equation*}
+		\piper{\frac{D (\zeta_0+\zeta - z)}{Dt}}_{z=\zeta_0+\zeta} = \piper{\partial_t (\zeta_0 + \zeta - z) + \velocity \cdot \nabla (\zeta_0 + \zeta - z)}_{z=\zeta_0+\zeta} = 0
+		\end{equation*}
+		c'est-à-dire
+		\begin{equation}
+		w(z = \zeta_0+\zeta) = \zeta_t + u(z=\zeta_0 + \zeta)\zeta_x + v(z=\zeta_0+\zeta)\zeta_y \label{eq:surfacecondition}
+		\end{equation}
+		\item La pression $P$ à la surface est normalement la pression atmosphérique $P_{atm}$, mais au prix d'une translation, nous pouvons aisément considéré que $P_{atm} = 0$. Il donc commun d'exprimer la pression à partir du potentiel hydraulique $gz$ et il suit que 
+		\begin{equation}
+			P (z) = \rho g (\zeta_0 + \zeta - z)
+		\end{equation}
+	\end{itemize}
+
+	\item En $z = \xi_0(t) + \xi(x, y, t)$
+	\begin{itemize}[label=$\mybullet\mybullet$]
+		\item \textit{le flotteur n'est pas perméable}. Ce qui correspond à une vitesse verticale nulle pour une particule de fluide en tout point du bord immergé : 
+		\begin{equation*}
+		\piper{\frac{D (\xi_0+\xi - z)}{Dt}}_{z=\xi_0+\xi} = 0
+		\end{equation*}
+		c'est-à-dire
+		\begin{equation}
+		w(z = \xi_0+\xi) = \left(\xi_0+\xi\right)_t + u(z=\xi_0 + \xi)\xi_x + v(z=\xi_0+\xi)\xi_y \label{eq:surfacecondition_b}
+		\end{equation}
+		\item La pression à la surface contre le flotteur est inconnue du système final : nous la notons $\rho \bpression$ comme le produit d'une masse volumique $\rho$ et d'un potentiel hydraulique $\bpression$ qui est à déterminer. Nous avons donc dans $\Omega_b$
+		\begin{equation}
+		P(z) = \rho g (\xi_0 + \xi - z) + \rho\bpression \label{eq:pression_cond}
+		\end{equation}
+	\end{itemize}
+
+	\item En $z = \fond_0 + \fond(x, y)$ qui correspond au fond, nous avons une condition d'imperméabilité (supposé ici non dépendant du temps)
+	\begin{equation*}
+	\piper{\frac{D (\fond_0+\fond - z)}{Dt}}_{z=\fond_0+\fond} = 0
+	\end{equation*}
+	c'est-à-dire
+	\begin{equation}
+	w(z = \fond_0 + \fond) = u(z=\fond_0+\fond)\fond_x + v(z=\fond_0+\fond)\fond_y.\label{eq:fondcondition}
+	\end{equation}
+\end{itemize}
+
+\subsection{Équation de la masse moyennée sur la verticale}
+\noindent Dans cette sous-section nous allons moyenner les équations obtenues précédemment sur la hauteur du fluide, pour cela nous définissons la moyenne d'une quantité $f$ selon la hauteur d'eau $h$ en tant que
+\begin{align*}
+  	\overline{f}(x, y, t) &= \frac{1}{h}\int_{\fond_0 + \fond(x, y)}^{\zeta_0+\zeta(x, y, t)}\,f(x, y, t)\,dz\hspace{1.3cm}\text{dans }\Omega_w\\
+	&= \frac{1}{d}\int_{\fond_0 + \fond(x, y)}^{\xi_0(t)+\xi(x, y, t)}\,f(x, y, t)\,dz\hspace{1cm}\text{dans }\Omega_b
+\end{align*}
+et nous rappelons par ailleurs le théorème de Leibniz en annexe (formule \eqref{op:leibniz}) qui permet entres autres de réécrire certaines intégrales de dérivée.\\
+%De plus pour limiter les calculs, nous effectuerons les moyennes que dans le domaine de la surface libre $\Omega_w$ : les calculs qui vont suivre sont similaire en remplaçant $\zeta_0 + \zeta$ par $\xi_0 + \xi$ lors de l'étude dans $\Omega_b$.\\
+
+\noindent Un fluide incompressible est caractérisé par la relation \eqref{eq:incompressible} et nous avons donc une formulation simple de contrainte pour l'équation de conservation de la masse.
+\begin{equation}
+	\div[\velocity] = u_x + v_y + w_z = 0 \hspace{1cm}\text{dans $\mathbb{R}^3$.}
+\end{equation}
+En intégrant cette équation selon la hauteur d'eau $h$ ou $d$, nous obtenons
+\begin{equation}
+	\underbrace{w(z=\zeta_0+\zeta)}_{\text{surface}\eqref{eq:surfacecondition} } - \underbrace{w(z=\fond_0 + \fond)}_{\text{fond} \eqref{eq:fondcondition}}  =  - \int_{\fond_0 + \fond}^{\zeta_0+\zeta}u_x + v_y\,dz = \int_{\fond_0 + \fond}^{\zeta_0+\zeta} w_z\,dz
+\end{equation}
+\begin{equation}
+\underbrace{w(z=\xi_0+\xi)}_{\text{surface}\eqref{eq:surfacecondition_b} } - \underbrace{w(z=\fond_0 + \fond)}_{\text{fond} \eqref{eq:fondcondition}}  =  - \int_{\fond_0 + \fond}^{\xi_0+\xi}u_x + v_y\,dz = \int_{\fond_0 + \fond}^{\xi_0+\xi} w_z\,dz
+\end{equation}
+qui grâce à la formule \eqref{op:leibniz} et aux conditions d'imperméabilité \eqref{eq:surfacecondition}, \eqref{eq:surfacecondition_b} et \eqref{eq:fondcondition}, nous permet d'obtenir l'équation de masse moyennée sur la verticale selon \citet{Pons2018}
+\begin{equation}
+	h_t + \div[h\overline{\velocity}] = 0\hspace{1cm}\text{et}\hspace{1cm}	d_t + \div[d\overline{\velocity}] = 0.
+\end{equation}
+Rappelons que $\overline{\velocity}$ désigne la moyenne des vitesses horizontales selon la hauteur d'eau.
+\subsection{La conservation de la quantité de mouvement moyennée sur la verticale}
+\noindent L'équation de conservation de la masse demande quant à elle un peu plus de travail, reprenons \eqref{eq:NSI}
+\begin{equation*}
+	\velocity_t + \div[\velocity\otimes\velocity] = \boldvec{g} -\frac{1}{\rho} \nabla P.
+\end{equation*}
+avec $\boldvec{g} = \left(0, 0, -g\right)$ où $g$ est la constante d'accélération gravitationnelle.\\
+Selon \citet{Pons2018}, il est possible d'appliquer la même démarche ici, de sorte à  exprimer l'équation de conservation de la quantité de mouvement moyennée selon $h$ ou $d$. Dans la suite les calculs peuvent être fait indistinctement sur $\Omega_b$ et $\Omega_b$ en remplaçant la position de la surface.\\
+
+\noindent \textbf{Selon l'axe $x$,} l'équation \eqref{eq:NSI} devient
+\begin{equation}
+	\int_{\fond_0+\fond}^{\zeta_0+\zeta}\,u_t\,dz + \int_{\fond_0+\fond}^{\zeta_0+\zeta}\,uu_x\,dz + \int_{\fond_0+\fond}^{\zeta_0+\zeta}\,vu_y\,dz + \int_{\fond_0+\fond}^{\zeta_0+\zeta}\,wu_z\,dz = -\frac{1}{\rho}\int_{\fond_0+\fond}^{\zeta_0+\zeta}\,P_x\,dz
+\end{equation}
+Par de multiples applications de \eqref{op:leibniz}, et par \eqref{eq:incompressible}, nous avons
+\begin{equation}
+\left(h\overline{u}\right)_t + \left(h\overline{u^2}\right)_x + \left(h\overline{u}\overline{v}\right)_y + \left(\frac{1}{\rho}h\overline{P}\right)_x = \frac{1}{\rho}P(z=\zeta_0+\zeta)\zeta_x -\frac{1}{\rho} P(z=\fond_0 + \fond)\fond_x
+\end{equation}
+
+\noindent \textbf{Selon l'axe $y$,} l'équation \eqref{eq:NSI} devient
+\begin{equation}
+\int_{\fond_0+\fond}^{\zeta_0+\zeta}\,v_t\,dz + \int_{\fond_0+\fond}^{\zeta_0+\zeta}\,uv_x\,dz + \int_{\fond_0+\fond}^{\zeta_0+\zeta}\,vv_y\,dz + \int_{\fond_0+\fond}^{\zeta_0+\zeta}\,wv_z\,dz = -\frac{1}{\rho}\int_{\fond_0+\fond}^{\zeta_0+\zeta}\,P_y\,dz
+\end{equation}
+Pour obtenir
+\begin{equation}
+\left(h\overline{v}\right)_t + \left(h\overline{u}\overline{v}\right)_x + \left(h\overline{v^2}\right)_y + \left(\frac{1}{\rho}h\overline{P}\right)_y = \frac{1}{\rho}P(z=\zeta_0+\zeta)\zeta_y -\frac{1}{\rho} P(z=\fond_0+\fond)\fond_y
+\end{equation}
+
+\noindent \textbf{Selon l'axe $z$,} l'équation \eqref{eq:NSI} devient
+\begin{equation}
+	-P_z = \rho \left(g + w_t + uw_x + vw_y+ww_z\right)
+\end{equation}
+qui conduit à
+\begin{equation}
+	P(z) - P(z=\zeta_0+\zeta) = \rho g (\zeta_0 + \zeta - z) + \rho \int_{z}^{\zeta_0+\zeta} w_t + uw_x + vw_y +ww_z \,dz.
+\end{equation}
+Ainsi dans $\Omega_w$ nous avons
+\begin{equation}
+	P(z) = \rho g (\zeta_0 + \zeta - z) + \rho \int_{z}^{\zeta_0+\zeta} w_t + uw_x + vw_y +ww_z \,dz
+\end{equation}
+et dans $\Omega_b$
+\begin{equation}
+	P(z) = \rho g (\xi_0 + \xi - z) + \rho \int_{z}^{\xi_0+\xi} w_t + uw_x + vw_y +ww_z \,dz + \rho \bpression
+\end{equation}
+À ce stade, nous supposons que \textbf{$w$ est nulle en tout temps et en tout point de l'espace}, c'est-à-dire que nous négligeons totalement la vitesse verticale du fluide.\\
+De plus pour plus de lisibilité nous omettrons à partir de maintenant les $\overline{~\cdot~}$ désignant les quantités moyennées.\\
+Ainsi en réunissant l'ensemble des équations et en remplaçant les termes de pression par leurs valeurs, c'est-à-dire
+\begin{equation*}
+	P(z=\zeta_0+\zeta) = \rho\bpression\hspace{1cm}P(z=\fond_0+\fond) = \rho g h + \rho\bpression
+\end{equation*}
+tel que
+\begin{equation}
+	P(z) = \rho g \left(\zeta_0 + \zeta - z\right) + \rho\bpression, \label{eq:pression}
+\end{equation}
+et après calculs
+\begin{equation}
+	\overline{P} = \frac{1}{h}\int_{\fond_0 + \fond}^{\zeta_0 + \zeta} P\,dz = \frac{1}{2}\rho g h + \rho\bpression.\label{eq:barpression}
+\end{equation}
+Ce qui conduit à 
+\begin{equation}
+	\frac{1}{\rho} \nabla \left(h\overline{P}\right) = \frac{1}{2}g\nabla h^2 + \nabla\left(h\bpression\right)
+\end{equation}
+Par ailleurs, nous avons aussi après simplification que
+\begin{equation}
+	\frac{1}{\rho}P(z=\zeta_0+\zeta)\nabla\zeta -\frac{1}{\rho} P(z=\fond)\nabla\fond = \bpression \nabla \zeta -\bpression\nabla\fond - gh \nabla\fond.
+\end{equation}
+L'expression avec le terme $\bpression$ peut être simplifié comme 
+\begin{equation}
+	 \nabla\left(h\bpression\right) - \bpression \nabla\zeta + \bpression\nabla\fond = \nabla\left(h\bpression\right) - \bpression \nabla h = h\nabla\bpression.
+\end{equation}
+De plus nous avons
+\begin{equation}
+	\frac{1}{2}g\nabla h^2 + gh \nabla\fond = gh\nabla h + gh \nabla\fond = gh\nabla\zeta
+\end{equation}
+
+\begin{refe}
+	Ainsi le système d'équation peut être écrit comme
+	\begin{subnumcases}{}
+	w = 0\\
+	\textcolor{MyRed}{u_x + v_y = 0,} &\textcolor{MyRed}{\text{\textit{(Cont. incompressible)}}}\label{eq:inc_contr}\\
+	\textcolor{MyRed}{v_x - u_y = u_z = v_z = 0,} &\textcolor{MyRed}{\text{\textit{(Cont. irrotationnel)}}}\label{eq:irr_contr}\\
+	h_t + \div[\boldvec{q}] = 0,&\text{\textit{(Cons. de la masse)}}\label{eq:mass} \\
+	\boldvec{q}_t + \div[\boldvec{q}\otimes\velocity] + gh\nabla\zeta= -h\nabla\bpression.&\text{\textit{(Cons. de $\vec{p}$)}}\label{eq:momemtum}
+	\end{subnumcases}
+	avec les conditions de bords \eqref{eq:surfacecondition}, \eqref{eq:fondcondition}, \eqref{eq:pression_cond} et	avec $\boldsymbol{\vec{q}}= h\velocity$,  $h:= h_0 + \zeta - \fond$, $\velocity = \left(u, v, w\right)$, $h$ la profondeur totale depuis la surface $h_0 + \zeta$ et jusqu'au sol $\fond$. Sous forme de système nous obtenons
+	\begin{equation}
+	\myvector{h}{hu}{hv}_t + \myvector{hu}{hu^2 + \frac{1}{2}gh^2}{hu v}_x + \myvector{hv}{hu v}{hv^2 + \frac{1}{2}gh^2}_y =-h \myvector{0}{\bpression_x +g \fond_x}{\bpression_y+g\fond_y} \label{eq:SWESYS}.
+	\end{equation}
+	Remarquons que si $\fond\equiv \cst$ et $\bpression = \cst$ (e.g $P_{atm}$) alors nous avons simplement
+	\begin{subnumcases}{(\text{SWN})}
+	h_t + \div\boldsymbol{\vec{q}} = 0,\\
+	\boldvec{q}_t + \div[\boldvec{q} \otimes\velocity + \frac{1}{2}gh^2\id] =\boldvec{0}.
+	\end{subnumcases}
+	qui forment les \textbf{équations de Saint-Venant non-linéaires}.
+\end{refe}
+
+\noindent Remarquons maintenant qu'en utilisant la décomposition de la divergence \eqref{op:divprodvec}, l'équation de conservation de la quantité de mouvement \eqref{eq:momemtum} devient
+\begin{equation}
+	\boldvec{q}_t +\velocity~\div[\boldvec{q}] + \left(\boldvec{q}\cdot\nabla\right)\velocity + gh\nabla\zeta  = -h\nabla\bpression
+\end{equation}
+ou encore grâce à la décomposition de Lamb \eqref{op:lamb} et à l'équation de conservation de la masse \eqref{eq:mass} 
+\begin{equation}
+h\velocity_t + \frac{1}{2}h\nabla\velocity^2 + \left(\rot[\velocity]\right)\times\velocity + gh\nabla \zeta = -h\nabla\bpression
+\end{equation}
+\vspace*{-5mm}
+\begin{refe}
+	Or si le fluide est irrotationnel $\rot[\velocity] = 0$ et en divisant par $h\neq 0$ nous avons
+	\begin{equation}
+	\velocity_t + \velocity\cdot\nabla\velocity + g\nabla \zeta  = - \nabla\bpression \label{eq:irrotationnel}
+	\end{equation}
+\end{refe}
+
+\subsection{Un mot sur la conservation de l'énergie}
+\noindent En pratique l'énergie totale $E_{tot}$ est décomposée selon trois types d'énergie macroscopiques
+\begin{equation}
+	E_{tot} = E_c + E_p + e
+\end{equation}
+où $E_{c}$ désigne l'énergie cinétique, $E_p$ l'énergie potentielle et $e$ l'énergie interne. Cette définition s'accorde avec celle faite dans \citet{leveque_numerical_1992} lorsque nous considérons l'énergie totale volumique $\tilde{E}_{tot}$ selon la description de \citet{leveque_numerical_1992} et en sortant l'énergie de potentielle $E_p$
+\begin{equation}
+	\tilde{E}_{tot} = E_{tot} - E_p = \frac{1}{2}\rho\velocity^2 + \rho e\label{eq:energytotale}
+\end{equation}
+où $e$ est l'énergie interne massique. Le terme $\frac{1}{2}\rho\velocity^2$ désigne l'énergie cinétique volumique.\\
+Ensuite nous pouvons établir que $e$ n'est pas une variable d'état et elle peut donc être exprimée à l'aide d'une fonction d'état dépendant de la pression $P$ et de la densité $\rho$, de sorte que
+\begin{equation}
+	e = e\left(P, \rho\right) \label{eq:energyintern}
+\end{equation}
+Par ailleurs l'énergie interne $e$ peut être négligée selon \citet{vallis_atmospheric_2006} puisque nous avons suivant le principe de la thermodynamique 
+\begin{equation}
+	de = Tds-Pd\vol\label{eq:firstlawthermo}
+\end{equation}
+avec $s$ l'enthalpie, $T$ la température, $P$ la pression, et $\vol$ le volume massique. Or d'une part nous étudions un processus adiabatique donc nous pouvons supposer $T = 0$ et d'autre part le volume massique est exactement $\frac{1}{\rho}$ qui est constant donc $de =0$.\\
+De plus l'énergie potentielle vérifie
+\begin{equation}
+	-\nabla E_p = P
+\end{equation}
+où $P$ est définit en \eqref{eq:pression}. Donc nous avons, grâce à \eqref{eq:barpression}
+\begin{equation}
+	E_p = -\int_{\fond_0 + \fond}^{\zeta_0+\zeta} P dz= -h\overline{P} = -\frac{1}{2}\rho g h^2 -h\bpression
+\end{equation}
+Ainsi \eqref{eq:energytotale} devient
+\begin{equation}
+	\tilde{E}_{tot} = E_{tot} + \frac{1}{2}\rho g h^2 + h\bpression = \frac{1}{2}\rho\velocity^2\label{eq:energytotale2}
+\end{equation}
+et injecté dans \eqref{eq:consenergyI} (rappelons que nous avons $\rho$ constant), cela donne
+\begin{equation}
+	\rho\velocity \cdot \velocity_t + \div[\left(\frac{1}{2}\rho\velocity^2 + \rho g \left(h_0 + \zeta - z\right) + \bpression\right)\velocity] = \rho \left(\velocity \cdot\boldvec{g} \right)
+\end{equation}
+En multipliant cette équation par $\velocity$, nous obtenons un système qui se trouve être exactement l'équation de conservation de la quantité de mouvement \eqref{eq:momemtum}.\footnote{A FAIRE ?}
+
+\subsection{Adimensionnement et linéarisation autour d'un état stationnaire}
+\noindent En prévision de l'adimensionnement, nous définissons plusieurs paramètres.
+\begin{itemize}[label=$\mybullet$]
+\item Le paramètre de \textbf{dispersion $\boldsymbol{\mu}$}
+	\begin{equation}
+		\mu = \kappa h_0,\hspace{5mm}\text{avec }\kappa = \frac{1}{\lambda} \text{ et donc } \mu = \frac{h_0}{\lambda},
+	\end{equation}
+	avec $\lambda$ la longueur d'onde et $\kappa$ est le nombre d'onde par unité de longueur. Selon \citet{bosi_spectral_2019} et \citet{Pons2018}, pour les longues vagues le paramètre $\mu$ est petit.\\
+\item Le paramètre de \textbf{non-linéarité $\boldsymbol{\eps}$ de la surface libre}
+	\begin{equation}
+		\eps = \frac{\ampl}{h_0}
+	\end{equation}
+	avec $\ampl$ l'amplitude de l'onde. Dans \citet{bosi_spectral_2019} il est aussi précisé que les modèles complètement non-linéaire $\eps \approx 1$ et que nous avons un modèle faiblement non-linéaire sous l'hypothèse
+	\begin{equation}
+		\eps \approx \mu^2 < 1.
+	\end{equation}
+\item Et le paramètre de \textbf{non-linéarité $\boldsymbol{\beta}$ de bathymétrie}
+	\begin{equation}
+		\beta = \frac{\fond_0}{h_0}.
+	\end{equation}
+\end{itemize}
+Nous définissons des variables adimensionnelles 
+\begin{equation}
+\begin{array}{llll}
+	& c_0 = \sqrt{gh_0}, \hspace{3cm}
+	& t= \simmer{t}\frac{\lambda}{c_0}=\simmer{t}\frac{1}{\mu}\frac{h_0}{c_0},\hspace{2cm}
+	& x = \simmer{x}\lambda = \frac{h_0}{\mu}\simmer{x},\\
+	& y = \simmer{y}\lambda = \frac{h_0}{\mu}\simmer{y},
+	& z= h_0\simmer{z}= \lambda \mu \simmer{z},
+	& \zeta = \ampl \simmer{\zeta} = h_0 \eps \simmer{\zeta},\\
+	& h = h_0 \simmer{h},
+	& \bpression = \simmer{\bpression}\eps c_0^2,
+	& \velocity = c_0\eps\simmer{\velocity}, \\
+	& \boldvec{q} = c_0h_0\eps\simmer{\boldvec{q}},
+	& \fond = \simmer{\fond}\fond_0 = \beta h_0\simmer{\fond}.
+\end{array}\label{eq:advariable}
+\end{equation}
+Nous pouvons exhiber 
+\begin{equation}
+	\simmer{h} = 1+\eps\simmer{\zeta} - \beta\simmer{\fond}. \label{eq:htilde}
+\end{equation}
+\noindent Reprenons donc le système formé par \eqref{eq:mass} et \eqref{eq:irrotationnel} en introduisant les quantités précédentes. Les contraintes \eqref{eq:inc_contr} et \eqref{eq:irr_contr} ne changent pas. 
+
+\subsubsection{Flux massique}
+\noindent Partons de l'équation \eqref{eq:mass},
+\begin{align}
+	\overset{h_t = \zeta_t}{\hfill\Longrightarrow}\hspace{1cm}&\zeta_t +\div[\boldvec{q}] = 0\\
+	\overset{\boldvec{q} = h \velocity}{\Longrightarrow}\hspace{1cm}&\zeta_t +h\,\div[\velocity] + \velocity \cdot \nabla h = 0\\
+	\overset{\eqref{op:chainder}\,\&\,\eqref{eq:advariable} }{\hfill\Longrightarrow}\hspace{1cm} &\frac{h_0 \eps c_0}{\lambda}\left(\frac{\partial \simmer{\zeta}}{\partial \simmer{t}} + \simmer{h} \, \widetilde{\div}\left(\simmer{\velocity}\right) + \simmer{\velocity} \cdot \widetilde{\nabla} \simmer{h}\right) = 0\\
+	\overset{\eqref{eq:htilde}}{\hfill\Longrightarrow}\hspace{1cm} &\frac{\partial \simmer{\zeta}}{\partial \simmer{t}} + \widetilde{\div}\left(\simmer{\velocity}\right) + \eps \widetilde{\div}\left(\simmer{\zeta}\simmer{\velocity}\right) - \beta \widetilde{\div}\left(\simmer{\fond}\simmer{\velocity}\right) = 0\\
+	\overset{}{\hfill\Longrightarrow}\hspace{1cm} & \frac{\partial \simmer{\zeta}}{\partial \simmer{t}} + \widetilde{\div}\left(\simmer{\velocity}\right) + \OLandau{\eps + \beta} = 0
+\end{align}
+Pour linéariser cette équation adimensionnée, nous négligeons les termes en $\OLandau{\eps + \beta}$, et en utilisant \eqref{eq:advariable} pour remettre sous forme dimensionnelle, nous obtenons
+\begin{align}
+	& \frac{\partial \simmer{\zeta}}{\partial \simmer{t}} + \widetilde{\div}\left(\simmer{\velocity}\right) = 0\\
+	\overset{\eqref{op:chainder}}{\Longrightarrow}\hspace{1cm} & \frac{h_0}{h_0 \eps \mu c_0}\,\zeta_t + \frac{h_0}{c_0\eps \mu} \div[\velocity] = 0
+	\intertext{Donc nous avons}
+	\Longrightarrow\hspace{1cm} & \zeta_t + h_0\div[\velocity] = 0
+\end{align}
+
+\subsubsection{Quantité de mouvement}
+\noindent De la même façon partons de \eqref{eq:irrotationnel},
+\begin{align}
+	\Longleftrightarrow\hspace{1cm}&\velocity_t + \velocity\cdot\nabla\velocity + g\nabla \zeta  = - \frac{1}{\rho}\nabla\bpression\\
+	\overset{\eqref{op:chainder}\,\&\,\eqref{eq:advariable}}{\Longrightarrow}\hspace{1cm} &\frac{gh_0\eps\mu}{h_0}\left(\frac{\partial \simmer{\velocity}}{\partial \simmer{t}} + \eps\simmer{\velocity}\cdot\widetilde{\nabla}\simmer{\velocity} + \widetilde{\nabla}\simmer{\zeta} \right)= -\frac{gh_0\eps\mu}{h_0}\widetilde{\nabla}\simmer{\bpression}\\
+	\Longrightarrow\hspace{1cm} &\frac{\partial \simmer{\velocity}}{\partial \simmer{t}} +  \widetilde{\nabla}\simmer{\zeta} + \OLandau{\eps}=-\widetilde{\nabla}\simmer{\bpression}
+\end{align}
+Pour linéariser cette équation adimensionnée, nous négligeons les termes en $\OLandau{\eps}$, et en utilisant \eqref{eq:advariable} pour remettre sous forme dimensionnelle,
+\begin{align}
+	& \frac{\partial \simmer{\velocity}}{\partial \simmer{t}} +  \widetilde{\nabla}\simmer{\zeta} =-\widetilde{\nabla}\simmer{\bpression}\\
+	\overset{\eqref{op:chainder}}{\Longrightarrow}\hspace{1cm} & \frac{h_0}{g h_0 \eps \mu }\left( \velocity_t + g \nabla \zeta \right) = \frac{h_0}{g h_0 \eps \mu } \left(-\nabla \bpression\right) 
+	\intertext{Donc nous avons}
+	\Longrightarrow\hspace{1cm} &\velocity_t + g \nabla \zeta = - \nabla \bpression
+\end{align}
+\vspace{-5mm}
+\begin{refe}
+	Nous remarquerons que d'avoir négligé les termes en $\OLandau{\eps + \beta}$ est similaire à choisir $A = \fond_0 = 0$ ce qui conduit à $\mu = 0$. Nous avons donc un modèle linéaire et non-dispersif caractérisé par le système suivant
+	\begin{subnumcases}{(\text{SWL})}
+	\zeta_t + h_0~\div[\velocity] = 0,&\text{\textit{(Cons. de la masse)}}\label{eq:masslin} \\
+	\velocity_t + g\nabla\zeta = - \nabla\bpression&\text{\textit{(Cons. de $\vec{p}$)}}\label{eq:momentumlin}
+	\end{subnumcases}
+	avec les conditions de bords \eqref{eq:surfacecondition}, \eqref{eq:fondcondition}, \eqref{eq:pression_cond} et les contraintes \eqref{eq:inc_contr}, \eqref{eq:irr_contr}. Si $\bpression \equiv \cst$, alors le système constitue \textbf{les équations de Saint-Venant linéaires}.
+\end{refe}
+Ces équations peuvent aussi être obtenues en linéarisant autour d'un état stationnaire directement
+\begin{equation}
+	\zeta  = \eps, \hspace{1cm} \fond = \mu,\hspace{1cm} h = h_0 + \eps - \mu,\hspace{1cm}\velocity = \boldvec{0} +  \vec{\eta}.
+\end{equation}
+Il suffit ensuite de négliger tous les termes en $\OLandau{\eps\eta}$ et en $\OLandau{\mu\eta}$ qui apparaissent.
+%\begin{refe}
+%	\noindent Le modèle linéaire est obtenu en prenant $\eps = \beta = 0$, donc nous avons $\mu = 0$ ce qui forme un modèle non-dispersif.\\
+%	\begin{equation}
+%		\eps = 0 \Rightarrow \ampl = 0\hspace{1cm} \beta = 0 \Rightarrow b_0 = 0
+%	\end{equation} Le système linéarisé adimensionné est
+%	\begin{subnumcases}{}
+%		\zeta_t + \div[\boldvec{q}] = 0\label{eq:mass_ad}\\
+%		\velocity_t + g\nabla\zeta = -\nabla\bpression\label{eq:momentum_ad}
+%	\end{subnumcases}
+%\end{refe}
+%
+%
+%\begin{align}
+%	\eqref{eq:mass} &\Longrightarrow \eps h_0 \zeta_t + \eps h_0 c_0\left(\eps \div[\zeta\velocity] + \div[\velocity] \right) = 0\\
+%	&\Longrightarrow \zeta_t + c_0 \eps \left( \left[\zeta + \frac{1}{\eps}\right]\div[\velocity] + \velocity \cdot \nabla \zeta\right) = 0\\
+%	&\Longrightarrow \zeta_t + c_0 \eps \div[\left(\zeta + \frac{1}{\eps}\right)\velocity] = 0 
+%\end{align}
+%\begin{subnumcases}{}
+%\eps h_t + \div[\boldvec{q}] = 0,&\text{\textit{(Cons. de la masse)}}\label{eq:mass_ad} \\
+%\boldvec{q}_t + \div[\boldvec{q}\otimes\velocity + \frac{1}{2}gh^2\id] = -\frac{1}{\rho}h\nabla\bpression - gh\nabla\fond.&\text{\textit{(Cons. de $\vec{p}$)}}\label{eq:momemtum_ad}
+%\end{subnumcases}
+
+%\subsection{Autour d'un état stationnaire}
+%\noindent Linéarisons les équations autour d'un état stationnaire, pour plus de simplicité nous étudierons le problème sans bathymétrie, c'est-à-dire, avec $\fond \equiv 0$ prenons $\eps$ tel que $|\eps|$ soit petit et
+%\begin{equation*}
+%	 \simmer{\zeta} = \eps, \simmer{\velocity} = \eps \text{ et }\simmer{h} = h_0+\eps
+%\end{equation*}
+%L'injection des ces quantités dans l'équation linéaire \eqref{eq:mass_ad}, en remplaçant $\boldvec{q}$ par son expression, donne que 
+%\begin{equation}
+%	\zeta_t + \div[\simmer{h}\simmer{\velocity}] = \zeta_t + h_0\div[\simmer{\velocity}] + \OLandau{\eps^2}
+%\end{equation}
+%Tandis que l'injection de cette état stationnaire dans l'équation linéaire \eqref{eq:momentum_ad} donne que
+%\begin{align}
+%		\velocity_t + g\nabla \simmer{\zeta} = - \frac{1}{\rho}\nabla\bpression
+%\end{align}
+%Donc le système linéarisé est
+%\begin{subnumcases}{}
+%	\zeta_t + h_0~\div[\velocity] = 0\nonumber\\
+%	\velocity_t + g\nabla\zeta = - \frac{1}{\rho}\nabla\bpression\nonumber
+%\end{subnumcases}
+%\begin{refe}
+%	Dans la suite nous supposerons que le fluide est de l'eau et que par conséquent $\rho = 1$,  ainsi le système linéarisé est
+%	\begin{subnumcases}{}
+%	\zeta_t + h_0~\div[\velocity] = 0,&\text{\textit{(Cons. de la masse)}}\label{eq:masslin} \\
+%	\velocity_t + g\nabla\zeta = - \nabla\bpression&\text{\textit{(Cons. de $\vec{p}$)}}\label{eq:momentumlin}
+%	\end{subnumcases}
+%	avec les conditions de bords \eqref{eq:surfacecondition}, \eqref{eq:fondcondition}, \eqref{eq:pression_cond} et les contraintes \eqref{eq:inc_contr}, \eqref{eq:irr_contr}. Si $\bpression \equiv \cst$, alors le système constitue \textbf{les équations de Saint-Venant linéarisées}.
+%\end{refe}
+
+\subsection{Vers l'équation des ondes}\label{subsec:eqtondes}
+\noindent Par \eqref{eq:masslin} nous avons que
+\begin{equation}
+\div[\velocity]= -\frac{1}{h_0}\partial_t\zeta\hspace{3mm}\Longrightarrow\hspace{3mm} \div[\velocity]_t = -\frac{1}{h_0}\partial_{tt}\zeta\label{eq:divvelocity}
+\end{equation}
+sous la condition $h_0 \neq 0$, qui est vérifiée car $h_0$ > 0.\\
+De plus, en prenant la divergence de part et d'autres dans l'équation \eqref{eq:momentumlin} et comme le champ de vitesse $\velocity$ est supposé continu en dehors de $\Gamma_0$ (qui est de mesure nulle), alors nous avons
+\begin{equation*}
+-\div[\velocity]_t = g~\div[\nabla\zeta] +\Delta\bpression \overset{\eqref{eq:divvelocity}}{=} \frac{1}{h_0}\partial_{tt}\zeta
+\end{equation*}
+C'est-à-dire
+\begin{equation}
+h_0 \Delta \bpression = \partial_{tt}\zeta - c_0^2\Delta\zeta
+\end{equation}
+avec $c_0 = \sqrt{gh_0}$ (voir \eqref{eq:advariable}).
+\begin{refe}
+%	Ainsi nous obtenons les systèmes suivant
+%	\begin{subnumcases}{ \text{Dans $\Omega_w$ : }}
+%		\partial_t\zeta + h_0~\div[\velocity] = 0\\
+%		\partial_{tt}\zeta - c_0^2\Delta\zeta = 0.
+%	\end{subnumcases}
+%	En notant $\piper{\zeta}_{\Omega_b} = \zeta_b$ nous avons aussi
+%	\begin{subnumcases}{ \text{Dans $\Omega_b$ : }}
+%	\partial_t\zeta_b + h_0~\div[\velocity] = 0\label{eq:zetabmass}\\
+%	\partial_{tt}\zeta_b - c_0^2\Delta\zeta_b = h_0~\Delta \bpression\label{eq:zetabonde}
+%	\end{subnumcases}
+	Ainsi nous obtenons le système suivant
+	\begin{subnumcases}{}
+		\partial_t\zeta + h_0~\div[\velocity] = 0 &\text{dans $\Omega_w\cup\Omega_b$},\label{eq:zetamass}\\
+		\partial_{tt}\zeta - c_0^2\Delta\zeta = 0 &\text{dans $\Omega_w$},\label{eq:zetaonde_w}\\
+		\partial_{tt}\zeta - c_0^2\Delta\zeta = h_0\Delta\bpression &\text{dans $\Omega_b$}.\label{eq:zetaonde_b}
+	\end{subnumcases}
+	avec les contraintes d'incompressibilité \eqref{eq:inc_contr} et d'irrotationalité \eqref{eq:irr_contr}. 
+\end{refe}
+Remarquons que si $\zeta$ est fixe dans $\Omega_b$ alors nous avons simplement que l'équation \eqref{eq:zetamass} devient la contrainte d'incompressibilité et cela revient à résoudre
+\begin{subnumcases}{}
+	\partial_t\zeta + h_0~\div[\velocity] = 0 &\text{dans $\Omega_w$},\\
+	\partial_{tt}\zeta - c_0^2\Delta\zeta = 0 &\text{dans $\Omega_w$},\\
+	\div[\velocity] = 0&\text{dans $\Omega_b$},\\
+	\Delta \bpression = 0&\text{dans $\Omega_b$}.
+\end{subnumcases}
+
+%\begin{subnumcases}{}
+%	\div[\velocity] = 0\\
+%	\Delta \bpression = 0
+%\end{subnumcases}
+%\begin{equation}
+%	\Delta \bpression = 0
+%\end{equation}

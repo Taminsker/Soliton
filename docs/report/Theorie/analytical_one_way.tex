@@ -1,0 +1,305 @@
+
+\section{Solutions progressives et analytiques de l'équation des ondes}
+\noindent Cette section est inspirée d'un document que m'a transmis Mr Ricchiuto intitulé "Travelling solutions : linear shallow water equations".\\
+
+\noindent Le système formé de \eqref{eq:mass} et \eqref{eq:massflux} peut être réécrit de façon simple dans $\Omega_w$ (sans flotteur) dans une direction $\boldvec{d} = \left[\mathbf{d_1}, \mathbf{d_2}\right]^{T}$ :
+\begin{subnumcases}{}
+	\partial_t\zeta + \mathbf{d_1}\partial_x q_1 + \mathbf{d_2}\partial_y q_2 = 0, \label{eq:water_1}\\
+	\partial_t q_1 + \mathbf{d_1}c_0^2\partial_x\zeta = 0,\label{eq:water_2}\\
+	\partial_t q_2 + \mathbf{d_2}c_0^2\partial_y\zeta = 0,\label{eq:water_3}
+\end{subnumcases}
+avec $c_0^2 = gd_0 = gh_0$. La mise sous forme d'un système est relativement simple
+\begin{equation}
+	\partial_t W + \mathbf{d_1}A\partial_x W + \mathbf{d_2}B\partial_y W = \bld{0}, \hspace{6mm}W = \myvector{\zeta}{q_1}{q_2}, \hspace{6mm}A = \begin{bmatrix}
+	0 & 1 & 0\\
+	c_0^2 & 0 & 0\\
+	0 & 0 & 0
+	\end{bmatrix}_{\mathbb{R}^{3\times 3}}, \text{ et }\hspace{6mm} B = \begin{bmatrix}
+	0 & 0 & 1\\
+	0 & 0 & 0\\
+	c_0^2 & 0 & 0
+	\end{bmatrix}_{\mathbb{R}^{3\times 3}}\label{eq:sys_1}
+\end{equation}
+
+\noindent Les matrices $A$ et $B$ peuvent être écrites comme suit
+\begin{equation}
+A = L_{A} D_A R_A, \hspace{3mm} L_A = \begin{bmatrix}
+\frac{1}{c_0} & -\frac{1}{c_0}\\
+1 & 1\\
+0 & 0
+\end{bmatrix}_{\mathbb{R}^{3\times 2}}, \hspace{3mm}D_A= \begin{bmatrix}
+c_0 & 0\\
+0 & -c_0
+\end{bmatrix}_{\mathbb{R}^{2\times 2}}, \hspace{3mm}R_A =\begin{bmatrix}
+\frac{c_0}{2} & \frac{1}{2} & 0\\
+-\frac{c_0}{2} & \frac{1}{2} & 0
+\end{bmatrix}_{\mathbb{R}^{2\times 3}}
+\end{equation}
+
+\begin{equation}
+B = L_B D_B R_B, \hspace{3mm} L_B = \begin{bmatrix}
+\frac{1}{c_0} & -\frac{1}{c_0}\\
+0 & 0\\
+1 & 1
+\end{bmatrix}_{\mathbb{R}^{3\times 2}}, \hspace{3mm}D_B = \begin{bmatrix}
+c_0 & 0\\
+0 & -c_0
+\end{bmatrix}_{\mathbb{R}^{2\times 2}}, \hspace{3mm}R_B = \frac{1}{2}\begin{bmatrix}
+\frac{c_0}{2} & 0 & \frac{1}{2}\\
+-\frac{c_0}{2} & 0 & \frac{1}{2}
+\end{bmatrix}_{\mathbb{R}^{2\times 3}}
+\end{equation}
+Introduisons maintenant les variables caractéristiques
+\begin{equation}
+N^{\bld{x}} = \myvector{\eta^{+\bld{x}}}{\eta^{-\bld{x}}}{}:= R_A W = \myvector{\frac{1}{2}\left(q_1 + c_0\zeta\right)}{\frac{1}{2}\left(q_1 - c_0\zeta\right)}{},
+\end{equation}
+\begin{equation}
+N^{\bld{y}} =\myvector{\eta^{+\bld{y}}}{\eta^{-\bld{y}}}{} := R_B W = \myvector{\frac{1}{2}\left(q_2 + c_0\zeta\right)}{\frac{1}{2}\left(q_2 - c_0\zeta\right)}{}.
+\end{equation}
+Nous pouvons remarquer que
+\begin{subnumcases}{}
+\zeta = \frac{1}{2c_0}\left(\eta^{+\bld{x}} - \eta^{-\bld{x}} +\eta^{+\bld{y}} - \eta^{-\bld{y}}\right),\\
+q_1 = \eta^{+\bld{x}} + \eta^{-\bld{x}},\\
+q_2 = \eta^{+\bld{y}} + \eta^{-\bld{y}}.
+\end{subnumcases}
+\noindent Nous obtenons deux caractérisations de $W$ (une dans la direction $\boldvec{x}$ et une dans la direction $\boldvec{y}$)
+\begin{equation}
+W^{\bld{x}} = L_A N^{\bld{x}}\hspace{4mm}\text{et}\hspace{4mm}W^{\bld{y}} = L_B N^{\bld{y}}.
+\end{equation}
+Nous pouvons dès lors dégager deux systèmes, l'un en multipliant \eqref{eq:sys_1} par $R_A$ et en remplaçant $W$ par $W^{\bld{x}}$ et l'autre $R_B$ et $W^{\bld{y}}$
+\begin{subnumcases}{}
+\partial_tN^{\bld{x}} + \mathbf{d_1}\partial_x D_A N^{\bld{x}} + \mathbf{d_2}\partial_y R_A B L_A N^{\bld{x}}  = 0\\
+\partial_tN^{\bld{y}} + \mathbf{d_1}\partial_x R_BA L_B N^{\bld{y}} + \mathbf{d_2}\partial_y D_B N^{\bld{y}}  = 0
+\end{subnumcases}
+Or nous avons $ R_AB L_A =  R_BA L_B =\bld{ 0}$. Nous obtenons donc les systèmes\\
+\begin{minipage}{0.45\textwidth}
+	\begin{subnumcases}{}
+	\left(\partial_t  + \boldvec{v}^{\bld{d_1}}\cdot \nabla \right)\eta^{+\bld{x}} = 0\\
+	\left(\partial_t  - \boldvec{v}^{\bld{d_1}}\cdot \nabla \right)\eta^{-\bld{x}} = 0
+	\end{subnumcases}
+\end{minipage}
+\begin{minipage}{0.45\textwidth}
+	\begin{subnumcases}{}	
+	\left(\partial_t  + \boldvec{v}^{\bld{d_2}}\cdot \nabla \right)\eta^{+\bld{y}} = 0\\
+	\left(\partial_t  - \boldvec{v}^{\bld{d_2}}\cdot \nabla \right)\eta^{-\bld{y}} = 0
+	\end{subnumcases}
+\end{minipage}\vspace*{3mm}\\
+\noindent où $\boldvec{v}_{\bld{d_1}} = \left(c_0\mathbf{d_1}, 0\right)^{T}$ et $\boldvec{v}_{\bld{d_2}} = \left(0, c_0\mathbf{d_2}\right)^{T}$. Ainsi nous avons les solutions générales\\
+\begin{minipage}{0.49\textwidth}
+	\begin{subnumcases}{}
+	\eta^{+\bld{x}}(\boldvec{x}, t) = \eta^{+\bld{x}}_0(\boldvec{x} - \boldvec{v}_{\bld{d_1}} t)\\
+	\eta^{-\bld{x}}(\boldvec{x}, t) = \eta^{-\bld{x}}_0(\boldvec{x} + \boldvec{v}_{\bld{d_1}} t)
+	\end{subnumcases}
+\end{minipage}
+\begin{minipage}{0.49\textwidth}
+	\begin{subnumcases}{}
+	\eta^{+\bld{y}}(\boldvec{x}, t) = \eta^{+\bld{y}}_0(\boldvec{x} - \boldvec{v}_{\bld{d_2}} t)\\
+	\eta^{-\bld{y}}(\boldvec{x}, t) = \eta^{-\bld{y}}_0(\boldvec{x} + \boldvec{v}_{\bld{d_2}} t)
+	\end{subnumcases}
+\end{minipage}\vspace*{3mm}\\
+Ainsi
+\begin{subnumcases}{}
+	\zeta(\boldvec{x}, t) = \frac{\eta^{+\bld{x}}_0(\boldvec{x} - \boldvec{v}_{\bld{d_1}} t)-\eta^{-\bld{x}}_0(\boldvec{x} + \boldvec{v}_{\bld{d_1}} t) + \eta^{+\bld{y}}_0(\boldvec{x} - \boldvec{v}_{\bld{d_2}} t)-\eta^{-\bld{y}}_0(\boldvec{x} + \boldvec{v}_{\bld{d_2}} t)}{2c_0}\\
+	\boldvec{q}(\boldvec{x}, t) = \myvector{\eta^{+\bld{x}}_0(\boldvec{x} - \boldvec{v}_{\bld{d_1}} t)+\eta^{-\bld{x}}_0(\boldvec{x} + \boldvec{v}_{\bld{d_1}} t)}{\eta^{+\bld{y}}_0(\boldvec{x} - \boldvec{v}_{\bld{d_2}} t)+\eta^{-\bld{y}}_0(\boldvec{x} + \boldvec{v}_{\bld{d_2}} t)}{}
+\end{subnumcases}
+%\begin{subnumcases}{}
+%	\zeta(x, y, t) = \frac{\eta^{+\bld{x}}_0(x - c_0t, y) - \eta^{-\bld{x}}_0(x + c_0t, y)}{2c_0} + \frac{\eta^{+\bld{y}}_0(x, y-c_0t) - \eta^{-\bld{y}}_0(x, y+c_0t)}{2c_0}\\
+%	q_1(x, y, t) = \eta^{+\bld{x}}_0(x - c_0t, y) + \eta^{-\bld{x}}_0(x + c_0t, y)\\
+%	q_2 (x, y, t) = \eta^{+\bld{y}}_0(x, y-c_0t) + \eta^{-\bld{y}}_0(x, y+c_0t)
+%\end{subnumcases}
+
+%\vspace*{5cm}
+%Les matrices $A_0$ et $A_1$ peuvent être diagonalisées comme suit
+%\begin{equation}
+%	A_0 = P_0 D_0 P_0^{-1}, \hspace{3mm} P_0 = \frac{1}{c_0}\begin{bmatrix}
+%	0 & 1 & -1\\
+%	0 & c_0 & c_0\\
+%	c_0 & 0 & 0
+%	\end{bmatrix}, \hspace{3mm}D_0 = c_0\begin{bmatrix}
+%	0 & 0 & 0\\
+%	0 & 1 & 0\\
+%	0 & 0 & -1
+%	\end{bmatrix}, \hspace{3mm}P_0^{-1} = \frac{1}{2}\begin{bmatrix}
+%	0 & 0 & 2\\
+%	c_0 & 1 & 0\\
+%	-c_0 & 1 & 0
+%	\end{bmatrix}
+%\end{equation}
+%\begin{equation}
+%A_1 = P_1 D_1 P_1^{-1}, \hspace{3mm} P_1 = \frac{1}{c_0}\begin{bmatrix}
+%0 & 1 & -1\\
+%c_0 & 0 & 0 \\
+%0 & c_0 & c_0
+%\end{bmatrix}, \hspace{3mm}D_1 = c_0\begin{bmatrix}
+%0 & 0 & 0\\
+%0 & 1 & 0\\
+%0 & 0 & -1
+%\end{bmatrix}, \hspace{3mm}P_1^{-1} = \frac{1}{2}\begin{bmatrix}
+%0 & 2 & 0\\
+%c_0 & 0 & 1\\
+%-c_0 & 0 & 1
+%\end{bmatrix}
+%\end{equation}
+%Introduisons maintenant les variables caractéristiques
+%\begin{equation}
+%	N^{\bld{x}} = \myvector{q_2}{\eta^{+\bld{x}}}{\eta^{-\bld{x}}}:= P_0^{-1} W = \myvector{q_2}{\frac{1}{2}\left(q_1 + c_0\zeta\right)}{\frac{1}{2}\left(q_1 - c_0\zeta\right)},
+%\end{equation}
+%\begin{equation}
+%	N^{\bld{y}} =\myvector{q_1}{\eta^{+\bld{y}}}{\eta^{-\bld{y}}} := P_1^{-1} W = \myvector{q_1}{\frac{1}{2}\left(q_2 + c_0\zeta\right)}{\frac{1}{2}\left(q_2 - c_0\zeta\right)}.
+%\end{equation}
+%Nous pouvons remarquer que 
+%\begin{subnumcases}{}
+%	\zeta = \frac{1}{2c_0}\left(\eta^{+\bld{x}} - \eta^{-\bld{x}} +\eta^{+\bld{y}} - \eta^{-\bld{y}}\right),\\
+%	q_1 = \eta^{-\bld{x}} + \eta^{+\bld{x}},\\
+% 	q_2 = \eta^{-\bld{y}} + \eta^{+\bld{y}}.
+%\end{subnumcases}\\
+%
+%\noindent Nous obtenons deux caractérisations de $W$ (une dans la direction $\boldvec{x}$ et une dans la direction $\boldvec{y}$)
+%\begin{equation}
+%	W^{\bld{x}} = P_0 N^{\bld{x}}\hspace{4mm}\text{et}\hspace{4mm}W^{\bld{y}} = P_1 N^{\bld{y}}.
+%\end{equation}
+%Nous pouvons dès lors dégager deux systèmes, l'un en multipliant \eqref{eq:sys_1} par $P_0^{-1}$ et en remplaçant $W$ par $W^{\bld{x}}$ et l'autre $P_1^{-1}$ et $W^{\bld{y}}$
+%\begin{subnumcases}{}
+%	N^{\bld{x}}_t + \partial_x D_0 N^{\bld{x}} + \partial_y P_0^{-1}A_1 P_0 N^{\bld{x}}  = 0\\
+%	N^{\bld{y}}_t + \partial_x P_1^{-1}A_0 P_1 N^{\bld{y}} + \partial_y D_1 N^{\bld{y}}  = 0
+%\end{subnumcases}
+%et obtenir en négligeant les premières équations\\
+%%\begin{minipage}{0.49\linewidth}
+%\begin{subnumcases}{}
+%%		\partial_t \left(\eta^{+\bld{y}} + \eta^{-\bld{y}}\right) + c_0 \partial_y \left(\eta^{+\bld{x}} - \eta^{-\bld{x}}\right) = 0\label{s:11}\\
+%		\partial_t \eta^{+\bld{x}} + c_0 \partial_x \eta^{+\bld{x}}
+%		=- \frac{c_0}{2} \partial_y \left(\eta^{+\bld{y}} + \eta^{-\bld{y}}\right) \label{s:12}\\
+%		\partial_t \eta^{-\bld{x}} 
+%		- c_0 \partial_x \eta^{-\bld{x}} =+
+%		\frac{c_0}{2} \partial_y \left(\eta^{+\bld{y}} + \eta^{-\bld{y}}\right)	\label{s:13}\\[1em]
+%%		\partial_t \left(\eta^{+\bld{x}} + \eta^{-\bld{x}}\right) + c_0 \partial_x \left(\eta^{+\bld{y}} - \eta^{-\bld{y}}\right) =0 \label{s:21}\\
+%		\partial_t \eta^{+\bld{y}} 
+%		+ c_0 \partial_y \eta^{+\bld{y}} = -\frac{c_0}{2} \partial_x \left(\eta^{+\bld{x}} + \eta^{-\bld{x}}\right)\label{s:22}\\
+%		\partial_t \eta^{-\bld{y}} 
+%		- c_0 \partial_y \eta^{-\bld{y}}= +\frac{c_0}{2} \partial_x \left(\eta^{+\bld{x}} + \eta^{-\bld{x}}\right) \label{s:23}
+%\end{subnumcases}
+%
+%%\begin{subnumcases}{}
+%%	\eqref{s:22}+\eqref{s:23}-\eqref{s:11} \Longrightarrow \partial_y \left(\eta^{+\bld{y}} - \eta^{-\bld{y}}\right) = \partial_y \left(\eta^{+\bld{x}} -\eta^{-\bld{x}}\right)\\
+%%	\eqref{s:12}+\eqref{s:13}-\eqref{s:21} \Longrightarrow \partial_x \left(\eta^{+\bld{y}} - \eta^{-\bld{y}}\right) = \partial_x \left(\eta^{+\bld{x}} -\eta^{-\bld{x}}\right)
+%%\end{subnumcases}
+%%Ainsi
+%%\begin{subnumcases}{}
+%%		\eqref{s:11} \Longrightarrow \partial_t \left(\eta^{+\bld{y}} + \eta^{-\bld{y}}\right) + c_0 \partial_y \left(\eta^{+\bld{y}} - \eta^{-\bld{y}}\right) = 0\\
+%%		\eqref{s:21} \Longrightarrow \partial_t \left(\eta^{+\bld{x}} + \eta^{-\bld{x}}\right) + c_0 \partial_x \left(\eta^{+\bld{x}} - \eta^{-\bld{x}}\right) =0
+%%\end{subnumcases}
+%%\\ \\ \\ 
+%\noindent Prenons maintenant une direction donnée $\boldvec{d} = \myvector{d_1}{d_2}{}_{\mathbb{R}^2}$ avec $\left\|\boldvec{d}\right\|_2 = 1$ alors nous avons simplement
+%\begin{subnumcases}{}
+%	\partial_t \eta^{\bld{d_1}} + 
+%	sign(d_1) c_0 \partial_x \eta^{\bld{d_1}} = -sign(d_1)\frac{c_0}{2}\partial_y \eta^{\bld{d_2}}
+%\end{subnumcases}
+%%
+%%\begin{itemize}[label=$\mybullet$]
+%%	\item Dans la direction $\pm\bld{x} : \eta^{\mp\bld{x}}, \eta^{\cdot\bld{y}} = 0$ nous avons $\eta^{\pm\bld{x}} = \eta_0^{\pm\bld{x}}\left(x \mp c_0 t\right)$
+%%	\item Dans la direction $\pm\bld{y} : \eta^{\mp\bld{y}}, \eta^{\cdot\bld{x}} = 0$ nous avons $\eta^{\pm\bld{y}} = \eta_0^{\pm\bld{y}}\left(y \mp c_0 t\right)$
+%%\end{itemize}
+%%\vspace*{3cm}
+%
+%\begin{subnumcases}{}
+%	\eqref{s:11} -\eqref{s:12} - \eqref{s:13} + \eqref{s:21} \Longrightarrow \partial_t \left(\eta^{+\bld{y}} + \eta^{-\bld{y}}\right) + c_0\partial_y \left(\eta^{+\bld{y}} - \eta^{-\bld{y}}\right) = 0\\
+%	\eqref{s:21} -\eqref{s:22} - \eqref{s:23} + \eqref{s:11} \Longrightarrow \partial_t \left(\eta^{+\bld{x}} + \eta^{-\bld{x}}\right) + c_0\partial_x \left(\eta^{+\bld{x}} - \eta^{-\bld{x}}\right) = 0
+%\end{subnumcases}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%Pour toute direction $\boldvec{d} = \myvector{d^{\bld{x}}}{d^{\bld{y}}}{}$ (avec $\left\| \boldvec{d}\right\|_2 = 1$), nous introduisons la variable caractéristique
+%%\begin{equation}
+%%	N^{\bld{d}} =  d^{\bld{x}} N^{\bld{x}} + d^{\bld{y}} N^{\bld{y}} = \myvector{\bld{k}}{\delta^{+}}{\delta^{-}} := \myvector{\boldvec{d} \cdot \boldvec{q} }{\frac{1}{2}\bld{k} + c_0 \zeta \left(d^{\bld{x}}+ d^{\bld{y}}\right) }{\frac{1}{2}\bld{k} - c_0 \zeta \left(d^{\bld{x}}+ d^{\bld{y}}\right) }
+%%\end{equation}
+%%\noindent Nous appellerons
+%%\begin{equation}
+%%	W^{\bld{d}} := \myvector{\zeta \left(d^{\bld{x}}+ d^{\bld{y}}\right)}{d^{\bld{x}} q_1}{d^{\bld{y}} q_2} \hspace{4mm}\text{donnant}\hspace{4mm} W^{\bld{d}}_t + A_0 \partial_x W^{\bld{d}} +  A_1 \partial_y W^{\bld{d}} = \bld{0}
+%%\end{equation}
+%%\noindent Nous pouvons revenir à $W$ comme
+%%\begin{equation}
+%%W = \boldvec{d}\cdot \myvector{P_0 N^{\bld{x}}}{P_1 N^{\bld{y}}}{} = \myvector{\frac{1}{c_0}\left[d^{\bld{x}}\left( \eta^{+\bld{x}} - \eta^{-\bld{x}}\right) + d^{\bld{y}} \left(\eta^{+\bld{y}} - \eta^{-\bld{y}}\right)\right]}{d^{\bld{x}}\left(\eta^{+\bld{x}} + \eta^{-\bld{x}}\right) + d^{\bld{y}} q_2}{d^{\bld{y}}\left(\eta^{+\bld{y}} + \eta^{-\bld{y}}\right) + d^{\bld{x}} q_1} .
+%%\end{equation}
+%%qui est 
+%%\begin{equation}
+%%	\partial_t \left(\boldvec{d} \cdot  \myvector{\eta^{+\bld{x}} - \eta^{-\bld{x}}}{\eta^{+\bld{y}} - \eta^{-\bld{y}}}{}\right) + c_0 \partial_x \left(\boldvec{d}\cdot\myvector{\eta^{+\bld{x}} + \eta^{-\bld{x}}}{\eta^{+\bld{y}} + \eta^{-\bld{y}}}{}\right)+ c_0 \partial_y \left(\boldvec{d}\cdot\myvector{\eta^{+\bld{x}} + \eta^{-\bld{x}}}{\eta^{+\bld{y}} + \eta^{-\bld{y}}}{}\right) = 0
+%%\end{equation}
+%%\begin{equation}
+%%	\partial_t \left(\boldvec{d}\cdot \myvector{\eta^{+\bld{x}} + \eta^{-\bld{x}}}{q_2}{}\right) + c_0 \partial_x \left(\boldvec{d} \cdot  \myvector{\eta^{+\bld{x}} - \eta^{-\bld{x}}}{\eta^{+\bld{y}} - \eta^{-\bld{y}}}{}\right) = 0
+%%\end{equation}
+%%\begin{equation}
+%%\partial_t \left(\boldvec{d}\cdot \myvector{q_1}{\eta^{+\bld{y}} + \eta^{-\bld{y}}}{}\right) + c_0 \partial_y \left(\boldvec{d} \cdot  \myvector{\eta^{+\bld{x}} - \eta^{-\bld{x}}}{\eta^{+\bld{y}} - \eta^{-\bld{y}}}{}\right) = 0
+%%\end{equation}
+%%SUM
+%%\begin{equation}
+%%\partial_t \left(\boldvec{d} \cdot  \myvector{\eta^{+\bld{x}} +q_1}{\eta^{+\bld{y}} +q_2}{}\right) 
+%%+ c_0 \partial_x \left(\boldvec{d}\cdot\myvector{\eta^{+\bld{x}}}{\eta^{+\bld{y}}}{}\right)
+%%+ c_0 \partial_y \left(\boldvec{d}\cdot\myvector{\eta^{+\bld{x}}}{\eta^{+\bld{y}}}{}\right) = 0
+%%\end{equation}
+%%\begin{equation}
+%%	W = 
+%%\end{equation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Ainsi le système devient
+%\begin{subnumcases}{}
+%	\eta^{-}_t - c_0 \nabla \cdot \eta^{-} = 0\\
+%	\eta^{+}_t + c_0 \nabla \cdot \eta^{+} = 0
+%\end{subnumcases}
+%Ce système d'équations découplées a pour solutions exactes
+%\begin{subnumcases}{}
+%	\eta^{-} (x, y, t) = \eta^{-}_0 (x+ y + c_0 t)\\
+%	\eta^{+} (x, y, t) = \eta^{+}_0 (x+ y - c_0 t)
+%\end{subnumcases}
+%conduisant à
+%\begin{subnumcases}{}
+%\zeta (x, y, t) = \frac{1}{c_0}\left(\eta^{+}_0 (x+ y - c_0 t) - \eta^{-}_0 (x+ y + c_0 t)\right),\\
+%\boldvec{q} (x, y, t) = \eta^{-}_0 (x+ y + c_0 t) + \eta^{+}_0 (x+ y - c_0 t).
+%\end{subnumcases}
+%\noindent Si nous considérons une direction $\boldvec{d} = \myvector{d_1}{d_2}{}$ alors il est toujours possible d'écrire 
+%\begin{equation}
+%\boldvec{d} = \myvector{d_1^{+} - d_1^{-}}{d_1^{+} - d_1^{-}}{}\hspace{3mm}\text{avec}\hspace{3mm}a^{+} = \frac{|a| + a}{2}\text{ et }a^{-} = \frac{|a| - a}{2}
+%\end{equation}
+
+%\vspace*{10cm}
+%\noindent Si nous considérons une onde progressive dans une direction $\boldvec{d} = \myvector{d_1}{d_2}{}$ alors $\eta^{+}$ représente une onde progressant dans la direction $\boldvec{x}+\boldvec{y}$ tandis que $\eta^{-}$ représente une onde progressant dans la direction contraire.\\
+\noindent Par ailleurs, il est toujours possible d'écrire 
+\begin{equation}
+\boldvec{d} = \myvector{\bld{d_1^{+}} - \bld{d_1^{-}}}{\bld{d_2^{+}} - \bld{d_2^{-}}}{}\hspace{3mm}\text{avec}\hspace{3mm}a^{+} = \frac{|a| + a}{2}\text{ et }a^{-} = \frac{|a| - a}{2}
+\end{equation}
+Ainsi, selon $\boldvec{d}$ nous avons\\
+\begin{minipage}{0.49\textwidth}
+	\begin{subnumcases}{}
+	\eta^{+\bld{x}}(\boldvec{x}, t) = \frac{\bld{d_1^{+}}}{\bld{d_1}}\eta^{+\bld{x}}_0(\boldvec{x} - \boldvec{v}_{\bld{d_1}} t)\\
+	\eta^{-\bld{x}}(\boldvec{x}, t) = \frac{\bld{d_1^{-}}}{\bld{d_1}}\eta^{-\bld{x}}_0(\boldvec{x} + \boldvec{v}_{\bld{d_1}} t)
+	\end{subnumcases}
+\end{minipage}
+\begin{minipage}{0.49\textwidth}
+	\begin{subnumcases}{}
+	\eta^{+\bld{y}}(\boldvec{x}, t) = \frac{\bld{d_2^{+}}}{\bld{d_2}}\eta^{+\bld{y}}_0(\boldvec{x} - \boldvec{v}_{\bld{d_2}} t)\\
+	\eta^{-\bld{y}}(\boldvec{x}, t) = \frac{\bld{d_2^{-}}}{\bld{d_2}}\eta^{-\bld{y}}_0(\boldvec{x} + \boldvec{v}_{\bld{d_2}} t)
+	\end{subnumcases}
+\end{minipage}\vspace*{3mm}\\
+\noindent Ainsi selon $\boldvec{d}$ nous avons une simplification possible. Par exemple prenons $a, b\in \mathbb{R}$ et $\boldvec{d} = \left[a^2, -b^2\right]^{T}$ alors \\
+\begin{minipage}{0.49\textwidth}
+	\begin{subnumcases}{}
+	\eta^{+\bld{x}}(\boldvec{x}, t) = \eta^{+\bld{x}}_0(\boldvec{x} - \boldvec{v}_{\bld{d_1}} t)\\
+	\eta^{-\bld{x}}(\boldvec{x}, t) =0
+	\end{subnumcases}
+\end{minipage}
+\begin{minipage}{0.49\textwidth}
+	\begin{subnumcases}{}
+	\eta^{+\bld{y}}(\boldvec{x}, t) =0\\
+	\eta^{-\bld{y}}(\boldvec{x}, t) = \eta^{-\bld{y}}_0(\boldvec{x} + \boldvec{v}_{\bld{d_2}} t)
+	\end{subnumcases}
+\end{minipage}\vspace*{3mm}\\
+\begin{equation}
+	\myvector{\eta^{-\bld{x}}_{0}}{\eta^{+\bld{y}}_{0}}{} = \boldvec{0} \hspace{3mm}\Longrightarrow\hspace{3mm} \boldvec{q} = \boldvec{c_0}\zeta,
+\end{equation}
+sous la notation $\boldvec{c_0} = \myvector{c_0}{c_0}{}$, ainsi
+\begin{equation}
+	\boldvec{q}_t = \boldvec{c_0}\zeta_t, \hspace{4mm}\text{et}\hspace{4mm} \div[\boldvec{q}] = c_0\partial_x\zeta + c_0 \partial_y\zeta 
+\end{equation}
+Ainsi, le système formé par \eqref{eq:water_1}-\eqref{eq:water_3} devient
+\begin{subnumcases}{}
+	\zeta_t + c_0\bld{d_1} \partial_x \zeta+ c_0\bld{d_2} \partial_y \zeta= 0\\
+	\zeta_t + c_0 \bld{d_1} \partial_x\zeta = 0\\
+	\zeta_t + c_0 \bld{d_2} \partial_y \zeta = 0
+\end{subnumcases}

@@ -1,0 +1,39 @@
+\section{Définitions propres au flotteur}
+\noindent Dans ce stage, nous n'avons regardé que des flotteurs indéformables, c'est-à-dire que les distances intérieures dans celui-ci sont conservées au cours du temps sous les différents déplacements. Pour plus de commodités nous donnons le schéma suivant :
+\begin{figure}[H]
+	\centering
+	\incfig{0.8}{Images/flotteur}
+	\caption{Modèle 2D - caractéristiques du flotteur.}
+	\label{fig:2dflotteur}
+\end{figure}
+\noindent Nous rappelons que nous avons défini $\Omega_b$ comme le domaine associé au flotteur, correspondant à la partie immergée du flotteur.
+En conséquence, nous définissons plusieurs variables associées à celui-ci : 
+\begin{itemize}[label=$\mybullet$]
+%	\item Nous notons $\mathcal{C}(t)$ le domaine 3D correspondant à la partie de flotteur qui est immergée.
+	\item Le centre de masse $\mathcal{G} (t) = \left(x_\mathcal{G} (t), y_\mathcal{G} (t), z_\mathcal{G} (t) \right)\in\mathbb{R}^3$ du flotteur. Point auquel nous assimilons le flotteur dans l'ensemble de ses mouvements. En particulier la vitesse axiale est donnée par
+	\begin{equation}
+		\velocity_\mathcal{G} = \left(\dot{x}_\mathcal{G}(t), \dot{y}_\mathcal{G}(t), \dot{z}_\mathcal{G}(t)\right)\in\mathbb{R}^3.
+	\end{equation}
+	Et une accélaration
+	\begin{equation}
+		\boldvec{a}_\mathcal{G} = \frac{d}{dt}\velocity_\mathcal{G} = \left(\ddot{x}_\mathcal{G}(t), \ddot{y}_\mathcal{G}(t), \ddot{z}_\mathcal{G}(t)\right)\in\mathbb{R}^3.
+	\end{equation}
+	\item Nous notons l'extension naturelle à $\mathbb{R}^3$ des coordonnées positions $\left(x, y\right)^{T}\in \Omega_b\subset \mathbb{R}^2$ comme le point à la surface 
+	\begin{equation}
+		\zetasurf(x, y, t) = \myvector{x}{y}{\zeta (x, y, t)} \in \mathbb{R}^3
+	\end{equation}
+	\item Dans un premier temps, nous définissons la vitesse angulaire du flotteur, qui ne dépend pas du point où nous l'exprimons, comme
+	\begin{equation}
+		\boldvec{\omega}(t) = \myvector{\omega_x(t)}{\omega_y(t)}{\omega_z(t)}\in\mathbb{R}^3
+	\end{equation}
+	\item Dans un second temps, nous définissons la vitesse de translation du flotteur exprimé en un point de sa surface immergée (elle est également valable en n'importe quel point du flotteur en changeant la définition de $\bld{\underline{\zeta}}$) comme
+	\begin{equation}
+		\velocity_b(x, y, t) = \velocity_\mathcal{G}(t) + \boldvec{\omega}(t) \times \boldvec{\mathcal{G}\zetasurf}
+	\end{equation}
+	où 
+	\begin{equation}
+		\boldvec{\mathcal{G}\zetasurf}(t) = \zetasurf(x, y, t) - \mathcal{G}(t) = \myvector{x - x_\mathcal{G}(t)}{y - y_\mathcal{G}(t)}{\zeta (x, y, t) - z_\mathcal{G}(t)}
+	\end{equation} qui est, en accord avec \citet{lannes_dynamics_2017}, l'expression standard pour déterminer le champ de vitesse d'un solide en mécanique des solides.
+	\item Nous désignerons la masse du flotteur par $\mass{b}$.
+\end{itemize}
+

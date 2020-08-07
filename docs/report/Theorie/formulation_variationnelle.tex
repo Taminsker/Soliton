@@ -1,0 +1,26 @@
+%\section{Formulation variationnelle}
+%
+%\noindent Reprenons le système défini en \ref{subsub:systeme} et l'équation des ondes de la section \ref{subsec:eqtondes}. Multiplions cette dernière par une fonction $\varphi$ dans un espace fonctionnel à préciser et intégrons sur $\Omega_f = \Omega_w\cup\Omega_b$ 
+%\begin{refe}
+%	Pour rappel :\\
+%	\begin{subnumcases}{}
+%	u_x + v_y = 0, &\text{\textit{(Cont. incompressible)}}\nonumber\\
+%	v_x - u_y = 0, &\text{\textit{(Cont. irrotationnel)}}\nonumber\\
+%	\zeta_t + \div[\boldvec{q}] = 0,&\text{\textit{(Cons. de la masse)}}\nonumber \\
+%	\boldvec{q}_t + d_0 \nabla \left(g \zeta + \frac{1}{\rho}\bpression\right) = \boldvec{0}.&\text{\textit{(Cons. du flux de masse)}}\nonumber
+%	\end{subnumcases}
+%	avec la notation $\boldvec{q} = h\velocity$ et rappelons $d_0=h_0 - \mathds{1}_{\Omega_b}D_0$.\\
+%	Et
+%	\begin{equation*}
+%	\zeta_{tt} - c_0^2 \Delta \zeta = d_0 \Delta \bpression
+%	\end{equation*}
+%\end{refe}
+%
+%\noindent Nous utiliserons la notation produit scalaire sur $\ell^2$, les indices $w, b$ et $f$ font respectivement références aux domaine $\Omega_w$, $\Omega_b$ et $\Omega_f$. Nous partons de l'équation des ondes \eqref{eq:ondes},
+%\begin{align*}
+%\hspace{1cm} & \scal{\zeta_{tt} - c_0^2 \Delta \zeta}{\varphi}_f  = \scal{d_0\Delta \bpression}{\varphi}_f\\
+%\overset{}{\hfill\Longrightarrow} \hspace{1cm}  &\scal{\zeta_{tt}}{\varphi}_f - gh_0 \scal{\Delta \zeta}{\varphi}_f + gD_0 \scal{\Delta \zeta}{\varphi}_b  = \left(h_0 - D_0\right)\scal{\Delta\bpression}{\varphi}_b\\
+%\overset{\eqref{op:greenh2_nablas}}{\hfill\Longrightarrow} \hspace{1cm} &
+%\scal{\zeta_{tt}}{\varphi}_f + gh_0 \left(\scal{\nabla\zeta}{\nabla\varphi}_f -  \scal{\nabla \zeta \cdot \nvec}{\varphi}_{\Gamma_{out}}\right) - gD_0 \left(\scal{\nabla \zeta}{\nabla\varphi}_b - \scal{\nabla \zeta \cdot \nvec}{\varphi}_{\Gamma_{in}}\right)\\
+%&\hspace{2cm}= \left(D_0 - h_0\right)\left(\scal{\nabla\bpression}{\nabla\varphi}_b - \scal{\nabla \bpression \cdot \nvec}{\varphi}_{\Gamma_{in}}\right)
+%\end{align*}

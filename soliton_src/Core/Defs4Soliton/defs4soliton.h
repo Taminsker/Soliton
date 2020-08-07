@@ -21,7 +21,6 @@ typedef int SOLITON_RETURN;
     if (x != SOLITON_SUCCESS)\
         return SOLITON_FAILURE
 
-
 #define COLOR_BLACK     "\033[1;30m"
 #define COLOR_RED       "\033[1;31m"
 #define COLOR_GREEN     "\033[1;32m"
@@ -57,6 +56,5 @@ typedef int SOLITON_RETURN;
     #define ERROR           std::cerr << COLOR_RED      << "ERROR : "
     #define BLINKRETURN     ""
 #endif
-
 
 #endif // DEFS4SOLITON_H

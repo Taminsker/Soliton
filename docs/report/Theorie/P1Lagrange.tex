@@ -1,0 +1,95 @@
+
+\section{Éléments P1-Lagrange}
+\noindent Dans cette section nous réécrirons les problèmes variationnels obtenus précédemment en P1-Lagrange avec une méthode de Galerkin. Nous supposerons la méthode des éléments finis P1 en 2D déjà connue est seuls les calculs les plus importants seront détaillés.\\
+
+\noindent Nous rappelons l'élément de référence $2D$ utilisé dans la suite des développements :
+\begin{figure}[H]
+	\centering
+	\incfig{0.5}{Images/triangle_ref}
+\caption[Élément de référence en \textbf{2D}]{Élément de référence en \textbf{2D}}
+\label{fig:elementreference}
+\end{figure}
+\noindent Où la fonction de passage entre l'élément de référence $\widehat{K}$ et un élément $K$ est
+\begin{equation}
+	\mathcal{T}_{\widehat{K}\mapsto K} (\xi, \eta) := \myvector{x}{y}{} =  \left[\begin{array}{cc}
+	x_2-x_1 & x_3-x_1\\
+	y_2-y_1 & y_3-y_1\\
+	\end{array}\right] \myvector{\xi}{\eta}{} + \myvector{x_1}{y_1}{}
+\end{equation}
+avec comme matrice jacobienne
+\begin{equation}
+	\mathbf{J}_{\mathcal{T}_{\widehat{K}\mapsto K}} := \text{Jac}\left[\mathcal{T}_{\widehat{K}\mapsto K}\right] = \left[\begin{array}{cc}
+	x_2-x_1 & x_3-x_1\\
+	y_2-y_1 & y_3-y_1\\
+	\end{array}\right].
+\end{equation}
+Remarquons que 
+\begin{equation}
+	\text{det}\left(\mathbf{J}_{\mathcal{T}_{\widehat{K}\mapsto K}}\right) = 2\aire{K} =: 2\,\text{Aire} (K)
+\end{equation}
+et donc nous avons
+\begin{equation*}
+	\mathbf{J}_{\mathcal{T}_{\widehat{K}\mapsto K}}^{-1}=\frac{1}{2\aire{K}}\text{Com}\left(\mathbf{J}_{\mathcal{T}_{\widehat{K}\mapsto K}}\right)^{T}=\frac{1}{2\aire{K}}\left[\begin{array}{cc}
+	y_3-y_1 & x_1-x_3\\
+	y_1-y_2 & x_2-x_1\\
+\end{array}\right].
+\end{equation*}
+Nous rappelons aussi les 3 fonctions d'interpolations P1 sur l'élément de référence, ainsi que leur gradients
+\begin{center}
+\begingroup
+\setlength{\tabcolsep}{10pt} % Default value: 6pt
+\renewcommand{\arraystretch}{1.5} % Default value: 1
+\begin{tabular}{|c|c|c|}
+	\hline
+	$i$ & $\widehat{\varphi_i}$ & $\widehat{\nabla} \widehat{\varphi_i}$\\
+	\hline
+	$1$ & $1-\xi-\eta$ & $\left[-1, -1\right]^{T}$\\
+	$2$ & $\xi$ & $\left[1, 0\right]^{T}$\\
+	$3$ & $\eta$ & $\left[0, 1\right]^{T}$\\
+	\hline	
+\end{tabular}
+\endgroup
+\end{center}
+
+\noindent Remarquons aussi que $\forall i, j \in \left\{1, 2, 3\right\}$
+\begin{equation}
+\int_{\widehat{K}}\widehat{\varphi_i}\widehat{\varphi_j} = \delta_{ij}\frac{1}{24} + \frac{1}{24}\label{eq:integrale_phiij}
+\end{equation}
+Nous rappelons aussi la formule de changement de variables dans une intégrale en annexe \eqref{op:changementdevariables}.
+
+\subsection{Système dans $\Omega_w$}
+\noindent Nous définissons la discrétisation de $\zeta$ sur un élément $K$ comme 
+\begin{equation}
+	\left[\zeta\right]^{K} := \left\{\zeta_j\right\}_{j=\overline{1, 3}}
+\end{equation}
+et une approximation de la fonction $\chi_{dam}$ sur $K$ comme
+\begin{equation}
+	\widetilde{\chi_{dam}}^{K} := \sum_{j=1}^{3}\frac{\chi_{dam} (x_j, y_j)}{3}.
+\end{equation}
+
+\subsubsection{Partie temporelle}
+\noindent La partie temporelle de la formulation variationnelle est contenue dans $\bld{a^{time/dam}}$ \eqref{eq:a_time_dam_1}. Nous notons l'opérateur de dérivée seconde $T^{(2)}$ et l'opérateur de dérivée première $T^{(1)}$ : nous y reviendrons ensuite.\\
+Après calculs, $\bld{a^{time/dam}}$ en formulation variationnelle élémentaire devient
+\begin{equation}
+	\left[\bld{a^{time/dam}}\right]^{K} = \aire{K}R T^{(2)} \left[\zeta\right]^{K} + \widetilde{\chi_{dam}}^{K}\aire{K} R T^{(1)} \left[\zeta\right]^{K}
+\end{equation}
+avec
+\begin{equation}
+R = \frac{1}{24}\begin{bmatrix}
+1 & 2 & 2\\
+2 & 1 & 2\\
+2 & 2 & 1
+\end{bmatrix}
+\end{equation}
+\subsubsection{Partie spatiale}
+\noindent Prenons en premier lieu la partie sur $\widetilde{\Omega_w}$ de \eqref{eq:a_space_1} :
+\begin{equation}
+	\left[W\right]_{ij} = \iint_{K} \nabla \varphi_i\cdot\nabla \varphi_j= 2\aire{K} \iint_{\widehat{K}}  \mathbf{J}_{\mathcal{T}_{\widehat{K}\mapsto K}}^{-T}\widehat{\nabla} \widehat{\varphi_i} \cdot \mathbf{J}_{\mathcal{T}_{\widehat{K}\mapsto K}}^{-T} \widehat{\nabla} \widehat{\varphi_j}
+\end{equation}
+
+\noindent Prenons en premier lieu \eqref{eq:a_sb_1} :
+\begin{equation}
+\left[R\right]_{ij} = \iint_{K} \nabla \varphi_i\cdot\nabla \varphi_j \,dxdy = 2\aire{K} \iint_{\widehat{K}}  \left(\nabla \varphi_i\right)^{T}\mathbf{J}_{\mathcal{T}_{\widehat{K}\mapsto K}}^{-1} \mathbf{J}_{\mathcal{T}_{\widehat{K}\mapsto K}}^{-T} \nabla \varphi_j  \,d\xi d\eta
+\end{equation}
+
+\subsection{Système dans $\Omega_b$}

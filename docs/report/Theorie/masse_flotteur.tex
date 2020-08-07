@@ -1,0 +1,14 @@
+\section{La masse du flotteur}
+\noindent Premièrement, rappelons la seconde loi de Newton 
+\begin{equation}
+	\mass{b}\boldvec{a}_\mathcal{G} = \sum_{i}\,\boldvec{F_i}
+\end{equation}
+où $\mass{b}$ désigne la masse du flotteur et $\sum_{i}\,\boldvec{F_i}$ la somme des forces extérieures subies par le corps. Dans notre cas, seuls le poids et les forces découlant de la pression entrent en jeu, c'est-à-dire que nous avons
+\begin{subnumcases}{}
+\boldvec{F_1} = \mass{b}\boldvec{g}  = - g\mass{b}\boldvec{e}_z \hspace{1cm}&\text{(poids)},\\
+\boldvec{F_2} = \iint_{\Omega_b}\mathcal{P}\, \normalvec\,dxdy&\text{(force issue de la pression $\mathcal{P}$)}.
+\end{subnumcases}
+avec $\mathcal{P} = \rho g \zeta + \bpression$ définie à \eqref{eq:pressiondefinition}. Ainsi
+\begin{equation}
+\mass{b}\boldvec{a}_\mathcal{G} = - g\mass{b}\boldvec{e}_z + \rho g\iint_{\Omega_b}\zeta\, \normalvec\,dxdy + \rho \iint_{\Omega_b}\bpression_{b}\, \normalvec\,dxdy \label{eq:massflotteur_1}
+\end{equation}

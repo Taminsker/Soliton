@@ -1,0 +1,256 @@
+\documentclass[11pt,a4paper]{report}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\graphicspath{ {Images/} }
+\usepackage[french]{babel}
+\frenchbsetup{StandardLists=true}
+\usepackage[light, math]{kurier}
+\usepackage[T1]{fontenc}
+\usepackage[dvipsnames]{xcolor}
+\definecolor{MyBlue}{RGB}{0, 68, 128}
+\definecolor{MyYellow}{RGB}{255, 148, 0}
+\colorlet{MyRed}{red!60!black}
+\definecolor{MyGreen}{RGB}{38, 78, 54}
+
+\usepackage{mathtools}
+\usepackage{tikz}
+\usepackage{amsmath, amssymb, amsthm}  
+\usepackage{upgreek} 
+\usepackage{esint}      
+\usepackage{stmaryrd}  
+\usepackage{ifthen}
+\usepackage{amstext, amsfonts, a4}
+\usepackage{dsfont}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=MyRed,
+	citecolor=MyBlue,
+	filecolor=magenta,      
+	urlcolor=cyan,
+	bookmarks=true
+}
+\usepackage[ruled,vlined, french, onelanguage]{algorithm2e}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{multicol}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{pgffor}
+\usepackage{nicefrac} 
+\usepackage[labelfont=bf]{subcaption}
+\usepackage{cases}
+\usepackage[square, numbers]{natbib}
+\bibliographystyle{dinat}
+\usepackage[nottoc]{tocbibind}
+%\usepackage{calrsfs}
+%\DeclareMathAlphabet{\pazocal}{OMS}{zplm}{m}{n}
+
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\small\textsc{Rapport de Stage}}
+\lhead{\small\leftmark}
+\rfoot{Page \thepage}
+
+\usepackage{euscript}
+\usepackage{cancel}
+\usepackage{mathabx}
+
+\newboolean{AllDisp}
+\setboolean{AllDisp}{true}
+
+\newcommand{\Disp}[1]{\ifthenelse{\boolean{AllDisp}}{#1}{}}
+
+\usepackage{import}
+\usepackage{xifthen}
+\usepackage{pdfpages}
+\usepackage{transparent}
+\usepackage{cancel}
+
+\newcommand{\incfig}[2]{%
+	\def\svgwidth{#1\textwidth}
+	\centering
+	\import{./figures/}{#2.pdf_tex}
+}
+
+\usepackage[framemethod=TikZ]{mdframed}
+\usepackage{xargs}
+%\usepackage{yfonts}
+
+%\numberwithin{equation}{section}
+%\renewcommand{\thechapter}{\Roman{chapter}}
+%\renewcommand{\theequation}{\thechapter.\arabic{equation}} 
+\newenvironment{refe}[1][]{%
+	\ifstrempty{#1}%
+	{}%
+	{\noindent\textsc{#1}}%
+	%   
+	\mdfsetup{
+		backgroundcolor=black!7,
+		linecolor=red!60!black,
+		linewidth=2pt,
+		innerleftmargin=10pt,
+		topline=false,
+		bottomline = false,
+		rightline=false,
+		leftline=true
+		%		frametitleaboveskip=\dimexpr-\ht\strutbox\relax
+	}
+	\begin{mdframed}[] }{\end{mdframed}\vspace{3mm}}
+
+\newcommand{\velocity}{\overrightarrow{\boldsymbol{u}}}
+\newcommand{\myvector}[3]{\left[\begin{array}{c}
+		#1\\
+		#2\\
+		#3
+	\end{array}\right]}
+\newcommand{\grad}{\text{grad}~}
+%\newcommand{\divg}{\textcolor{MyRed}{\overrightarrow{\textbf{div}}}}
+\renewcommand{\div}[1][]{\textbf{div}\ifstrempty{#1}{~}{\left(#1\right)}}
+%\newcommand{\rot}{\text{rot}~}
+\newcommand{\rot}[1][]{\overrightarrow{\textbf{rot}}\ifstrempty{#1}{~}{\left(#1\right)}}
+\newcommand{\dmat}[1][]{{\partial_{\text{Mat}} \ifstrempty{#1}{~}{\left(#1\right)}}}
+\newcommand{\md}{\text{d}}
+\newcommand{\madd}{\mathbf{M}_{add}}
+\newcommand{\mass}[1]{\mathfrak{m}_{\mathfrak{#1}}}
+\newcommand{\vol}{\EuScript{V}}
+\newcommand{\surf}{\mathcal{S}}
+\newcommand{\lhs}{\hspace{3mm}}
+\newcommand{\thvector}[3]{#1 \lhs #2 \lhs #3}
+\newcommand{\id}{\mathcal{I}}
+\newcommand{\nvec}{\boldsymbol{\vec{n}}}
+\newcommand{\gvec}{\boldsymbol{\vec{g}}}
+\newcommand{\piper}[1]{\left. #1 \right|}
+\newcommand{\fond}{\mathfrak{B}}
+\newcommand{\nvarchi}{\boldsymbol{P}_A}
+\newcommand{\archi}{\overrightarrow{\nvarchi}}
+%\newcommand{\bpression}{\breve{\Pi}}
+\newcommand{\bpression}{\Pi}
+\newcommand{\qvec}{\boldsymbol{\vec{q}}}
+\newcommand{\boldvec}[1]{\overrightarrow{\boldsymbol{#1}}}
+\newcommand{\onabla}[1]{\boldvec{\nabla_{#1}}}
+\newcommand{\mnabla}{\stackrel{\sim}{\smash{\nabla}\rule{0pt}{1.1ex}}}
+\newcommand{\mDelta}{\stackrel{\sim}{\smash{\Delta}\rule{0pt}{1.1ex}}}
+\newcommand{\cst}{\text{C}\text{\tiny st}}
+\newcommand{\mybullet}{\textcolor{MyRed}{\bullet}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\simmer}[1]{\overset{\sim}{#1}}
+\newcommand{\OLandau}[1]{\mathcal{O}\left(#1\right)}
+\newcommand{\mbrac}[1]{\llbracket #1 \rrbracket}
+\newcommand{\ampl}{A}
+\newcommand{\bld}[1]{\boldsymbol{#1}}
+\newcommand{\tostar}[1]{{{#1}^{*}}}
+\newcommand{\tostars}[2]{{{\tostar{#1}}_{\tostar{#2}}}}
+\newcommand{\scal}[2]{\left<#1,#2\right>}
+\newcommand{\tensor}[1]{\overline{\overline{#1}}}
+\newcommand{\zetasurf}{\underline{\bld{\zeta}}}
+\newcommand{\normalvec}{\boldvec{\mathfrak{n}}}
+\newcommand{\outngamma}{\boldvec{\mathtt{n}}}
+\newcommand{\outtgamma}{\boldvec{\mathtt{t}}}
+\newcommand{\dgamma}{\boldvec{\mathtt{d}}}
+\newcommand{\mapgamma}{\mathds{M}}
+\newcommand{\dunderline}[1]{\underline{\underline{#1}}}
+\newcommand{\pression}[2]{P_{\left\{#1, \bld{#2}\right\}}}
+\newcommand{\wall}[1]{\text{Wall}^{#1}}
+%\newcommand{\tostar}[1]{\overset{\widehat{*}}{#1}}
+\newcommand{\un}{\mathfrak{1}}
+\newcommand{\deux}{\mathfrak{2}}
+\newcommand{\aire}[1]{\left|#1\right|}
+\usepackage{listofitems}
+
+\newcommand{\sob}[2][]{%
+	\ifthenelse{\equal{#2}{}}{
+		\mathcal{H}^{1}
+	}{
+		\readlist*\firstitem{#2}%
+		\ifnum\firstitemlen=1\relax%
+		{
+			\mathcal{H}^{\firstitem[1]}
+		}
+		\else%
+		{
+			\ifnum\firstitemlen=2\relax%
+			{
+				\mathcal{H}^{\firstitem[1]}_{\firstitem[2]}
+			}
+			\else%
+			{
+				\ifnum\firstitemlen=3\relax%
+				{
+					\mathcal{\firstitem[1]}^{\firstitem[2], \,\firstitem[3]}
+				}
+				\fi%
+			}
+			\fi%
+		}
+		\fi%
+	}
+	\ifthenelse{\equal{#1}{}}{}{\left(#1\right)}
+%	\ifstrempty{#1}%
+%	{}
+%	{
+%		\left(\seconditem[1]\right)
+%	}
+%	\fi		
+}
+\allowdisplaybreaks
+
+\begin{document}
+\Disp{\include{TitlePage/titlepage}}
+
+\Disp{\include{TableOfContents/tableofcontents}}
+
+\chapter{Considérations théoriques pour la surface libre}
+\input{Theorie/equations_euler}
+\input{Theorie/ondes_lineaire_2}
+\input{Theorie/couplage}
+
+\chapter{Considérations théoriques pour le flotteur}
+\input{Theorie/flotteur_def}
+\input{Theorie/rotations_deplacements}
+\input{Theorie/masse_flotteur}
+\input{Theorie/added_mass}
+
+\chapter{Modèle de résolution}
+\input{Theorie/analytical_one_way}
+\input{Theorie/formulation_variationnelle}
+\input{Theorie/sbm}
+\input{Theorie/P1Lagrange}
+
+\chapter{Résultats numériques}
+
+\chapter{Waflow : Wa(ter)Flow}
+
+\citet{bocchi_compressible-incompressible_2019}
+\citet{bosi_spectral_2019}
+\citet{burman_ghost_2010}
+\citet{casulli_unstructured_2000}
+\citet{chouly_hdr}
+\citet{chouly_nitsche_2017}
+\citet{darrozes_mecanique_1998}
+\citet{lannes_dynamics_2017}
+\citet{leveque_numerical_1992}
+\citet{li_shifted_2020}
+\citet{main_shifted_2018}
+\citet{main_shifted_2018_2}
+\citet{nouveau_high-order_2019}
+\citet{Pons2018}
+\citet{song_shifted_2018}
+\citet{toro_riemann_2009}
+\citet{vallis_atmospheric_2006}
+\citet{wahl}
+%\medskip
+
+
+\Disp{
+	\include{TableOfFigures/tableoffigures}
+%	\addcontentsline{toc}{chapter}{Bibliographie}
+%	\printbibliography
+	\selectlanguage{french}
+	\bibliography{references.bib}
+}
+\appendix
+\include{Annexes/mathematique}
+\end{document}

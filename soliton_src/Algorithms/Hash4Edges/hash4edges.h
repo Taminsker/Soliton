@@ -27,7 +27,7 @@ SOLITON_RETURN AddToHashMap (SolitonHashMap* map, std::vector <SolitonHashCell *
 SOLITON_RETURN BuildEdgesWithHashMap (Mesh* mesh);
 
 //long int HashFunction (std::vector <int> idx, int KeyGenerator);
-std::string HashFunction (std::vector <int> idx);
+std::string HashFunction (std::vector <Point*>* pointlist);
 
 void Print (SolitonHashMap* map, std::string name);
 
