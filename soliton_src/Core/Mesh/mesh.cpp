@@ -4,13 +4,16 @@
 #include "../Point/point.h"
 #include "../HetContainer/hetcontainer.h"
 
-#include <Core/Defs4Soliton/defs4soliton.h>
+#include <ProgDef/proddef.h>
+#include <Core/EnumClass/enumclass.h>
+#include <IO/parsers.h>
 
 Mesh::Mesh () :
     m_pointsdata (new PointsData (&m_points)),
     m_cellsdata (new CellsData (&m_cells)),
     m_edgesdata (new EdgesData (&m_edges)),
-    m_name ("no-name-selected")
+    m_name ("no-name-selected"),
+    m_h (1.)
 {}
 
 Mesh::~Mesh ()
@@ -64,7 +67,6 @@ EdgesData* Mesh::GetEdgesData () const
 void Mesh::AddPoint (Point * p)
 {
     m_points.push_back (p);
-//    m_pointsdata->Add (p->)
     return;
 }
 
@@ -158,6 +160,17 @@ std::string Mesh::GetName () const
     return m_name;
 }
 
+void Mesh::SetPrescribedSize(double h)
+{
+    m_h = h;
+    return;
+}
+
+double Mesh::GetPrescribedSize ()
+{
+    return m_h;
+}
+
 void Mesh::Print () const
 {
     HEADERFUN("Mesh::Print");
@@ -174,50 +187,77 @@ void Mesh::Print () const
     INFOS << SEPARATOR << ENDLINE;
     INFOS << COLOR_BLUE << "CELLS TYPE :" << ENDLINE;
 
-    for (int type = VTK_EMPTY_CELL; type < VTK_NUMBER_OF_CELL_TYPES; ++type)
+    for (VTK_CELL_TYPE type : EnumClass<VTK_CELL_TYPE>())
     {
-        count = CountCellType (VTKCellType(type));
+        count = CountCellType (type);
         if (count > 0)
-            INFOS << "Number of " << GetNameVTKType(VTKCellType(type)) << " : \t" << count << ENDLINE;
+            INFOS << "Number of " << type << " : \t" << count << ENDLINE;
     }
 
     INFOS << SEPARATOR << ENDLINE;
     INFOS << COLOR_BLUE << "EDGES TYPE :" << ENDLINE;
 
-    for (int type = VTK_EMPTY_CELL; type < VTK_NUMBER_OF_CELL_TYPES; ++type)
+    for (VTK_CELL_TYPE type : EnumClass<VTK_CELL_TYPE>())
     {
-        count = CountEdgeType (VTKCellType(type));
+        count = CountEdgeType (type);
         if (count > 0)
-            INFOS << "Number of " << GetNameVTKType(VTKCellType(type)) << " : \t" << count << ENDLINE;
+            INFOS << "Number of " << type << " : \t" << count << ENDLINE;
+    }
+
+    INFOS << SEPARATOR << ENDLINE;
+    INFOS << COLOR_BLUE << "POINTS TAG :" << ENDLINE;
+    HetInt::Array* tagvec = GetPointsData ()->GetIntArrays ()->Get (NAME_TAG_PHYSICAL);
+
+    if (tagvec != nullptr)
+    {
+        for (TAG_PHYSICAL tag : EnumClass<TAG_PHYSICAL>())
+        {
+            count = 0;
+            for (auto tagid : tagvec->vec)
+                if (static_cast<TAG_PHYSICAL>(tagid) == tag)
+                    count++;
+
+            if (count > 0)
+                INFOS << "Number of tag " << tag << " : \t" << count << ENDLINE;
+        }
     }
 
     INFOS << SEPARATOR << ENDLINE;
     INFOS << COLOR_BLUE << "CELLS TAG :" << ENDLINE;
+    tagvec = GetCellsData ()->GetIntArrays ()->Get (NAME_TAG_PHYSICAL);
 
-    auto tagvec = m_cellsdata->GetIntArrays ()->Get (0);
     if (tagvec != nullptr)
-        for (int i = 0; i < 10; ++i)
+    {
+        for (TAG_PHYSICAL tag : EnumClass<TAG_PHYSICAL>())
         {
             count = 0;
             for (auto tagid : tagvec->vec)
-                if (tagid == i) count++;
+                if (static_cast<TAG_PHYSICAL>(tagid) == tag)
+                    count++;
+
             if (count > 0)
-                INFOS << "Number of tag " << i << " (" << m_tag_physical.at (std::size_t (i-1)) << ") : \t" << count << ENDLINE;
+                INFOS << "Number of tag " << tag << " : \t" << count << ENDLINE;
         }
+    }
 
     INFOS << SEPARATOR << ENDLINE;
     INFOS << COLOR_BLUE << "EDGES TAG :" << ENDLINE;
+    tagvec = GetEdgesData ()->GetIntArrays ()->Get (NAME_TAG_PHYSICAL);
 
-    tagvec = m_edgesdata->GetIntArrays ()->Get (0);
     if (tagvec != nullptr)
-        for (int i = 1; i < 10; ++i)
+    {
+        for (TAG_PHYSICAL tag : EnumClass<TAG_PHYSICAL>())
         {
             count = 0;
             for (auto tagid : tagvec->vec)
-                if (tagid == i) count++;
+                if (static_cast<TAG_PHYSICAL>(tagid) == tag)
+                    count++;
+
             if (count > 0)
-                INFOS << "Number of tag " << i << " (" << m_tag_physical.at (std::size_t (i-1)) << ") : \t" << count << ENDLINE;
+                INFOS << "Number of tag " << tag << " : \t" << count << ENDLINE;
         }
+    }
+
     INFOS << SEPARATOR << ENDLINE;
     INFOS << COLOR_BLUE << "CELLS DATA :" << ENDLINE;
     m_cellsdata->Print ();
@@ -234,14 +274,7 @@ void Mesh::Print () const
     return;
 }
 
-void Mesh::SetTagPhysical (std::vector <std::string> taglist)
-{
-    m_tag_physical = taglist;
-    return;
-}
-
-
-int Mesh::CountCellType (VTKCellType type) const
+int Mesh::CountCellType (VTK_CELL_TYPE type) const
 {
     int count = 0;
     for (auto c : m_cells)
@@ -250,7 +283,7 @@ int Mesh::CountCellType (VTKCellType type) const
     return count;
 }
 
-int Mesh::CountEdgeType (VTKCellType type) const
+int Mesh::CountEdgeType (VTK_CELL_TYPE type) const
 {
     int count = 0;
     for (auto c : m_edges)

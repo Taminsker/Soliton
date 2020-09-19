@@ -93,3 +93,30 @@ R = \frac{1}{24}\begin{bmatrix}
 \end{equation}
 
 \subsection{Système dans $\Omega_b$}
+
+
+
+\subsection{Schéma Newmark}
+
+\begin{equation}
+	M \ddot{u} + C \dot{u} + Au = F
+\end{equation}
+
+\begin{subnumcases}{}
+	\dot{u}_{n+1} = \dot{u}_n + \Delta t \ddot{u}_{\alpha}\\
+	\text{avec }\ddot{u}_{\alpha} = \alpha\ddot{u}_{n} + \left(1- \alpha\right)\ddot{u}_{n+1}\\
+	u_{n+1} = u_n + \Delta t \dot{u}_{n} + \frac{1}{2}\Delta t ^2 \ddot{u}_{\beta}\\
+	\text{avec }\ddot{u}_{\beta} = 2 \beta\ddot{u}_{n} + \left(1- 2\beta\right)\ddot{u}_{n+1}
+\end{subnumcases}
+
+\begin{equation}
+	u_{n+1} = u_n + \Delta t \partial_t u_n + \frac{\Delta t^2}{2} \partial_{2t} u_n + \frac{\Delta t^3}{6} \partial_{3t} u_n + \frac{\Delta t^4}{24} \partial_{4t} u_n + \frac{\Delta t^5}{120} \partial_{5t} u_n
+\end{equation}
+
+\begin{equation}
+u_{n+1} = u_{n-1} + 2\Delta t \partial_t u_{n-1} + 2\Delta t^2 \partial_{2t} u_{n-1} + \frac{4\Delta t^3}{3} \partial_{3t} u_{n-1} + \frac{2\Delta t^4}{3} \partial_{4t} u_{n-1} + \frac{4\Delta t^5}{15} \partial_{5t} u_{n-1}
+\end{equation}
+
+\begin{equation}
+	\ddddot{u}
+\end{equation}

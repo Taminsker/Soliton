@@ -3,16 +3,20 @@
 #include <Core/core.h>
 #include "writers.h"
 
-SOLITON_RETURN WriterVTK::WithCells (Mesh* mesh)
+void WriteVTKWithCells (Mesh* mesh, std::string add2basename)
 {
-    HEADERFUN("WriterVTK::WithCells");
+    HEADERFUN("WriteVTKWithCells");
 
     DataContainer<Point*>* pointsData = mesh->GetPointsData ();
     DataContainer<Cell*>* cellsData = mesh->GetCellsData ();
+    std::string filename = "";
 
-    std::string filename = mesh->GetName ()+"_wcells.vtk";
+    if (add2basename == "")
+        filename = mesh->GetName ()+"_w_cells.vtk";
+    else
+        filename = mesh->GetName ()+"_w_cells_" + add2basename + ".vtk";
 
-    BEGIN << "Write the vtk file with cells p.o.v : " << filename << ENDLINE;
+    BEGIN << "Write the vtk file with cells p.o.v : " << COLOR_BLUE << filename << ENDLINE;
 
     std::ofstream outfile (filename);
     int numpoints = mesh->GetNumberOfPoints ();
@@ -22,7 +26,7 @@ SOLITON_RETURN WriterVTK::WithCells (Mesh* mesh)
     if (!outfile.is_open ())
     {
         ERROR << "the file \"" << filename << "\" can not be open." << BLINKRETURN << ENDLINE;
-        return SOLITON_FAILURE;
+        return;
     }
     else
     {
@@ -63,7 +67,7 @@ SOLITON_RETURN WriterVTK::WithCells (Mesh* mesh)
 
     // CELLSTYPE
     for (int i = 0; i < numcells; ++i)
-        outfile << mesh->GetCell (i)->GetTypeVTK () << std::endl;
+        outfile << static_cast<int>(mesh->GetCell (i)->GetTypeVTK ()) << std::endl;
     outfile << std::endl;
 
 #ifdef VERBOSE
@@ -90,7 +94,7 @@ SOLITON_RETURN WriterVTK::WithCells (Mesh* mesh)
 
     for (auto arr : *pointsData->GetBooleanArrays ()->GetAll ())
     {
-        outfile << "SCALARS " << arr->name << " bool " << std::endl;
+        outfile << "SCALARS " << arr->name << " int " << std::endl;
         outfile << "LOOKUP_TABLE default" << std::endl;
         outfile << arr->vec << std::endl;
         outfile << std::endl;
@@ -142,7 +146,7 @@ SOLITON_RETURN WriterVTK::WithCells (Mesh* mesh)
 
     for (auto arr : *cellsData->GetBooleanArrays ()->GetAll ())
     {
-        outfile << "SCALARS " << arr->name << " bool " << std::endl;
+        outfile << "SCALARS " << arr->name << " int " << std::endl;
         outfile << "LOOKUP_TABLE default" << std::endl;
         outfile << arr->vec << std::endl;
         outfile << std::endl;
@@ -179,19 +183,24 @@ SOLITON_RETURN WriterVTK::WithCells (Mesh* mesh)
     ENDFUN;
 #endif
 
-    return SOLITON_SUCCESS;
+    return;
 }
 
-SOLITON_RETURN WriterVTK::WithEdges (Mesh* mesh)
+void WriteVTKWithEdges (Mesh* mesh, std::string add2basename)
 {
     HEADERFUN("WriterVTK::WithEdges");
 
     DataContainer<Point *>* pointsData = mesh->GetPointsData ();
     DataContainer<Edge *>* edgesData = mesh->GetEdgesData ();
 
-    std::string filename = mesh->GetName ()+"_wedges.vtk";
+    std::string filename = "";
 
-    BEGIN << "Write the vtk file with edges p.o.v : " << filename << ENDLINE;
+    if (add2basename == "")
+        filename = mesh->GetName ()+"_w_edges.vtk";
+    else
+        filename = mesh->GetName ()+"_w_edges_" + add2basename + ".vtk";
+
+    BEGIN << "Write the vtk file with edges p.o.v : " << COLOR_BLUE << filename << ENDLINE;
 
     std::ofstream outfile (filename);
     int numpoints = mesh->GetNumberOfPoints ();
@@ -201,7 +210,7 @@ SOLITON_RETURN WriterVTK::WithEdges (Mesh* mesh)
     if (!outfile.is_open ())
     {
         ERROR << "the file \"" << filename << "\" can not be open." << BLINKRETURN << ENDLINE;
-        return SOLITON_FAILURE;
+        return;
     }
     else
     {
@@ -242,7 +251,7 @@ SOLITON_RETURN WriterVTK::WithEdges (Mesh* mesh)
 
     // CELLSTYPE
     for (int i = 0; i < numedges; ++i)
-        outfile << mesh->GetEdge (i)->GetTypeVTK () << std::endl;
+        outfile << static_cast<int>(mesh->GetEdge (i)->GetTypeVTK ()) << std::endl;
     outfile << std::endl;
 
 #ifdef VERBOSE
@@ -357,5 +366,5 @@ SOLITON_RETURN WriterVTK::WithEdges (Mesh* mesh)
 
     outfile.close ();
 
-    return SOLITON_SUCCESS;
+    return;
 }

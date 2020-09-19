@@ -5,6 +5,6 @@
 #include "Core/core.h"
 #include "IO/io.h"
 #include "Solver/solver.h"
-
+#include "Routines/routines.h"
 
 #endif // WAVER_H

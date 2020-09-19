@@ -2,7 +2,7 @@
 #define HETCONTAINER_H
 
 #include "../Point/point.h"
-#include <Core/Defs4Soliton/defs4soliton.h>
+#include <ProgDef/proddef.h>
 
 #include <vector>
 #include <string>
@@ -41,7 +41,7 @@ public:
 
     Array* Get (int num)
     {
-        if (num >= 0 && num < int(m_loa->size ()))
+        if (num >= 0 && num < static_cast<int>(m_loa->size ()))
             return m_loa->at (std::size_t (num));
         return nullptr;
     }
@@ -90,7 +90,7 @@ public:
 
     int GetSize ()
     {
-        return int(m_loa->size ());
+        return static_cast<int>(m_loa->size ());
     }
 
     void Print (std::ostream& out = std::cout)
@@ -158,7 +158,7 @@ public:
 
     Array* Get (int num)
     {
-        if (num >= 0 && num < int(m_loa->size ()))
+        if (num >= 0 && num < static_cast<int>(m_loa->size ()))
             return m_loa->at (std::size_t (num));
         return nullptr;
     }
@@ -201,7 +201,7 @@ public:
                     delete p;
 
                 delete m_loa->at (i);
-                m_loa->erase (m_loa->begin () + int(i));
+                m_loa->erase (m_loa->begin () + static_cast<int>(i));
 
                 return;
             }
@@ -212,7 +212,7 @@ public:
 
     int GetSize ()
     {
-        return int(m_loa->size ());
+        return static_cast<int>(m_loa->size ());
     }
 
     void Print (std::ostream& out = std::cout)
@@ -249,11 +249,11 @@ private:
     Arrays* m_loa;
 };
 
-typedef HetContainer<bool> HetBool;
-typedef HetContainer<double> HetDouble;
-typedef HetContainer<int> HetInt;
-typedef HetContainer<std::string> HetString;
-typedef HetContainer<Point*> HetPointptr;
+typedef HetContainer<bool>          HetBool;
+typedef HetContainer<double>        HetDouble;
+typedef HetContainer<int>           HetInt;
+typedef HetContainer<std::string>   HetString;
+typedef HetContainer<Point*>        HetPointptr;
 
 
 template <typename T>
@@ -261,12 +261,12 @@ class DataContainer
 {
 public:
     DataContainer (std::vector <T>* vector) :
-        m_link (vector),
-        m_bool (new HetBool ()),
-        m_double (new HetDouble ()),
-        m_point (new HetPointptr ()),
-        m_int (new HetInt ()),
-        m_string (new HetString ())
+        m_link      (vector),
+        m_bool      (new HetBool ()),
+        m_double    (new HetDouble ()),
+        m_point     (new HetPointptr ()),
+        m_int       (new HetInt ()),
+        m_string    (new HetString ())
     {}
 
     ~DataContainer ()

@@ -1,0 +1,137 @@
+#include <Soliton>
+#include "functions.h"
+
+int main(int argc, char *argv[])
+{
+    HEADERFUN("main");
+
+    (void)argc;
+    (void)argv;
+
+    SolitonRoutines::PrintExecutableName ("POISSON EQUATION - EXECUTABLE CONVERGENCE");
+    SolitonRoutines::PrintMacros ();
+
+   InputDatStruct inputdatfile;
+
+    ParseInputDatFile (&inputdatfile, "../input.dat");
+
+    std::vector<double> err_l2, err_l1, err_linf, err_rela, hpres;
+
+    for (double hsz = 0.1; hsz > 1.9*1e-3; hsz-=1e-3)
+    {
+        INFOS << COLOR_YELLOW << "h = " << hsz << ENDLINE;
+        hpres.push_back (hsz);
+        inputdatfile.hsize = hsz;
+
+        std::cout.setstate(std::ios_base::failbit);
+
+        Sto4Sol store;
+        SolitonRoutines::Generation (&store, &inputdatfile);
+
+        // ********************************************************************* //
+        BEGIN << COLOR_YELLOW << "Solver" << ENDLINE;
+
+        int numPoints = store.mesh->GetNumberOfPoints ();
+
+        PlainVector F;
+        SolitonRoutines::ComputeSecondMember (store.mesh, &F, f);
+
+        std::vector <Triplet> tripletList;
+        tripletList.reserve (std::size_t (10 * numPoints));
+        SolitonRoutines::ComputeGradGrad (store.mesh, &tripletList);
+
+        INFOS << "Fill the matrix is done !" << ENDLINE;
+
+        SparseMatrix A (numPoints, numPoints);
+        A.setFromTriplets (tripletList.begin (), tripletList.end ());
+
+        INFOS <<  "Matrix size : " << A.rows () << ", " << A.cols() << ENDLINE;
+        std::cout << std::endl;
+
+
+        auto tagvec = store.mesh->GetPointsData ()->GetIntArrays ()->Get (NAME_TAGPHYSICAL);
+
+        if (tagvec == nullptr)
+        {
+            INFOS << "no tag physical on points : search under the name " << NAME_TAGPHYSICAL << "." << BLINKRETURN <<ENDLINE;
+            return EXIT_FAILURE;
+        }
+
+        std::vector<int> leftright, topbottom;
+        leftright.reserve (std::size_t (numPoints));
+        topbottom.reserve (std::size_t (numPoints));
+
+        for (int i = 0; i < numPoints; ++i)
+        {
+            int value = tagvec->vec.at (std::size_t (i));
+
+            if (value == TAG_PHYSICAL::TAG_INLET || value == TAG_PHYSICAL::TAG_OUTLET)
+                leftright.push_back (i);
+            else if (value == TAG_PHYSICAL::TAG_WALL)
+                topbottom.push_back (i);
+        }
+
+        std::sort (topbottom.begin(), topbottom.end());
+        topbottom.erase (std::unique (topbottom.begin (), topbottom.end()), topbottom.end());
+
+        std::sort (leftright.begin(), leftright.end());
+        leftright.erase (std::unique (leftright.begin (), leftright.end()), leftright.end());
+
+        ImposeDirichlet (store.mesh, &A, &F, g, &topbottom);
+        ImposeDirichlet (store.mesh, &A, &F, h, &leftright);
+
+        PlainVector sol_num;
+        Solver::AutoDeduceBest (&A, &F, &sol_num);
+
+        std::vector<double> solstd = PlainVector2Vector (&sol_num);
+
+        store.mesh->GetPointsData ()->GetDoubleArrays ()->Add ("sol_num", solstd);
+
+        PlainVector sol_ana;
+        FunToVec (&sol_ana, store.mesh, u);
+        solstd = PlainVector2Vector (&sol_ana);
+
+        store.mesh->GetPointsData ()->GetDoubleArrays ()->Add ("sol_ana", solstd);
+
+        PlainVector erroabs = GetErrorAbs (store.mesh, &sol_ana, &sol_num);
+        solstd = PlainVector2Vector (&erroabs);
+        store.mesh->GetPointsData ()->GetDoubleArrays ()->Add ("err_abs", solstd);
+
+        err_l1.push_back (GetErrorl1 (store.mesh, &sol_ana, &sol_num));
+        err_l2.push_back (GetErrorl2 (store.mesh, &sol_ana, &sol_num));
+        err_linf.push_back (GetErrorlinf (store.mesh, &sol_ana, &sol_num));
+        err_rela.push_back (GetErrorRela (store.mesh, &sol_ana, &sol_num));
+
+        ENDFUN;
+        // ********************************************************************* //
+
+        std::cout.clear();
+    }
+
+    std::cout << "err_l1 = [ ";
+    for (std::size_t i = 0; i < err_l1.size () - 1; ++i)
+        std::cout << err_l1.at (i) << ", ";
+    std::cout << err_l1.back () << " ];" << std::endl;
+
+    std::cout << "err_l2 = [ ";
+    for (std::size_t i = 0; i < err_l2.size () - 1; ++i)
+        std::cout << err_l2.at (i) << ", ";
+    std::cout << err_l2.back () << " ];" << std::endl;
+
+    std::cout << "err_linf = [ ";
+    for (std::size_t i = 0; i < err_linf.size () - 1; ++i)
+        std::cout << err_linf.at (i) << ", ";
+    std::cout << err_linf.back () << " ];" << std::endl;
+
+    std::cout << "err_rela = [ ";
+    for (std::size_t i = 0; i < err_rela.size () - 1; ++i)
+        std::cout << err_rela.at (i) << ", ";
+    std::cout << err_rela.back () << " ];" << std::endl;
+
+    std::cout << "h = [ ";
+    for (std::size_t i = 0; i < hpres.size () - 1; ++i)
+        std::cout << hpres.at (i) << ", ";
+    std::cout << hpres.back () << " ];" << std::endl;
+
+    return EXIT_SUCCESS;
+}

@@ -5,7 +5,7 @@ Edge::Edge () :
     Cell(),
     m_celllist ({})
 {
-    this->m_specialcell = IMANEDGE;
+    this->m_cat_cell = CAT_CELL_EDGE::EDGE;
 }
 
 Edge::~Edge ()
@@ -23,12 +23,12 @@ std::vector<Cell*>* Edge::GetCellsList ()
 
 int Edge::GetNumberOfCells () const
 {
-    return int(m_celllist.size ());
+    return static_cast<int>(m_celllist.size ());
 }
 
 Cell* Edge::GetCell (int idx)
 {
-    if (idx >= 0 && idx < int(m_celllist.size ()))
+    if (idx >= 0 && idx < static_cast<int>(m_celllist.size ()))
         return m_celllist.at (std::size_t(idx));
     return nullptr;
 }

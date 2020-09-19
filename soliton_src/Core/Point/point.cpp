@@ -5,7 +5,7 @@ Point::Point () :
     x (0.), y (0.), z (0.),
     m_cells ({}),
     m_listNeighbours ({}),
-    m_globalIndex (NONEID) // Il n'a pas encore d'indice global
+    m_globalIndex (NONE_ID_SELECTED) // Il n'a pas encore d'indice global
 {}
 
 Point::Point (const Point &p) :
@@ -19,7 +19,7 @@ Point::Point (double a, double b, double c) :
     x (a), y (b), z (c),
     m_cells ({}),
     m_listNeighbours ({}),
-    m_globalIndex (NONEID) // Il n'a pas encore d'indice global
+    m_globalIndex (NONE_ID_SELECTED) // Il n'a pas encore d'indice global
 {}
 
 Point& Point::operator= (const Point& p)
@@ -30,7 +30,7 @@ Point& Point::operator= (const Point& p)
     m_cells  = p.m_cells;
     m_listNeighbours  = p.m_listNeighbours;
 
-    if (p.m_globalIndex != NONEID)
+    if (p.m_globalIndex != NONE_ID_SELECTED)
         m_globalIndex = p.m_globalIndex;
 
     return *this;
@@ -176,6 +176,33 @@ Point* Point::DetachFromAll ()
     return this;
 }
 
+Point& Point::operator+= (Point&& p)
+{
+    x += p.x;
+    y += p.y;
+    z += p.z;
+
+    return *this;
+}
+
+Point& Point::operator-= (Point&& p)
+{
+    x -= p.x;
+    y -= p.y;
+    z -= p.z;
+
+    return *this;
+}
+
+Point& Point::operator*= (Point&& p)
+{
+    x *= p.x;
+    y *= p.y;
+    z *= p.z;
+
+    return *this;
+}
+
 Point& Point::operator+= (Point& p)
 {
     x += p.x;
@@ -230,9 +257,34 @@ Point& Point::operator*= (double value)
     return *this;
 }
 
+Point& Point::operator/= (double value)
+{
+    if (std::abs (value) < 1e-20)
+        return *this;
+
+    x /= value;
+    y /= value;
+    z /= value;
+
+    return *this;
+}
+
 std::vector<double> Point::data ()
 {
     return {x, y, z};
+}
+
+Point& Point::Normalize ()
+{
+    double norm = this->EuclidianNorm ();
+    if (std::abs (norm) < 1e-15)
+        return *this;
+
+    this->x /= norm;
+    this->y /= norm;
+    this->z /= norm;
+
+    return *this;
 }
 
 double Point::EuclidianNorm ()
@@ -271,6 +323,15 @@ Point operator* (const Point& a, const Point& b)
     return {a.x * b.x, a.y * b.y, a.z * b.z};
 }
 
+Point operator* (const Matrix3x3& A, const Point& p)
+{
+    Point out;
+    out.x = A.coeffRef (0, 0) * p.x + A.coeffRef (0, 1) * p.y + A.coeffRef (0, 2) * p.z;
+    out.y = A.coeffRef (1, 0) * p.x + A.coeffRef (1, 1) * p.y + A.coeffRef (1, 2) * p.z;
+    out.z = A.coeffRef (2, 0) * p.x + A.coeffRef (2, 1) * p.y + A.coeffRef (2, 2) * p.z;
+
+    return out;
+}
 Point operator+ (const Point& a, const Point& b)
 {
     return {a.x + b.x, a.y + b.y, a.z + b.z};
@@ -338,20 +399,18 @@ bool operator>= (const Point& a, const Point& b)
 
 bool operator== (const Point& a, const Point& b)
 {
-    double eps = 1e-10;
-    bool bx = (fabs(a.x - b.x) < eps);
-    bool by = (fabs(a.y - b.y) < eps);
-    bool bz = (fabs(a.z - b.z) < eps);
+    bool bx = (fabs(a.x - b.x) < EPSILON);
+    bool by = (fabs(a.y - b.y) < EPSILON);
+    bool bz = (fabs(a.z - b.z) < EPSILON);
 
     return (bx && by && bz);
 }
 
 bool operator!= (const Point& a, const Point& b)
 {
-    double eps = 1e-10;
-    bool bx = (fabs(a.x - b.x) > eps);
-    bool by = (fabs(a.y - b.y) > eps);
-    bool bz = (fabs(a.z - b.z) > eps);
+    bool bx = (fabs(a.x - b.x) > EPSILON);
+    bool by = (fabs(a.y - b.y) > EPSILON);
+    bool bz = (fabs(a.z - b.z) > EPSILON);
 
     return (bx && by && bz);
 }
@@ -365,3 +424,63 @@ double EuclidianDist (const Point& a, const Point& b)
 
     return std::sqrt (x * x + y * y + z * z);
 }
+
+Point CrossProduct (const Point& a, const Point& b)
+{
+    Point out;
+    out.x = a.y * b.z - a.z * b.y;
+    out.y = a.z * b.x - a.x * b.z;
+    out.z = a.x * b.y - a.y * b.x;
+    return out;
+}
+
+Matrix3x3 OuterProduct (const Point& a, const Point& b)
+{
+    Matrix3x3 out;
+    out.setZero ();
+
+    out.row (0) << a.x * b.x, a.x * b.y, a.x * b.z;
+    out.row (1) << a.y * b.x, a.y * b.y, a.y * b.z;
+    out.row (2) << a.z * b.x, a.z * b.y, a.z * b.z;
+
+    return out;
+}
+
+void InitPointVector (std::vector<Point*>* vec, std::size_t size, Point&& data)
+{
+    vec->resize (size);
+    for (std::size_t i = 0; i < size; ++i)
+    {
+        vec->at (i) = new Point();
+        *vec->at (i) = data;
+    }
+
+    return;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

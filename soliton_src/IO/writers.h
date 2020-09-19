@@ -2,14 +2,13 @@
 #define WRITERS_H
 
 #include <string>
-#include <Core/Defs4Soliton/defs4soliton.h>
+#include <ProgDef/proddef.h>
 
 class Mesh;
 
-namespace WriterVTK {
-    SOLITON_RETURN WithEdges (Mesh* mesh);
-    SOLITON_RETURN WithCells (Mesh* mesh);
-}
+
+void WriteVTKWithEdges (Mesh* mesh, std::string add2basename = "");
+void WriteVTKWithCells (Mesh* mesh, std::string add2basename = "");
 
 
 #endif // WRITERS_H

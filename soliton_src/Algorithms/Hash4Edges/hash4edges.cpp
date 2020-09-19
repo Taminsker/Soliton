@@ -43,13 +43,13 @@ std::vector <SolitonHashCell *> ExtractUndergroundCells (Cell* cell)
     std::vector <SolitonHashCell *> out;
     std::size_t np = std::size_t (cell->GetNumberOfPoints ());
     auto lp = cell->GetPoints ();
-    unsigned int type = cell->GetTypeVTK ();
+    VTK_CELL_TYPE type = cell->GetTypeVTK ();
 
     switch (type)
     {
-    case VTK_LINE:
+    case VTK_CELL_TYPE::VTK_LINE:
     {
-        unsigned int edgeType = 15; // Vertex
+        GMSH_CELL_TYPE edgeType = GMSH_CELL_TYPE::GMSH_1_NODE_POINT;
 
         for (std::size_t j = 0; j < np; j++)
         {
@@ -62,9 +62,9 @@ std::vector <SolitonHashCell *> ExtractUndergroundCells (Cell* cell)
         }
         break;
     }
-    case VTK_QUADRATIC_EDGE:
+    case VTK_CELL_TYPE::VTK_QUADRATIC_EDGE:
     {
-        unsigned int edgeType = 15; // Vertex
+        GMSH_CELL_TYPE edgeType = GMSH_CELL_TYPE::GMSH_1_NODE_POINT;
 
         for (std::size_t j = 0; j < np-2; j=j+2)
         {
@@ -77,9 +77,9 @@ std::vector <SolitonHashCell *> ExtractUndergroundCells (Cell* cell)
         }
         break;
     }
-    case VTK_TRIANGLE:
+    case VTK_CELL_TYPE::VTK_TRIANGLE:
     {
-        unsigned int edgeType = 1; // LINE
+        GMSH_CELL_TYPE edgeType = GMSH_CELL_TYPE::GMSH_2_NODE_LINE;
 
         for (std::size_t j = 0; j < np; ++j)
         {
@@ -98,9 +98,9 @@ std::vector <SolitonHashCell *> ExtractUndergroundCells (Cell* cell)
 
         break;
     }
-    case VTK_QUADRATIC_TRIANGLE:
+    case VTK_CELL_TYPE::VTK_QUADRATIC_TRIANGLE:
     {
-        unsigned int edgeType = 8; // second order line
+        GMSH_CELL_TYPE edgeType = GMSH_CELL_TYPE::GMSH_3_NODE_QUADRATIC_LINE;
 
         for (std::size_t j = 0; j < np - 1; ++j)
         {
@@ -129,14 +129,14 @@ std::vector <SolitonHashCell *> ExtractUndergroundCells (Cell* cell)
     return out;
 }
 
-SOLITON_RETURN AddToHashMap (SolitonHashMap* map, std::vector <SolitonHashCell *>* HashCells)
+void AddToHashMap (SolitonHashMap* map, std::vector <SolitonHashCell *>* HashCells)
 {
     HEADERFUN("AddToHashMap");
 
     for (SolitonHashCell* obj : *HashCells)
     {
         std::string id = obj->id;
-        bool noid = (obj->id == std::to_string (NONEID));
+        bool noid = (obj->id == std::to_string (NONE_ID_SELECTED));
         bool nocell = (obj->cell == nullptr);
         bool nopoints = (obj->listpoints.size () == 0);
 
@@ -149,10 +149,10 @@ SOLITON_RETURN AddToHashMap (SolitonHashMap* map, std::vector <SolitonHashCell *
         map->insert ({id, obj});
     }
 
-    return SOLITON_SUCCESS;
+    return;
 }
 
-SOLITON_RETURN BuildEdgesWithHashMap (Mesh* mesh)
+void BuildEdgesWithHashMap (Mesh* mesh)
 {
     HEADERFUN("BuildEdgesWithHashMap");
 
@@ -173,18 +173,19 @@ SOLITON_RETURN BuildEdgesWithHashMap (Mesh* mesh)
         for (SolitonHashCell* obj : vectorHash)
                     obj->id = HashFunction (&obj->listpoints);
 
-        SOLITON_RETURN error = AddToHashMap (&map, &vectorHash);
-        USE_SOLITON_RETURN(error);
+        AddToHashMap (&map, &vectorHash);
     }
 
-    Print(&map, "test.txt");
+#ifdef PRINTHASHMAP
+    Print(&map, "hashmap.txt");
+#endif
 
 #ifdef VERBOSE
     INFOS << "Hash table size : " << map.size () << ENDLINE;
 #endif
 
     Edge* currentedge = nullptr;
-    std::string idx = std::to_string (NONEID);
+    std::string idx = std::to_string (NONE_ID_SELECTED);
     int globalId = 0;
 
     std::vector <int> counter;
@@ -196,7 +197,7 @@ SOLITON_RETURN BuildEdgesWithHashMap (Mesh* mesh)
 
         if (idx != obj.first)
         {
-            if (idx != std::to_string (NONEID) && currentedge != nullptr)
+            if (idx != std::to_string (NONE_ID_SELECTED) && currentedge != nullptr)
                 mesh->AddEdge (currentedge);
 
             std::string objIdx = obj.first;
@@ -220,7 +221,7 @@ SOLITON_RETURN BuildEdgesWithHashMap (Mesh* mesh)
     }
 
 
-    if (idx != std::to_string (NONEID) && currentedge != nullptr)
+    if (idx != std::to_string (NONE_ID_SELECTED) && currentedge != nullptr)
         mesh->AddEdge (currentedge);
 
     INFOS << "build : " << mesh->GetNumberOfEdges () << " edges." << ENDLINE;
@@ -228,7 +229,7 @@ SOLITON_RETURN BuildEdgesWithHashMap (Mesh* mesh)
     map.clear ();
 
     ENDFUN;
-    return SOLITON_SUCCESS;
+    return;
 }
 
 void Print (SolitonHashMap* map, std::string name)

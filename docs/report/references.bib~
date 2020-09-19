@@ -1,0 +1,244 @@
+@article{main_shifted_2018,
+	author = {Main, A. and Scovazzi, G.},
+	doi = {10.1016/j.jcp.2017.10.026},
+	issn = {00219991},
+	journal = {Journal of Computational Physics},
+	language = {en},
+	month = nov,
+	pages = {972--995},
+	shorttitle = {The shifted boundary method for embedded domain computations. {Part} {I}},
+	title = {The shifted boundary method for embedded domain computations. {Part} {I}: {Poisson} and {Stokes} problems},
+	volume = {372},
+	year = {2018}
+}
+
+@article{nouveau_high-order_2019,
+	author = {Nouveau, L. and Ricchiuto, M. and Scovazzi, G.},
+	doi = {10.1016/j.jcp.2019.108898},
+	issn = {00219991},
+	journal = {Journal of Computational Physics},
+	language = {en},
+	month = dec,
+	pages = {108898},
+	shorttitle = {High-order gradients with the shifted boundary method},
+	title = {High-order gradients with the shifted boundary method: {An} embedded enriched mixed formulation for elliptic {PDEs}},
+	volume = {398},
+	year = {2019}
+}
+
+@phdthesis{bosi_spectral_2019,
+	abstract = {Modeling and Simulation},
+	author = {Bosi, Umberto},
+	language = {English},
+	school = {Universit{\'e} de Bordeaux},
+	title = {A unified spectral/hp element depth-integrated {Boussinesq} model for nonlinear wavefloating body interaction},
+	type = {{PhD} dissertation},
+	url = {https://tel.archives-ouvertes.fr/tel-02297587},
+	year = {2019}
+}
+
+@phdthesis{bocchi_compressible-incompressible_2019,
+	author = {Bocchi, Edoardo},
+	language = {English},
+	school = {Universit{\'e} de Bordeaux},
+	title = {Compressible-incompressible transitions in fluid mechanics : waves-structures interaction and rotating fluids},
+	type = {{PhD} dissertation},
+	url = {https://tel.archives-ouvertes.fr/tel-02371058},
+	year = {2019}
+}
+
+@book{leveque_numerical_1992,
+	address = {Basel; Boston},
+	author = {LeVeque, Randall J.},
+	edition = {2nd ed},
+	isbn = {9783764327231 9780817627232},
+	keywords = {Differential equations; Hyperbolic; Numerical solutions; Conservation laws (Mathematics); Shock waves},
+	publisher = {Birkhauser Verlag},
+	series = {Lectures in mathematics {ETH} {Zurich}},
+	title = {Numerical methods for conservation laws},
+	year = {1992}
+}
+
+@book{darrozes_mecanique_1998,
+	author = {Darroz{\`e}s, Jean-Sylvestre and Francois, Claude},
+	isbn = {9782722509009},
+	language = {French},
+	note = {OCLC: 494019189},
+	title = {M{\'e}canique des fluides incompressibles},
+	year = {1998}
+}
+
+@article{casulli_unstructured_2000,
+	author = {Casulli, Vincenzo and Walters, Roy A},
+	journal = {International journal for numerical methods in fluids},
+	number = {3},
+	pages = {331--348},
+	publisher = {Wiley Online Library},
+	title = {An unstructured grid, three-dimensional model based on the shallow water equations},
+	volume = {32},
+	year = {2000}
+}
+
+@book{toro_riemann_2009,
+	address = {Dordrecht ; New York},
+	author = {Toro, E. F.},
+	edition = {3rd ed},
+	isbn = {9783540252023 9783540498346},
+	keywords = {Fluid dynamics; Computational fluid dynamics},
+	note = {OCLC: ocn401321914},
+	publisher = {Springer},
+	shorttitle = {Riemann solvers and numerical methods for fluid dynamics},
+	title = {Riemann solvers and numerical methods for fluid dynamics: a practical introduction},
+	year = {2009}
+}
+
+@phdthesis{Pons2018,
+	author = {Pons, K{\'e}vin},
+	language = {English},
+	note2 = {2018TOUL0014},
+	school = {Universit{\'e} de Toulon},
+	title = {Mod{\'e}lisation des tsunamis : propagation et impact},
+	type = {{PhD} dissertation},
+	url = {http://www.theses.fr/2018TOUL0014/document},
+	year = {2018}
+}
+
+@book{vallis_atmospheric_2006,
+	address = {Cambridge},
+	author = {Vallis, Geoffrey K.},
+	isbn = {9780521849692},
+	keywords = {Fluid dynamics; Fluid dynamics; Problems; exercises; etc; Ocean-atmosphere interaction; Ocean-atmosphere interaction; Problems; exercises; etc},
+	note = {OCLC: ocm70671784},
+	publisher = {Cambridge University Press},
+	shorttitle = {Atmospheric and oceanic fluid dynamics},
+	title = {Atmospheric and oceanic fluid dynamics: fundamentals and large-scale circulation},
+	year = {2006}
+}
+
+@incollection{chouly_nitsche_2017,
+	address = {Cham},
+	author = {Chouly, Franz and Fabre, Mathieu and Hild, Patrick and Mlika, Rabii and Pousin, J{\'e}r{\^o}me and Renard, Yves},
+	booktitle = {Geometrically {Unfitted} {Finite} {Element} {Methods} and {Applications}},
+	doi = {10.1007/978-3-319-71431-8_4},
+	editor = {Bordas, St{\'e}phane P. A. and Burman, Erik and Larson, Mats G. and Olshanskii, Maxim A.},
+	isbn = {9783319714301 9783319714318},
+	language = {en},
+	pages = {93--141},
+	publisher = {Springer International Publishing},
+	title = {An {Overview} of {Recent} {Results} on {Nitsche}{\rq}s {Method} for {Contact} {Problems}},
+	url = {http://link.springer.com/10.1007/978-3-319-71431-8_4},
+	urldate = {2020-06-18},
+	volume = {121},
+	year = {2017}
+}
+
+@phdthesis{chouly_hdr,
+	author = {Chouly, Franz},
+	hal_id = {tel-00981356},
+	hal_version = {v1},
+	keywords = {analyse num{\'e}rique; calcul scientifique; {\'e}l{\'e}ments finis; Nitsche; interaction fluide-structure; contact; m{\'e}canique des solides; m{\'e}canique des fluides},
+	month = dec,
+	pdf = {https://tel.archives-ouvertes.fr/tel-00981356/file/memoire-hdr-court.pdf},
+	school = {{Universit{\'e} de Franche-Comt{\'e}}},
+	title = {Contribution au traitement des conditions limites et d'interface dans le cadre de la M{\'e}thode des {\'E}l{\'e}ments Finis},
+	type = {Habilitation {\`a} diriger des recherches},
+	url = {https://tel.archives-ouvertes.fr/tel-00981356},
+	year = {2013}
+}
+
+@phdthesis{wahl,
+	author = {Wahl, Fabien},
+	hal_id = {tel-01955798},
+	hal_version = {v2},
+	keywords = {Unilateral constraint; Congested hyperbolic model; Shallow water equations; {\'E}quations de Saint-Venant; Mod{\`e}le hyperbolique congestionn{\'e}; Contrainte unilat{\'e}rale; Sch{\'e}ma well-balanced; Sch{\'e}ma entropique; Sch{\'e}ma bas-Froude},
+	month = dec,
+	number = {2018SORUS487},
+	pdf = {https://tel.archives-ouvertes.fr/tel-01955798/file/WAHL\_Fabien\_these\_2018.pdf},
+	school = {{Sorbonne Universit{\'e}}},
+	title = {Modeling and analysis of interactions between free surface flows and floating structures},
+	type = {Theses},
+	url = {https://tel.archives-ouvertes.fr/tel-01955798},
+	year = {2018}
+}
+
+@article{lannes_dynamics_2017,
+	author = {Lannes, David},
+	doi = {10.1007/s40818-017-0029-5},
+	issn = {2199-2576},
+	journal = {Annals of PDE},
+	language = {en},
+	month = jun,
+	number = {1},
+	pages = {11},
+	title = {On the {Dynamics} of {Floating} {Structures}},
+	url = {http://link.springer.com/10.1007/s40818-017-0029-5},
+	urldate = {2020-07-08},
+	volume = {3},
+	year = {2017}
+}
+
+@article{burman_ghost_2010,
+	author = {Burman, Erik},
+	doi = {10.1016/j.crma.2010.10.006},
+	issn = {1631073X},
+	journal = {Comptes Rendus Mathematique},
+	language = {en},
+	month = nov,
+	number = {21-22},
+	pages = {1217--1220},
+	title = {Ghost penalty},
+	url = {https://linkinghub.elsevier.com/retrieve/pii/S1631073X10002827},
+	urldate = {2020-07-14},
+	volume = {348},
+	year = {2010}
+}
+
+@article{main_shifted_2018_2,
+	author = {Main, A. and Scovazzi, G.},
+	doi = {10.1016/j.jcp.2018.01.023},
+	issn = {00219991},
+	journal = {Journal of Computational Physics},
+	language = {en},
+	month = nov,
+	pages = {996--1026},
+	shorttitle = {The shifted boundary method for embedded domain computations. {Part} {II}},
+	title = {The shifted boundary method for embedded domain computations. {Part} {II}: {Linear} advection--diffusion and incompressible {Navier}--{Stokes} equations},
+	url = {https://linkinghub.elsevier.com/retrieve/pii/S0021999118300330},
+	urldate = {2020-07-14},
+	volume = {372},
+	year = {2018}
+}
+
+@techreport{song_shifted_2018,
+	author = {Song, Ting and Main, Alex and Scovazzi, Guglielmo and Ricchiuto, Mario},
+	hal_id = {hal-01671990},
+	hal_version = {v1},
+	institution = {{Inria Bordeaux Sud-Ouest}},
+	keywords = {finite elements; approximate boundary methods; Embedded boundary conditions; wave equation; shallow water flows; {\'e}quations shallow water; m{\'e}thodes immerg{\'e}es; {\'e}l{\'e}ments finis; {\'e}quations des ondes; conditions aux bords embedded},
+	month = dec,
+	number = {RR-9136},
+	pages = {1--56},
+	pdf = {https://hal.archives-ouvertes.fr/hal-01671990/file/RR-9136.pdf},
+	title = {The shifted boundary method for hyperbolic systems: Embedded domain computations of linear waves and shallow water flows},
+	type = {Research Report},
+	url = {https://hal.archives-ouvertes.fr/hal-01671990},
+	year = {2017}
+}
+
+@article{li_shifted_2020,
+	author = {Li, Kangan and Atallah, Nabil M. and Main, G. Alex and Scovazzi, Guglielmo},
+	doi = {10.1002/nme.6231},
+	issn = {0029-5981, 1097-0207},
+	journal = {International Journal for Numerical Methods in Engineering},
+	language = {en},
+	month = feb,
+	number = {3},
+	pages = {492--518},
+	shorttitle = {The {Shifted} {Interface} {Method}},
+	title = {The {Shifted} {Interface} {Method}: {A} flexible approach to embedded interface computations},
+	url = {https://onlinelibrary.wiley.com/doi/abs/10.1002/nme.6231},
+	urldate = {2020-07-15},
+	volume = {121},
+	year = {2020}
+}
+

@@ -12,7 +12,7 @@
     continue;\
     }
 
-SOLITON_RETURN ParseInputDatFile (InputDatStruct* out, std::string filename)
+void ParseInputDatFile (InputDatStruct* out, std::string filename)
 {
     HEADERFUN("ParseInputDatFile");
     BEGIN << "Parse the input dat file." << ENDLINE;
@@ -22,13 +22,11 @@ SOLITON_RETURN ParseInputDatFile (InputDatStruct* out, std::string filename)
     std::vector <std::string> spl;
     unsigned int errs = 0;
     unsigned int count = 0;
-    SOLITON_RETURN error = SOLITON_FAILURE;
-
 
     if (!infile.is_open ())
     {
         ERROR << "the file " << filename << " can not be open." << BLINKRETURN << ENDLINE;
-        return SOLITON_FAILURE;
+        return;
     } else
     {
         STATUS << "the file " << filename << " is open." << ENDLINE;
@@ -40,8 +38,7 @@ SOLITON_RETURN ParseInputDatFile (InputDatStruct* out, std::string filename)
     {
         if (line.front () != '#' && line.size () != 0)
         {
-            error = RemoveBlankSpace (&line, &spl);
-            USE_SOLITON_RETURN(error);
+            RemoveBlankSpace (&line, &spl);
 
             if (spl.size () == 0)
                 continue;
@@ -65,11 +62,25 @@ SOLITON_RETURN ParseInputDatFile (InputDatStruct* out, std::string filename)
                     out->hsize = stod(value);
                 else if (field == "dt")
                     out->dt = stod(value);
+                else if (field == "Pk")
+                    out->Pk = stoi(value);
                 else if (field == "mouv")
                 {
                     out->mouv = false;
                     if (value == "true")
                         out->mouv = true;
+                }
+                else if (field == "damping")
+                {
+                    out->damping = false;
+                    if (value == "true")
+                        out->damping = true;
+                }
+                else if (field == "gen")
+                {
+                    out->gen = false;
+                    if (value == "true")
+                        out->gen= true;
                 }
                 else if (field == "eq_type")
                 {
@@ -82,6 +93,8 @@ SOLITON_RETURN ParseInputDatFile (InputDatStruct* out, std::string filename)
                     out->zeta_0 = stod(value);
                 else if (field == "beta_0")
                     out->beta_0 = stod(value);
+                else if (field == "file_msh")
+                    out->filename_msh = value;
                 else
                     ERRORPARAMS
             }
@@ -100,13 +113,12 @@ SOLITON_RETURN ParseInputDatFile (InputDatStruct* out, std::string filename)
                     if (infile.eof ())
                     {
                         ERROR << "not enabled to find $END_OBJECT..." << BLINKRETURN << ENDLINE;
-                        return SOLITON_FAILURE;
+                        return;
                     }
 
                     if (line.front () != '#' && line.size () != 0)
                     {
-                        error = RemoveBlankSpace (&line, &spl);
-                        USE_SOLITON_RETURN(error);
+                        RemoveBlankSpace (&line, &spl);
 
                         if (spl.size () >= 3)
                         {
@@ -120,7 +132,7 @@ SOLITON_RETURN ParseInputDatFile (InputDatStruct* out, std::string filename)
                                 if (value != "object")
                                 {
                                     ERROR << "only object type is now supported" << BLINKRETURN << ENDLINE;
-                                    return SOLITON_FAILURE;
+                                    return;
                                 }
                             }
                             else if (field == "xc")
@@ -163,13 +175,13 @@ SOLITON_RETURN ParseInputDatFile (InputDatStruct* out, std::string filename)
     ENDFUN;
 
 #ifdef DEBUG
-        Print (out);
+    Print (out);
 #endif
 
-    return SOLITON_SUCCESS;
+    return;
 }
 
-SOLITON_RETURN ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
+void ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
 {
     HEADERFUN("ParseMSH");
     BEGIN << "Parse the msh file." << ENDLINE;
@@ -177,7 +189,7 @@ SOLITON_RETURN ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
     if (mesh == nullptr)
     {
         ERROR << "the store object is not correct initialised." << BLINKRETURN << ENDLINE;
-        return SOLITON_FAILURE;
+        return;
     }
 
     std::ifstream infile (filename);
@@ -191,13 +203,12 @@ SOLITON_RETURN ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
     int err = 0;
     int count = 0;
     int depth_tag = 0;
-    SOLITON_RETURN error = SOLITON_FAILURE;
 
     // OPEN
     if (!infile.is_open ())
     {
         ERROR << "the file " << filename << " can not be open." << BLINKRETURN << ENDLINE;
-        return SOLITON_FAILURE;
+        return;
     } else
     {
         STATUS << "the file " << filename << " is " << COLOR_BLUE << "open." << ENDLINE;
@@ -211,23 +222,22 @@ SOLITON_RETURN ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
         if (infile.eof ())
         {
             ERROR << "The $MeshFormat field does not seem to be present" << BLINKRETURN << ENDLINE;
-            return SOLITON_FAILURE;
+            return;
         }
 
         std::getline(infile, line);
     }
 
 #ifdef DEBUG
-        STATUS << "$MeshFormat detected." << ENDLINE;
+    STATUS << "$MeshFormat detected." << ENDLINE;
 #endif
     std::getline(infile, line);
-    error = RemoveBlankSpace (&line, &sv);
-    USE_SOLITON_RETURN(error);
+    RemoveBlankSpace (&line, &sv);
 
     if (sv.at (0) != "2.2")
     {
         ERROR << "the msh file format must be 2.2 format" << BLINKRETURN << ENDLINE;
-        return SOLITON_FAILURE;
+        return;
     }
 
     // PhysicalNames
@@ -236,19 +246,18 @@ SOLITON_RETURN ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
         if (infile.eof ())
         {
             ERROR << "the $PhysicalNames field does not seem to be present" << BLINKRETURN << ENDLINE;
-            return SOLITON_FAILURE;
+            return;
         }
 
         std::getline(infile, line);
     }
 
 #ifdef DEBUG
-        STATUS << "$PhysicalNames detected." << ENDLINE;
+    STATUS << "$PhysicalNames detected." << ENDLINE;
 #endif
 
     std::getline(infile, line);
-    error = RemoveBlankSpace (&line, &sv);
-    USE_SOLITON_RETURN(error);
+    RemoveBlankSpace (&line, &sv);
 
     numtag = stoi(sv.at (0));
 
@@ -258,12 +267,11 @@ SOLITON_RETURN ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
         if (infile.eof ())
         {
             ERROR << "the $EndPhysicalNames field does not seem to be present" << BLINKRETURN << ENDLINE;
-            return SOLITON_FAILURE;
+            return;
         }
 
         std::getline(infile, line);
-        error = RemoveBlankSpace (&line, &sv);
-        USE_SOLITON_RETURN(error);
+        RemoveBlankSpace (&line, &sv);
 
         if (line == "$EndPhysicalNames")
             break;
@@ -271,11 +279,10 @@ SOLITON_RETURN ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
         if (sv.size () < 3)
         {
             ERROR << "one physical name doesn't respect the rule : onid id str, please check your msh file." << BLINKRETURN << ENDLINE;
-            return SOLITON_FAILURE;
+            return;
         }
 
-        error = split (&sv.at (2), &delimeter, &sv);
-        USE_SOLITON_RETURN(error);
+        split (&sv.at (2), &delimeter, &sv);
 
         tagphysical.push_back (sv.at (1));
         count++;
@@ -284,13 +291,13 @@ SOLITON_RETURN ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
     if (count != numtag)
     {
         ERROR << "the number of physical names does not coincide." << BLINKRETURN << ENDLINE;
-        return SOLITON_FAILURE;
+        return;
     }
 
-    mesh->SetTagPhysical (tagphysical);
+//    mesh->SetTagPhysical (tagphysical);
 
 #ifdef DEBUG
-        STATUS << "$EndPhysicalNames detected." << ENDLINE;
+    STATUS << "$EndPhysicalNames detected." << ENDLINE;
 #endif
 
     INFOS << "physical names : \t" << count << ENDLINE;
@@ -301,19 +308,18 @@ SOLITON_RETURN ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
         if (infile.eof ())
         {
             ERROR << "the $Nodes field does not seem to be present" << BLINKRETURN << ENDLINE;
-            return SOLITON_FAILURE;
+            return;
         }
 
         std::getline(infile, line);
     }
 
 #ifdef DEBUG
-        STATUS << "$Nodes detected." << ENDLINE;
+    STATUS << "$Nodes detected." << ENDLINE;
 #endif
 
     std::getline(infile, line);
-    error = RemoveBlankSpace (&line, &sv);
-    USE_SOLITON_RETURN(error);
+    RemoveBlankSpace (&line, &sv);
 
     numpoints = stoi(sv.at (0));
 
@@ -323,12 +329,11 @@ SOLITON_RETURN ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
         if (infile.eof ())
         {
             ERROR << "the $EndNodes field does not seem to be present" << BLINKRETURN << ENDLINE;
-            return SOLITON_FAILURE;
+            return;
         }
 
         std::getline(infile, line);
-        error = RemoveBlankSpace (&line, &sv);
-        USE_SOLITON_RETURN(error);
+        RemoveBlankSpace (&line, &sv);
 
         if (line == "$EndNodes")
             break;
@@ -336,7 +341,7 @@ SOLITON_RETURN ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
         if (sv.size () < 4)
         {
             ERROR << "one point doesn't respect the rule : id x y z, please check your msh file." << BLINKRETURN << ENDLINE;
-            return SOLITON_FAILURE;
+            return;
         }
 
         auto P = new Point ();
@@ -353,11 +358,11 @@ SOLITON_RETURN ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
     if (count != numpoints)
     {
         ERROR << "the number of points does not coincide." << BLINKRETURN << ENDLINE;
-        return SOLITON_FAILURE;
+        return;
     }
 
 #ifdef DEBUG
-        STATUS << "$EndNodes detected." << ENDLINE;
+    STATUS << "$EndNodes detected." << ENDLINE;
 #endif
 
     INFOS << "nodes : \t" << count << ENDLINE;
@@ -368,17 +373,17 @@ SOLITON_RETURN ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
         if (infile.eof ())
         {
             ERROR << "the $Elements field does not seem to be present" << BLINKRETURN << ENDLINE;
-            return SOLITON_FAILURE;
+            return;
         }
         std::getline(infile, line);
     }
 
 #ifdef DEBUG
-        STATUS << "$Elements detected." << ENDLINE;
+    STATUS << "$Elements detected." << ENDLINE;
 #endif
 
     std::getline(infile, line);
-    error = RemoveBlankSpace (&line, &sv);
+    RemoveBlankSpace (&line, &sv);
 
     numcells = stoi(sv.at (0));
     tag.resize (std::size_t (numcells));
@@ -389,12 +394,11 @@ SOLITON_RETURN ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
         if (infile.eof ())
         {
             ERROR << "the $EndElements field does not seem to be present" << BLINKRETURN << ENDLINE;
-            return SOLITON_FAILURE;
+            return;
         }
 
         std::getline(infile, line);
-        error = RemoveBlankSpace (&line, &sv);
-        USE_SOLITON_RETURN(error);
+        RemoveBlankSpace (&line, &sv);
 
         if (line == "$EndElements")
             break;
@@ -402,11 +406,11 @@ SOLITON_RETURN ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
         if (sv.size () < 3)
         {
             ERROR << "One cell doesn't respect the rule : id type ntag <tag> <points>, please check your msh file." << BLINKRETURN << ENDLINE;
-            return SOLITON_FAILURE;
+            return;
         }
 
         auto C = new Cell ();
-        C->SetType (CELLTYPE (stoi (sv.at (1))));
+        C->SetType (GMSH_CELL_TYPE (stoi (sv.at (1))));
         C->SetGlobalIndex (count);
 
         tag.at (std::size_t (count)) = stoi (sv.at (3));
@@ -424,11 +428,11 @@ SOLITON_RETURN ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
     if (count != numcells)
     {
         ERROR << "The number of cells does not coincide." << BLINKRETURN << ENDLINE;
-        return SOLITON_FAILURE;
+        return;
     }
 
 #ifdef DEBUG
-        STATUS << "$EndElements detected." << ENDLINE;
+    STATUS << "$EndElements detected." << ENDLINE;
 #endif
 
     INFOS << "elements : \t" << count << ENDLINE;
@@ -442,22 +446,19 @@ SOLITON_RETURN ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
             ERROR << "can not delete the msh file..." << ENDLINE;
     }
 
-    mesh->GetCellsData ()->GetIntArrays ()->Add ("tag_physical", tag);
+    mesh->GetCellsData ()->GetIntArrays ()->Add (NAME_TAG_PHYSICAL, tag);
 
     ENDFUN;
 
-//    DeleteLines (mesh);
+    //    DeleteLines (mesh);
     Build_NtoN (mesh);
     BuildEdgesWithHashMap (mesh);
-    ComputeNormalsOnEdges (mesh);
-    ComputeNormalsOnCells (mesh);
-    ComputeNormalsOnPoints (mesh);
 
-    return SOLITON_SUCCESS;
+    return;
 }
 
 
-SOLITON_RETURN Print (InputDatStruct* input)
+void Print (InputDatStruct* input)
 {
     HEADERFUN("Print");
 
@@ -488,10 +489,10 @@ SOLITON_RETURN Print (InputDatStruct* input)
     }
     ENDFUN;
 
-    return SOLITON_SUCCESS;
+    return;
 }
 
-SOLITON_RETURN split (std::string* s, std::string* delimiter, std::vector<std::string>* out)
+void split (std::string* s, std::string* delimiter, std::vector<std::string>* out)
 {
     std::size_t pos_start = 0, pos_end, delim_len = delimiter->length();
     std::string token;
@@ -504,13 +505,13 @@ SOLITON_RETURN split (std::string* s, std::string* delimiter, std::vector<std::s
     }
 
     out->push_back (s->substr (pos_start));
-    return SOLITON_SUCCESS;
+    return;
 }
 
-SOLITON_RETURN RemoveBlankSpace (std::string* s, std::vector<std::string>* out)
+void RemoveBlankSpace (std::string* s, std::vector<std::string>* out)
 {
     std::istringstream iss(*s);
     *out = {std::istream_iterator<std::string>{iss},           std::istream_iterator<std::string>{}};
 
-    return SOLITON_SUCCESS;
+    return;
 }

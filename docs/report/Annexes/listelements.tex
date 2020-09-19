@@ -1,0 +1,705 @@
+\chapter{Aide éléments finis}
+
+\section{Éléments finis de type Lagrange}
+\noindent Nous présentons ici une courte liste des éléments finis de type Lagrange utilisés dans ce stage.
+
+\subsection{Fonctions de transformation}
+\noindent Nous rappelons aussi que l'application qui permet de passer de l'élément de référence à l'élément réel est donnée par 
+\begin{equation}
+	\boldvec{x} = \mathcal{T}_{\hat{K}}^{K} \left(\boldvec{\xi}\right) = \sum_{i=0}^{n_p[K]} \hat{\varphi}_i \left(\boldvec{\xi}\right) p_i 
+\end{equation}
+où $n_p[K]$ est le nombre de points qui définissent la géométrie \textit{physique} de l'élément, ainsi c'est aussi le nombre de fonctions de base locale ($\hat{\varphi}_i$) (nombre de $p_i = (p_{i, 0}, p_{i, 1}, p_{i, 2})^T$). Nous abrégeons les vecteurs de coordonnées comme suit
+\begin{equation}
+	\boldvec{x} = (x, y, z) \hspace{2cm} \boldvec{\xi} = (\xi, \eta, \zeta).
+\end{equation}
+\noindent L'application inverse $\mathcal{T}^{\hat{K}}_{K} \left(\boldvec{x}\right) = \left(\mathcal{T}_{\hat{K}}^{K}\right)^{-1} \left(\boldvec{x}\right)$ vérifiant
+\begin{equation}
+	\boldvec{\xi} = \mathcal{T}^{\hat{K}}_{K} \left(\boldvec{x}\right)
+\end{equation}
+peut être obtenue en appliquant l'algorithme de Newton-Raphson suivant
+\begin{subnumcases}{}
+	\boldvec{\xi_{n+1}} = \boldvec{\xi_{n}} - \left[\mathbf{Jac}_{\mathcal{F}}\left(\boldvec{\xi_n}\right)\right]^{-T}\mathcal{F}\left(\boldvec{\xi_{n}}\right)\\
+	\mathcal{F}\left(\boldvec{\xi}\right) = \mathcal{T}_{\hat{K}}^{K} \left(\boldvec{\xi}\right) - \boldvec{x}\\
+	\left[\mathbf{Jac}_{\mathcal{F}}\left(\boldvec{\xi}\right)\right] = \left[\mathbf{Jac}_{\mathcal{T}_{\hat{K}}^{K}}\left(\boldvec{\xi}\right)\right]
+\end{subnumcases}
+\subsection{Matrice jacobienne, son inverse et son déterminant}
+\noindent Nous noterons aussi $\left[\mathbf{J}\left(\boldvec{\xi}\right)\right]\in \mathcal{M}_3(\mathbb{R})$ la jacobienne de $\mathcal{T}_{\hat{K}}^{K}$ évaluée au point $\boldvec{\xi}$ et $\mathbf{j}\left(\boldvec{\xi}\right)$ le déterminant de $\left[\mathbf{J}\left(\boldvec{\xi}\right)\right]$.\\
+Il est d'usage d'écrire cette matrice jacobienne à partir des gradients de $\widehat{\varphi}\left(\boldvec{\xi}\right)$ comme suit
+\begin{equation}
+	\left[\mathbf{J}\left(\boldvec{\xi}\right)\right] = \sum_{k=0}^{n_p[K]} p_k \otimes \widehat{\nabla}\widehat{\varphi}_k\left(\boldvec{{\xi}}\right)
+\end{equation}
+où $\otimes$ désigne le produit vectoriel.\\
+
+\noindent Nombre de changement de variables sont à faire lors du calcul de matrices élémentaires, faisant intervenir notamment $\left[\mathbf{J}\left(\boldvec{\xi}\right)\right]^{-1}$, or dans de nombreux cas (comme $\mathcal{T}_{\hat{K}}^{K}  : \mathbb{R}^3 \to \mathbb{R}^3$) $\left[\mathbf{J}\left(\boldvec{\xi}\right)\right]$ n'est pas inversible. Ce problème a été résolu en prenant non pas $\left[\mathbf{J}\left(\boldvec{\xi}\right)\right]^{-1}$ mais la matrice pseudo inverse au sens de Moore-Penrose $\left[\mathbf{J}\left(\boldvec{\xi}\right)\right]^{\dagger}$ (vérifiant la propriété de faible inverse $[\mathbf{J}][\mathbf{J}]^{\dagger} [\mathbf{J}] = [\mathbf{J}]$ et si $[\mathbf{J}]^{-1}$ existe alors $[\mathbf{J}]^{\dagger}=[\mathbf{J}]^{-1}$) calculée à partir de la relation $[\mathbf{J}] = U\Sigma V^{*}$ comme 
+\begin{equation}
+[\mathbf{J}]^{\dagger} = V\Sigma^{\dagger}U^{*}
+\end{equation}
+issue de la décomposition SVD de $[\mathbf{J}]$. Quant au  déterminant, nécessaire lors des changements de variables, il est naturellement remplacé par le pseudo-déterminant calculé comme \begin{equation}
+	\mathbf{j}\left(\boldvec{\xi}\right) = \left|\prod_{\underset{\sigma_i \neq 0}{i=0}}^{3}\sigma_i\right|
+\end{equation}
+où les $\sigma_i$ sont les valeurs singulières de $\left[\mathbf{J}\left(\boldvec{\xi}\right)\right]$.\\
+
+\subsection{Vecteurs normaux et tangents}
+\noindent Pour tout élément $K$ nous pouvons définir le bord de $K$ comme $\displaystyle \partial K := \bigsqcup_{i=0}^{n_e[K]} E_i^{K}$ où $n_e[K]$ est le nombre d'élément de bord de $K$. Ainsi nous pouvons donner le vecteur normal de bord associé à $K$
+\begin{equation}
+		\nvec^{\partial K}\left(\boldvec{x}\right) = \left(\left[\mathbf{J}\left(\boldvec{\xi}\right)\right]^{\dagger }\right)^{T}\nvec^{\partial \widehat{K}}\left(\boldvec{\xi}\right)\hspace{5mm}\text{où}\hspace{5mm} \boldvec{\xi} = \mathcal{T}^{\hat{K}}_{K} \left(\boldvec{x}\right)
+\end{equation}
+avec le vecteur normal sur l'élément de référence est obtenue comme
+\begin{equation}
+\nvec^{\partial \widehat{K}}\left(\boldvec{\xi}\right) = \sum_{i=0}^{n_e[K]}\left|\widehat{\varphi_{E}}_{i}\left(\boldvec{\xi}\right)\right|\nvec^{\partial \widehat{K}}_i\left(\boldvec{\xi}\right)
+\end{equation}
+où $\nvec^{\partial \widehat{K}}_i$ désigne le vecteur normal associé à l'élément de bord $E_i^{\widehat{K}}$ sur l'élément de référence $\widehat{K}$ et 
+\begin{equation}
+	\widehat{\varphi_{E}}_{i}\left(\boldvec{\xi}\right) =\prod_{j = 0}^{n_p[E_i]}\widehat{\varphi}_j\left(\boldvec{\xi}\right)
+\end{equation}
+désigne la fonction de base d'élément de bord.\\
+%\begin{equation}
+%\nvec^{\partial \widehat{K}}_i\left(\boldvec{\xi}\right)=\left|\prod_{j = 0}^{n_p[E_i]}\widehat{\varphi}_j\left(\boldvec{\xi}\right)\right|\sum_{k=0}^{n_p[E_i]} \widehat{\nabla}\widehat{\varphi}_k\left(\boldvec{\xi}\right)
+%\end{equation}
+Nous définissons aussi le vecteur tangent à $\partial K$ comme
+\begin{equation}
+	\boldvec{t}^{\partial K}\left(\boldvec{x}\right) =\left[\mathbf{J}\left(\boldvec{\xi}\right)\right]  \sum_{i=0}^{n_e[K]}\left|\widehat{\varphi_{E}}_{i}\left(\boldvec{\xi}\right)\right|\boldvec{t}^{\partial \widehat{K}}_i\left(\boldvec{\xi}\right)\hspace{5mm}\text{où}\hspace{5mm} \boldvec{\xi} = \mathcal{T}^{\hat{K}}_{K} \left(\boldvec{x}\right)
+\end{equation}
+où $\boldvec{t}^{\partial \widehat{K}}_i$ désigne le vecteur tangent associé à l'élément de bord $E_i^{\widehat{K}}$ sur l'élément de référence $\widehat{K}$.
+%\begin{equation}
+%	\left[\mathcal{R}_{\boldvec{z}} \left(\theta\right)\right] = \begin{bmatrix}
+%	 \cos(\theta) &-\sin(\theta) &0\\
+%	 \sin(\theta) &\cos(\theta) &0\\
+%	 0 &0 &1
+%	\end{bmatrix}\hspace{5mm}\text{avec}\hspace{5mm}\left[\mathcal{R}_{\boldvec{z}} \left(\frac{\pi}{2}\right)\right] = \begin{bmatrix}
+%	0 &-1 &0\\
+%	1 &0 &0\\
+%	0 &0 &1
+%	\end{bmatrix}
+%\end{equation}
+Au regard des définitions précédentes, nous pouvons établir les correspondances suivantes
+\begin{table}[H]
+	\centering
+	\begin{tabular}{c@{\hspace{2mm}$\Longleftrightarrow$\hspace{2mm}}c}
+		\toprule
+		\rowcolor{black!10} \textcolor{MyRed}{\bfseries$K$} & \textcolor{MyRed}{\bfseries$\partial K$}\\
+		\midrule
+		$\boldvec{t_1}^{K}$ & $\nvec^{\partial \widehat{K}}$\\
+    	$\boldvec{t_2}^{K}$ & $\boldvec{t}^{\partial \widehat{K}}$\\
+		$\boldvec{n}^{K} := \boldvec{t_1}^{K}\otimes\boldvec{t_2}^{K}$ & $\boldvec{c}^{\partial \widehat{K}} = \boldvec{n}^{\partial \widehat{K}}\otimes\boldvec{t}^{\partial \widehat{K}}$\\
+		\bottomrule
+	\end{tabular}
+\caption{Correspondance des vecteurs entre $K$ et $\partial K$.}
+\end{table}
+\noindent où $\boldvec{n}^{K}$ désigne le vecteur normal sortant de $K$ lorsqu'il existe, et dans ce cas là $\boldvec{c}^{\partial \widehat{K}}$ désigne le vecteur normal sortant sur $\partial K$ en tant que surface.
+
+\subsection{Liste des éléments}
+\subsubsection{Élément Emp0N0DDL}
+\begin{table}[H]\hfill
+	\footnotesize
+\begin{minipage}[t]{0.48\linewidth}
+		\centering
+		\begin{tabular}{=>{\bfseries}l|+l}
+			\toprule
+			\rowcolor{black!10}\rowstyle{\color{MyRed}\bfseries} Code Soliton 	& Emp0N\\
+			\midrule
+			$\mytriangle$ Type & 0D\\
+			$\mytriangle$ Type physique & \textcolor{MyGreen}{\textbf{TYPE\_EMPTY}}\\
+			$\mytriangle$ Mesure de référence & 0\\
+			%		\multicolumn{4}{l}\!\!\!\!\normalfont{\dotfill}\\
+			\midrule
+			\rowcolor{black!10}$\mytriangle$ \textbf{\textsc{Points}} &\\
+			\hspace{3mm}$\mybullet$ Nombre & 0\\
+			\hspace{3mm}$\mybullet$ Liste &  $\emptyset$\\
+			\midrule
+			\rowcolor{black!10}$\mytriangle$ \textbf{\textsc{Élément de bord}}  &\\
+			\hspace{3mm}$\mybullet$ Nombre & 0\\
+			\hspace{3mm}$\mybullet$ Type &  $\emptyset$\\
+			\hspace{3mm}$\mybullet$ Liste &  $\emptyset$\\
+			\hspace{3mm}$\mybullet$ $\outngamma$ & $\emptyset$ \\
+			\hspace{3mm}$\mybullet$ $\outtgamma$ & $\emptyset$ \\
+			\bottomrule % <-- Bottomrule here
+		\end{tabular}
+	\caption{Élément physique : Emp0N.}
+	\label{tab:Emp0N}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}
+	\centering
+		\begin{tabular}{>{\bfseries} l|l}
+			\toprule % <-- Toprule here
+			\rowcolor{black!10}\rowstyle{\color{MyRed}\bfseries} Code Soliton & \textcolor{MyRed}{\textbf{Emp0N0DDL}}\\
+			\midrule
+			$\mytriangle$ Élément physique & \textcolor{MyRed}{Emp0N}\\
+			$\mytriangle$ Classe $P_k$ & $P_0$\\
+		    $\mytriangle$ Ordre de convergence & 0\\
+		    \midrule
+		    $\mytriangle$ $\widehat{\varphi}_i\, (\text{rel.} p_i)$ & $\emptyset$\\
+		    \midrule
+		    $\mytriangle$ $\widehat{\nabla}\widehat{\varphi}_i\, (\text{rel.} p_i)$ & $\emptyset$ \\
+		    \bottomrule % <-- Bottomrule here
+		    \end{tabular}
+	\caption{Élément Lagrange : Emp0N0DDL}
+    \label{tab:Emp0N0DDL}
+\end{minipage}\hfill
+\end{table}
+
+\subsubsection{Élément Ver1N1DDL}
+\begin{table}[H]\hfill
+	\footnotesize
+	\begin{minipage}[t]{0.48\linewidth}
+		\centering
+		\begin{tabular}{=>{\bfseries}l|+l}
+			\toprule
+			\rowcolor{black!10}\rowstyle{\color{MyRed}\bfseries} Code Soliton 	& Ver1N\\
+			\midrule
+			$\mytriangle$ Type & 1D\\
+			$\mytriangle$ Type physique & \textcolor{MyGreen}{\textbf{TYPE\_VERTEX}}\\
+			$\mytriangle$ Mesure de référence & 0\\
+			%		\multicolumn{4}{l}\!\!\!\!\normalfont{\dotfill}\\
+			\midrule
+			\rowcolor{black!10}$\mytriangle$ \textbf{\textsc{Points}} &\\
+			\hspace{3mm}$\mybullet$ Nombre & 1\\
+			\hspace{3mm}$\mybullet$ Liste &  $p_0 = (0, 0, 0)$\\
+			\midrule
+			\rowcolor{black!10}$\mytriangle$ \textbf{\textsc{Élément de bord}}  &\\
+			\hspace{3mm}$\mybullet$ Nombre & 0\\
+			\hspace{3mm}$\mybullet$ Type &  $\emptyset$\\
+			\hspace{3mm}$\mybullet$ Liste & $\emptyset$\\
+			\hspace{3mm}$\mybullet$ $\outngamma$ & $\emptyset$ \\
+			\hspace{3mm}$\mybullet$ $\outtgamma$ & $\emptyset$ \\
+			\bottomrule % <-- Bottomrule here
+		\end{tabular}
+		\caption{Élément physique : Ver1N.}
+		\label{tab:Ver1N}
+	\end{minipage}\hfill
+	\begin{minipage}[t]{0.48\linewidth}
+		\centering
+		\begin{tabular}{>{\bfseries} l|l}
+			\toprule % <-- Toprule here
+			\rowcolor{black!10}\rowstyle{\color{MyRed}\bfseries} Code Soliton & \textcolor{MyRed}{\textbf{Ver1N1DDL}}\\
+			\midrule
+			$\mytriangle$ Élément physique & \textcolor{MyRed}{Ver1N}\\
+			$\mytriangle$ Classe $P_k$ & $P_0$\\
+			$\mytriangle$ Ordre de convergence & 0\\
+			\midrule
+			$\mytriangle$ $\widehat{\varphi}_i\, (\text{rel.}\, p_i)$ &  $\widehat{\varphi}_0 = 1$\\
+			\midrule
+			$\mytriangle$ $\widehat{\nabla}\widehat{\varphi}_i\, (\text{rel.}\, p_i)$ & $\widehat{\nabla}\widehat{\varphi}_0 = \left(0, 0, 0\right)^T$ \\
+			\bottomrule % <-- Bottomrule here
+		\end{tabular}
+		\caption{Élément Lagrange : Ver1N1DDL}
+		\label{tab:Ver1N1DDL}
+	\end{minipage}\hfill
+\end{table}
+
+\subsubsection{Élément Lin2N2DDL}
+\begin{table}[H]\hfill
+	\footnotesize
+	\begin{minipage}[t]{0.48\linewidth}
+		\centering
+		\begin{tabular}{=>{\bfseries}l|+l}
+			\toprule
+			\rowcolor{black!10}\rowstyle{\color{MyRed}\bfseries} Code Soliton 	& Lin2N\\
+			\midrule
+			$\mytriangle$ Type & 2D\\
+			$\mytriangle$ Type physique & \textcolor{MyGreen}{\textbf{TYPE\_LINE}}\\
+			$\mytriangle$ Mesure de référence & 2\\
+			%		\multicolumn{4}{l}\!\!\!\!\normalfont{\dotfill}\\
+			\midrule
+			\rowcolor{black!10}$\mytriangle$ \textbf{\textsc{Points}} &\\
+			\hspace{3mm}$\mybullet$ Nombre & 2\\
+			\hspace{3mm}$\mybullet$ Liste &  $p_0 = (-1, 0, 0)$\\
+			& $p_1 = (1, 0, 0)$\\
+			\midrule
+			\rowcolor{black!10}$\mytriangle$ \textbf{\textsc{Élément de bord}}  &\\
+			\hspace{3mm}$\mybullet$ Nombre & 2\\
+			\hspace{3mm}$\mybullet$ Type &  \textcolor{MyRed}{Ver1N}\\
+			\hspace{3mm}$\mybullet$ Liste & $p_0$\\
+			& $p_1$\\
+		    \hspace{3mm}$\mybullet$ $\outngamma$ & $\outngamma_0 = \left(-1, 0, 0\right)$ \\
+		    & $\outngamma_1 = \left(+1, 0, 0\right)$ \\
+			\hspace{3mm}$\mybullet$ $\outtgamma$ & $\outtgamma_0 =\left(+1, 0, 0\right)$\\
+			\bottomrule % <-- Bottomrule here
+		\end{tabular}
+		\caption{Élément physique : Lin2N.}
+		\label{tab:Ver1N}
+	\end{minipage}\hfill
+	\begin{minipage}[t]{0.48\linewidth}
+		\centering
+		\begin{tabular}{>{\bfseries} l|l}
+			\toprule % <-- Toprule here
+			\rowcolor{black!10}\rowstyle{\color{MyRed}\bfseries} Code Soliton & \textcolor{MyRed}{\textbf{Lin2N2DDL}}\\
+			\midrule
+			$\mytriangle$ Élément physique & \textcolor{MyRed}{Lin2N}\\
+			$\mytriangle$ Classe $P_k$ & $P_1$\\
+			$\mytriangle$ Ordre de convergence & 2\\
+			\midrule
+			$\mytriangle$ $\widehat{\varphi}_i\, (\text{rel.} p_i)$ &  $\widehat{\varphi}_0 = \frac{1}{2}(1-\xi)$\\
+			&  $\widehat{\varphi}_1 = \frac{1}{2}(1+\xi)$\\
+			\midrule
+			$\mytriangle$ $\widehat{\nabla}\widehat{\varphi}_i\, (\text{rel.} p_i)$ & $\widehat{\nabla}\widehat{\varphi}_0 = \left(-\frac{1}{2}, 0, 0\right)^T$ \\
+			& $\widehat{\nabla}\widehat{\varphi}_1 = \left(+\frac{1}{2}, 0, 0\right)^T$ \\
+			\bottomrule % <-- Bottomrule here
+		\end{tabular}
+		\caption{Élément Lagrange : Lin2N2DDL}
+		\label{tab:Lin2N2DDL}
+	\end{minipage}\hfill
+\end{table}
+
+\subsubsection{Élément Lin3N3DDL}
+\begin{table}[H]\hfill
+	\footnotesize
+	\begin{minipage}[t]{0.48\linewidth}
+		\centering
+		\begin{tabular}{=>{\bfseries}l|+l}
+			\toprule
+			\rowcolor{black!10}\rowstyle{\color{MyRed}\bfseries} Code Soliton 	& Lin3N\\
+			\midrule
+			$\mytriangle$ Type & 2D\\
+			$\mytriangle$ Type physique & \textcolor{MyGreen}{\textbf{TYPE\_LINE}}\\
+			$\mytriangle$ Mesure de référence & 2\\
+			%		\multicolumn{4}{l}\!\!\!\!\normalfont{\dotfill}\\
+			\midrule
+			\rowcolor{black!10}$\mytriangle$ \textbf{\textsc{Points}} &\\
+			\hspace{3mm}$\mybullet$ Nombre & 3\\
+			\hspace{3mm}$\mybullet$ Liste &  $p_0 = (-1, 0, 0)$\\
+			&  $p_1 = (+1, 0, 0)$\\
+			&  $p_2 = (0, 0, 0)$\\
+			\midrule
+			\rowcolor{black!10}$\mytriangle$ \textbf{\textsc{Élément de bord}}  &\\
+			\hspace{3mm}$\mybullet$ Nombre & 2\\
+			\hspace{3mm}$\mybullet$ Type &  \textcolor{MyRed}{Ver1N}\\
+			\hspace{3mm}$\mybullet$ Liste & $p_0$\\
+			& $p_1$\\
+			\hspace{3mm}$\mybullet$ $\outngamma$ & $\outngamma_0 = \left(-1, 0, 0\right)$ \\
+			& $\outngamma_1 = \left(+1, 0, 0\right)$ \\
+			\hspace{3mm}$\mybullet$ $\outtgamma$ & $\outtgamma_0 =\left(+1, 0, 0\right)$\\
+			\bottomrule % <-- Bottomrule here
+		\end{tabular}
+		\caption{Élément physique : Lin3N.}
+		\label{tab:Lin3N}
+	\end{minipage}\hfill
+	\begin{minipage}[t]{0.48\linewidth}
+		\centering
+		\begin{tabular}{>{\bfseries} l|l}
+			\toprule % <-- Toprule here
+			\rowcolor{black!10}\rowstyle{\color{MyRed}\bfseries} Code Soliton & \textcolor{MyRed}{\textbf{Ver3N3DDL}}\\
+			\midrule
+			$\mytriangle$ Élément physique & \textcolor{MyRed}{Lin3N}\\
+			$\mytriangle$ Classe $P_k$ & $P_0$\\
+			$\mytriangle$ Ordre de convergence & 0\\
+			\midrule
+			$\mytriangle$ $\widehat{\varphi}_i\, (\text{rel.} p_i)$ &  $\widehat{\varphi}_0 = \frac{1}{2} \xi (\xi - 1)$\\
+			&  $\widehat{\varphi}_1 = \frac{1}{2}\xi(\xi+1)$\\
+			&  $\widehat{\varphi}_2 = 1-\xi^2$\\
+			\midrule
+			$\mytriangle$ $\widehat{\nabla}\widehat{\varphi}_i\, (\text{rel.} p_i)$ & $\widehat{\nabla}\widehat{\varphi}_0 = \left(\xi - \frac{1}{2}, 0, 0\right)^T$ \\
+			& $\widehat{\nabla}\widehat{\varphi}_1 = \left(\xi + \frac{1}{2}, 0, 0\right)^T$ \\
+			& $\widehat{\nabla}\widehat{\varphi}_2 = \left(-2\xi, 0, 0\right)^T$ \\
+			\bottomrule % <-- Bottomrule here
+		\end{tabular}
+		\caption{Élément Lagrange : Lin3N3DDL}
+		\label{tab:Lin3N3DDL}
+	\end{minipage}\hfill
+\end{table}
+ 
+\subsubsection{Élément Tri3N3DDL}
+\begin{table}[H]\hfill
+	\footnotesize
+	\begin{minipage}[t]{0.48\linewidth}
+		\centering
+		\begin{tabular}{=>{\bfseries}l|+l}
+			\toprule
+			\rowcolor{black!10}\rowstyle{\color{MyRed}\bfseries} Code Soliton 	& Tri3N\\
+			\midrule
+			$\mytriangle$ Type & 2D\\
+			$\mytriangle$ Type physique & \textcolor{MyGreen}{\textbf{TYPE\_TRIANGLE}}\\
+			$\mytriangle$ Mesure de référence & $\frac{1}{2}$\\
+			%		\multicolumn{4}{l}\!\!\!\!\normalfont{\dotfill}\\
+			\midrule
+			\rowcolor{black!10}$\mytriangle$ \textbf{\textsc{Points}} &\\
+			\hspace{3mm}$\mybullet$ Nombre & 3\\
+			\hspace{3mm}$\mybullet$ Liste &  $p_0 = (0, 0, 0)$\\
+			&  $p_1 = (1, 0, 0)$\\
+			&  $p_2 = (0, 1, 0)$\\
+			\midrule
+			\rowcolor{black!10}$\mytriangle$ \textbf{\textsc{Élément de bord}}  &\\
+			\hspace{3mm}$\mybullet$ Nombre & 3\\
+			\hspace{3mm}$\mybullet$ Type &  \textcolor{MyRed}{Lin2N}\\
+			\hspace{3mm}$\mybullet$ Liste & $p_0 \to p_1$\\
+			& $p_1 \to p_2$\\
+			& $p_2 \to p_0$\\
+		    \hspace{3mm}$\mybullet$ $\outngamma$ & $\outngamma_0 = \left(0, -1, 0\right)$ \\
+			& $\outngamma_1 = \left(+1, +1, 0\right)$ \\
+			& $\outngamma_2 = \left(-1, 0, 0\right)$ \\
+			\hspace{3mm}$\mybullet$ $\outtgamma$ & $\outtgamma_0 =\left(+1, 0, 0\right)$\\
+			& $\outtgamma_1 =\left(-1, +1, 0\right)$\\
+			& $\outtgamma_2 =\left(0, -1, 0\right)$\\
+			\bottomrule % <-- Bottomrule here
+		\end{tabular}
+		\caption{Élément physique : Tri3N.}
+		\label{tab:Tri3N}
+	\end{minipage}\hfill
+	\begin{minipage}[t]{0.48\linewidth}
+		\centering
+		\begin{tabular}{>{\bfseries} l|l}
+			\toprule % <-- Toprule here
+			\rowcolor{black!10}\rowstyle{\color{MyRed}\bfseries} Code Soliton & \textcolor{MyRed}{\textbf{Tri3N3DDL}}\\
+			\midrule
+			$\mytriangle$ Élément physique & \textcolor{MyRed}{Tri3N}\\
+			$\mytriangle$ Classe $P_k$ & $P_1$\\
+			$\mytriangle$ Ordre de convergence & 2\\
+			\midrule
+			$\mytriangle$ $\widehat{\varphi}_i\, (\text{rel.} p_i)$ &  $\widehat{\varphi}_0 = 1- \xi -\eta$\\
+			&  $\widehat{\varphi}_1 = \xi$\\
+			&  $\widehat{\varphi}_2 = \eta$\\
+			\midrule
+			$\mytriangle$ $\widehat{\nabla}\widehat{\varphi}_i\, (\text{rel.} p_i)$ & $\widehat{\nabla}\widehat{\varphi}_0 = \left(-1, -1, 0\right)^T$ \\
+			& $\widehat{\nabla}\widehat{\varphi}_1 = \left(1, 0, 0\right)^T$ \\
+			& $\widehat{\nabla}\widehat{\varphi}_2 = \left(0, 1, 0\right)^T$ \\
+			\bottomrule % <-- Bottomrule here
+		\end{tabular}
+		\caption{Élément Lagrange : Tri3N3DDL}
+		\label{tab:Tri3N3DDL}
+	\end{minipage}\hfill
+\end{table}
+
+\subsubsection{Élément Tri6N6DDL}
+\begin{table}[H]\hfill
+	\footnotesize
+	\begin{minipage}[t]{0.48\linewidth}
+		\centering
+		\begin{tabular}{=>{\bfseries}l|+l}
+			\toprule
+			\rowcolor{black!10}\rowstyle{\color{MyRed}\bfseries} Code Soliton 	& Tri6N\\
+			\midrule
+			$\mytriangle$ Type & 2D\\
+			$\mytriangle$ Type physique & \textcolor{MyGreen}{\textbf{TYPE\_TRIANGLE}}\\
+			$\mytriangle$ Mesure de référence & $\frac{1}{2}$\\
+			%		\multicolumn{4}{l}\!\!\!\!\normalfont{\dotfill}\\
+			\midrule
+			\rowcolor{black!10}$\mytriangle$ \textbf{\textsc{Points}} &\\
+			\hspace{3mm}$\mybullet$ Nombre & 6\\
+			\hspace{3mm}$\mybullet$ Liste &  $p_0 = (0, 0, 0)$\\
+			&  $p_1 = (1, 0, 0)$\\
+			&  $p_2 = (0, 1, 0)$\\
+			&  $p_3 = (\frac{1}{2}, 0, 0)$\\
+			&  $p_4 = (\frac{1}{2}, \frac{1}{2}, 0)$\\
+			&  $p_5 = (0, \frac{1}{2}, 0)$\\
+			\midrule
+			\rowcolor{black!10}$\mytriangle$ \textbf{\textsc{Élément de bord}}  &\\
+			\hspace{3mm}$\mybullet$ Nombre & 2\\
+			\hspace{3mm}$\mybullet$ Type &  \textcolor{MyRed}{Lin3N}\\
+			\hspace{3mm}$\mybullet$ Liste & $p_0\to p_ 3 \to p_1$\\
+			& $p_1\to p_ 4 \to p_2$\\
+			& $p_2\to p_ 5 \to p_0$\\
+			\hspace{3mm}$\mybullet$ $\outngamma$ & $\outngamma_0 = \left(0, -1, 0\right)$ \\
+			& $\outngamma_1 = \left(+1, +1, 0\right)$ \\
+			& $\outngamma_2 = \left(-1, 0, 0\right)$ \\
+			\hspace{3mm}$\mybullet$ $\outtgamma$ & $\outtgamma_0 =\left(+1, 0, 0\right)$\\
+			& $\outtgamma_1 =\left(-1, +1, 0\right)$\\
+			& $\outtgamma_2 =\left(0, -1, 0\right)$\\
+			\bottomrule % <-- Bottomrule here
+		\end{tabular}
+		\caption{Élément physique : Tri6N.}
+		\label{tab:Tri6N}
+	\end{minipage}\hfill
+	\begin{minipage}[t]{0.48\linewidth}
+		\centering
+		\begin{tabular}{>{\bfseries} l|l}
+			\toprule % <-- Toprule here
+			\rowcolor{black!10}\rowstyle{\color{MyRed}\bfseries} Code Soliton & \textcolor{MyRed}{\textbf{Tri6N6DDL}}\\
+			\midrule
+			$\mytriangle$ Élément physique & \textcolor{MyRed}{Tri3N}\\
+			$\mytriangle$ Classe $P_k$ & $P_2$\\
+			$\mytriangle$ Ordre de convergence & 3\\
+			\midrule
+			$\mytriangle$ $\widehat{\varphi}_i\, (\text{rel.} p_i)$ &  $\widehat{\varphi}_0 = \lambda (2\lambda - 1)$\\
+			&  $\widehat{\varphi}_1 = \xi (2\xi -1)$\\
+			&  $\widehat{\varphi}_2 = \eta (2\eta - 1)$\\
+			&  $\widehat{\varphi}_3 = 4\xi\lambda$\\
+			&  $\widehat{\varphi}_4 = 4\xi\eta$\\
+			&  $\widehat{\varphi}_5 = 4\eta\lambda$\\
+			\midrule
+			$\mytriangle$ $\widehat{\nabla}\widehat{\varphi}_i\, (\text{rel.} p_i)$ & $\widehat{\nabla}\widehat{\varphi}_0 = \left(1-4\lambda, 1-4\lambda, 0\right)^T$ \\
+			& $\widehat{\nabla}\widehat{\varphi}_1 = \left(4\xi-1, 0, 0\right)^T$ \\
+            & $\widehat{\nabla}\widehat{\varphi}_2 = \left(0, 4\eta - 1, 0\right)^T$ \\
+            & $\widehat{\nabla}\widehat{\varphi}_3 = \left(4(\lambda - \xi), -4\xi, 0\right)^T$ \\
+            & $\widehat{\nabla}\widehat{\varphi}_4 = \left(4\eta, 4\xi, 0\right)^T$ \\
+            & $\widehat{\nabla}\widehat{\varphi}_5 = \left(-4\eta, 4(\lambda - \eta), 0\right)^T$ \\
+            \midrule
+            \multicolumn{2}{l}{$\mytriangle$ $\lambda = 1 - \xi - \eta$}\\
+			\bottomrule % <-- Bottomrule here
+		\end{tabular}
+		\caption{Élément Lagrange : Tri6N6DDL}
+		\label{tab:Tri6N6DDL}
+	\end{minipage}\hfill
+\end{table}
+
+\subsubsection{Élément Quad4N4DDL}
+\begin{table}[H]\hfill
+	\footnotesize
+	\begin{minipage}[t]{0.48\linewidth}
+		\centering
+		\begin{tabular}{=>{\bfseries}l|+l}
+			\toprule
+			\rowcolor{black!10}\rowstyle{\color{MyRed}\bfseries} Code Soliton 	& Quad4N\\
+			\midrule
+			$\mytriangle$ Type & 2D\\
+			$\mytriangle$ Type physique & \textcolor{MyGreen}{\textbf{TYPE\_QUADRANGLE}}\\
+			$\mytriangle$ Mesure de référence & $1$\\
+			%		\multicolumn{4}{l}\!\!\!\!\normalfont{\dotfill}\\
+			\midrule
+			\rowcolor{black!10}$\mytriangle$ \textbf{\textsc{Points}} &\\
+			\hspace{3mm}$\mybullet$ Nombre & 4\\
+			\hspace{3mm}$\mybullet$ Liste &  $p_0 = (-1, -1, 0)$\\
+			&  $p_1 = (+1, -1, 0)$\\
+			&  $p_2 = (+1, +1, 0)$\\
+			&  $p_3 = (-1, +1, 0)$\\
+			\midrule
+			\rowcolor{black!10}$\mytriangle$ \textbf{\textsc{Élément de bord}}  &\\
+			\hspace{3mm}$\mybullet$ Nombre & 4\\
+			\hspace{3mm}$\mybullet$ Type &  \textcolor{MyRed}{Lin2N}\\
+			\hspace{3mm}$\mybullet$ Liste & $p_0 \to p_1$\\
+			& $p_1 \to p_2$\\
+			& $p_2 \to p_3$\\
+			& $p_3 \to p_0$\\
+			\bottomrule % <-- Bottomrule here
+		\end{tabular}
+		\caption{Élément physique : Quad4N.}
+		\label{tab:Quad4N}
+	\end{minipage}\hfill
+	\begin{minipage}[t]{0.48\linewidth}
+		\centering
+		\begin{tabular}{>{\bfseries} l|l}
+			\toprule % <-- Toprule here
+			\rowcolor{black!10}\rowstyle{\color{MyRed}\bfseries} Code Soliton & \textcolor{MyRed}{\textbf{Quad4N4DDL}}\\
+			\midrule
+			$\mytriangle$ Élément physique & \textcolor{MyRed}{Quad4N}\\
+			$\mytriangle$ Classe $P_k$ & $P_1$\\
+			$\mytriangle$ Ordre de convergence & 2\\
+			\midrule
+			$\mytriangle$ $\widehat{\varphi}_i\, (\text{rel.} p_i)$ &  $\widehat{\varphi}_0 = \frac{1}{4}(1-\xi)(1-\eta)$\\
+			&  $\widehat{\varphi}_1 = \frac{1}{4}(1+\xi)(1-\eta)$\\
+			&  $\widehat{\varphi}_2 = \frac{1}{4}(1+\xi)(1+\eta)$\\
+			&  $\widehat{\varphi}_3 = \frac{1}{4}(1-\xi)(1+\eta)$\\
+			\midrule
+			$\mytriangle$ $\widehat{\nabla}\widehat{\varphi}_i\, (\text{rel.} p_i)$ & $\widehat{\nabla}\widehat{\varphi}_0 = \frac{1}{4}\left(\eta-1, \xi-1, 0\right)^T$ \\
+			& $\widehat{\nabla}\widehat{\varphi}_1 = \frac{1}{4}\left(1-\eta, -1-\xi, 0\right)^T$ \\
+			& $\widehat{\nabla}\widehat{\varphi}_2 = \frac{1}{4}\left(1+\eta, 1+\xi, 0\right)^T$ \\
+			& $\widehat{\nabla}\widehat{\varphi}_3 = \frac{1}{4}\left(-1-\eta, 1-\xi, 0\right)^T$ \\
+			\bottomrule % <-- Bottomrule here
+		\end{tabular}
+		\caption{Élément Lagrange : Quad4N4DDL}
+		\label{tab:Quad4N4DDL}
+	\end{minipage}\hfill
+\end{table}
+
+\subsubsection{Élément Quad8N8DDL}
+\begin{table}[H]\hfill
+	\footnotesize
+	\hspace*{-3.5cm}
+	\begin{minipage}[t]{0.48\linewidth}
+		\centering
+		\begin{tabular}{=>{\bfseries}l|+l}
+			\toprule
+			\rowcolor{black!10}\rowstyle{\color{MyRed}\bfseries} Code Soliton 	& Quad8N\\
+			\midrule
+			$\mytriangle$ Type & 2D\\
+			$\mytriangle$ Type physique & \textcolor{MyGreen}{\textbf{TYPE\_QUADRANGLE}}\\
+			$\mytriangle$ Mesure de référence & $1$\\
+			%		\multicolumn{4}{l}\!\!\!\!\normalfont{\dotfill}\\
+			\midrule
+			\rowcolor{black!10}$\mytriangle$ \textbf{\textsc{Points}} &\\
+			\hspace{3mm}$\mybullet$ Nombre & 8\\
+			\hspace{3mm}$\mybullet$ Liste & $p_0 = (-1, -1, 0)$\\
+			&  $p_1 = (+1, -1, 0)$\\
+			&  $p_2 = (+1, +1, 0)$\\
+			&  $p_3 = (-1, +1, 0)$\\
+			&  $p_4 = (0, -1, 0)$\\
+			&  $p_5 = (+1, 0, 0)$\\
+			&  $p_6 = (0, +1, 0)$\\
+			&  $p_7 = (-1, 0, 0)$\\
+			\midrule
+			\rowcolor{black!10}$\mytriangle$ \textbf{\textsc{Élément de bord}}  &\\
+			\hspace{3mm}$\mybullet$ Nombre & 4\\
+			\hspace{3mm}$\mybullet$ Type &  \textcolor{MyRed}{Lin3N}\\
+			\hspace{3mm}$\mybullet$ Liste & $p_0 \to p_4 \to p_1$\\
+			& $p_1 \to p_5 \to p_2$\\
+			& $p_2 \to p_6 \to p_3$\\
+			& $p_3 \to p_7 \to p_0$\\
+			\bottomrule % <-- Bottomrule here
+		\end{tabular}
+		\caption{Élément physique : Quad8N.}
+		\label{tab:Quad8N}
+	\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}
+\centering
+\hspace*{-2.25cm}
+		\begin{tabular}{>{\bfseries} l|l}
+			\toprule % <-- Toprule here
+			\rowcolor{black!10}\rowstyle{\color{MyRed}\bfseries} Code Soliton & \textcolor{MyRed}{\textbf{Quad8N8DDL}}\\
+			\midrule
+			$\mytriangle$ Élément physique & \textcolor{MyRed}{Quad8N}\\
+			$\mytriangle$ Classe $P_k$ & $P_2$\\
+			$\mytriangle$ Ordre de convergence & 3\\
+			\midrule
+			$\mytriangle$ $\widehat{\varphi}_i\, (\text{rel.} p_i)$ &  $\widehat{\varphi}_0 = -\frac{1}{4}(1-\xi)(1-\eta)(1+\xi+\eta)$\\
+			&  $\widehat{\varphi}_1 = -\frac{1}{4}(1+\xi)(1-\eta)(1-\xi+\eta)$\\
+			&  $\widehat{\varphi}_2 = -\frac{1}{4}(1+\xi)(1+\eta)(1-\xi-\eta)$\\
+			&  $\widehat{\varphi}_3 = -\frac{1}{4}(1-\xi)(1+\eta)(1+\xi-\eta)$\\
+			&  $\widehat{\varphi}_4 = \frac{1}{2}(1-\xi^2)(1-\eta)$\\
+			&  $\widehat{\varphi}_5 = \frac{1}{2}(1+\xi)(1-\eta^2)$\\
+			&  $\widehat{\varphi}_6 = \frac{1}{2}(1-\xi^2)(1+\eta)$\\
+			&  $\widehat{\varphi}_7 = \frac{1}{2}(1-\xi)(1-\eta^2)$\\
+			\midrule
+			$\mytriangle$ $\widehat{\nabla}\widehat{\varphi}_i\, (\text{rel.} p_i)$ & $\widehat{\nabla}\widehat{\varphi}_0 = \frac{1}{4}\left((1-\eta)(2\xi+\eta), (1-\xi)(\xi+2\eta), 0\right)^T$ \\
+			& $\widehat{\nabla}\widehat{\varphi}_1 = \frac{1}{4}\left((1-\eta)(2\xi-\eta), -(1+\xi)(\xi-2\eta), 0\right)^T$ \\
+			& $\widehat{\nabla}\widehat{\varphi}_2 = \frac{1}{4}\left((1+\eta)(2\xi+\eta), (1+\xi)(\xi+2\eta), 0\right)^T$ \\
+			& $\widehat{\nabla}\widehat{\varphi}_3 = \frac{1}{4}\left((1+\eta)(2\xi-\eta), -(1-\xi)(\xi-2\eta), 0\right)^T$ \\
+			& $\widehat{\nabla}\widehat{\varphi}_4 = -\frac{1}{2}\left(2\xi(1-\eta), 1-\xi^2, 0\right)^T$ \\
+			& $\widehat{\nabla}\widehat{\varphi}_5 = \frac{1}{2}\left(1-\eta^2, -\eta(1+\xi), 0\right)^T$ \\
+			& $\widehat{\nabla}\widehat{\varphi}_6 = \frac{1}{2}\left(-2\xi(1+\eta), 1-\xi^2, 0\right)^T$ \\
+			& $\widehat{\nabla}\widehat{\varphi}_7 = -\frac{1}{2}\left(1-\eta^2, \eta(1-\xi), 0\right)^T$ \\
+			\bottomrule % <-- Bottomrule here
+		\end{tabular}
+		\caption{Élément Lagrange : Quad8N8DDL}
+		\label{tab:Quad8N8DDL}
+	\end{minipage}\hfill
+\end{table}
+
+\subsubsection{Élément Quad9N9DDL}
+\begin{table}[H]\hfill
+	\footnotesize
+	\hspace*{-3.5cm}
+	\begin{minipage}[t]{0.48\linewidth}
+		\centering
+		\begin{tabular}{=>{\bfseries}l|+l}
+			\toprule
+			\rowcolor{black!10}\rowstyle{\color{MyRed}\bfseries} Code Soliton 	& Quad9N\\
+			\midrule
+			$\mytriangle$ Type & 2D\\
+			$\mytriangle$ Type physique & \textcolor{MyGreen}{\textbf{TYPE\_QUADRANGLE}}\\
+			$\mytriangle$ Mesure de référence & $1$\\
+			%		\multicolumn{4}{l}\!\!\!\!\normalfont{\dotfill}\\
+			\midrule
+			\rowcolor{black!10}$\mytriangle$ \textbf{\textsc{Points}} &\\
+			\hspace{3mm}$\mybullet$ Nombre & 9\\
+			\hspace{3mm}$\mybullet$ Liste &  $p_0 = (-1, -1, 0)$\\
+			&  $p_1 = (+1, -1, 0)$\\
+			&  $p_2 = (+1, +1, 0)$\\
+			&  $p_3 = (-1, +1, 0)$\\
+			&  $p_4 = (0, -1, 0)$\\
+			&  $p_5 = (+1, 0, 0)$\\
+			&  $p_6 = (0, +1, 0)$\\
+			&  $p_7 = (-1, 0, 0)$\\
+			&  $p_8 = (0, 0, 0)$\\
+			\midrule
+			\rowcolor{black!10}$\mytriangle$ \textbf{\textsc{Élément de bord}}  &\\
+			\hspace{3mm}$\mybullet$ Nombre & 4\\
+			\hspace{3mm}$\mybullet$ Type &  \textcolor{MyRed}{Lin3N}\\
+			\hspace{3mm}$\mybullet$ Liste & $p_0 \to p_4 \to p_1$\\
+			& $p_1 \to p_5 \to p_2$\\
+			& $p_2 \to p_6 \to p_3$\\
+			& $p_3 \to p_7 \to p_0$\\
+			\bottomrule % <-- Bottomrule here
+		\end{tabular}
+		\caption{Élément physique : Quad9N.}
+		\label{tab:Quad9N}
+	\end{minipage}\hfill
+	\begin{minipage}[t]{0.48\linewidth}
+		\centering
+		\hspace*{-2.25cm}
+		\begin{tabular}{>{\bfseries} l|l}
+			\toprule % <-- Toprule here
+			\rowcolor{black!10}\rowstyle{\color{MyRed}\bfseries} Code Soliton & \textcolor{MyRed}{\textbf{Quad9N9DDL}}\\
+			\midrule
+			$\mytriangle$ Élément physique & \textcolor{MyRed}{Quad9N}\\
+			$\mytriangle$ Classe $P_k$ & $P_2$\\
+			$\mytriangle$ Ordre de convergence & 3\\
+			\midrule
+			$\mytriangle$ $\widehat{\varphi}_i\, (\text{rel.} p_i)$ &  $\widehat{\varphi}_0 = \frac{1}{4}\xi\eta(1-\xi)(1-\eta)$\\
+			&  $\widehat{\varphi}_1 = -\frac{1}{4}\xi\eta(1+\xi)(1-\eta)$\\
+			&  $\widehat{\varphi}_2 = \frac{1}{4}\xi\eta(1+\xi)(1+\eta)$\\
+			&  $\widehat{\varphi}_3 = -\frac{1}{4}\xi\eta(1-\xi)(1+\eta)$\\
+			&  $\widehat{\varphi}_4 = -\frac{1}{2}\eta(1-\xi^2)(1-\eta)$\\
+			&  $\widehat{\varphi}_5 = \frac{1}{2}\xi(1+\xi)(1-\eta^2)$\\
+			&  $\widehat{\varphi}_6 = \frac{1}{2}\eta(1-\xi^2)(1+\eta)$\\
+			&  $\widehat{\varphi}_7 = -\frac{1}{2}\xi(1-\xi)(1-\eta^2)$\\
+			&  $\widehat{\varphi}_8 = (1-\xi^2)(1-\eta^2)$\\
+			\midrule
+			$\mytriangle$ $\widehat{\nabla}\widehat{\varphi}_i\, (\text{rel.} p_i)$ & $\widehat{\nabla}\widehat{\varphi}_0 =  \frac{1}{4}\left(\eta(1-2\xi)(1-\eta), \xi(1-\xi)(1-2\eta), 0\right)^T$ \\
+			& $\widehat{\nabla}\widehat{\varphi}_1 = -\frac{1}{4}\left(\eta(1+2\xi)(1-\eta), \xi(1+\xi)(1-2\eta), 0\right)^T$ \\
+			& $\widehat{\nabla}\widehat{\varphi}_2 = \frac{1}{4}\left(\eta(1+2\xi)(1+\eta), \xi(1+\xi)(1+2\eta), 0\right)^T$ \\
+			& $\widehat{\nabla}\widehat{\varphi}_3 = -\frac{1}{4}\left(\eta(1-2\xi)(1+\eta), \xi(1-\xi)(1+2\eta), 0\right)^T$ \\
+			& $\widehat{\nabla}\widehat{\varphi}_4 = -\frac{1}{2}\left(-2(1-\eta)\xi\eta, (1-\xi^2)(1-2\eta), 0\right)^T$ \\
+			& $\widehat{\nabla}\widehat{\varphi}_5 = \frac{1}{2}\left((1+2\xi)(1-\eta^2), -2(1+\xi)\xi\eta, 0\right)^T$ \\
+			& $\widehat{\nabla}\widehat{\varphi}_6 = \frac{1}{2}\left(-2(1+\eta)\xi\eta, (1-\xi^2)(1+2\eta), 0\right)^T$ \\
+			& $\widehat{\nabla}\widehat{\varphi}_7 = -\frac{1}{2}\left((1-2\xi)(1-\eta^2), -2(1-\xi)\xi\eta, 0\right)^T$ \\
+			& $\widehat{\nabla}\widehat{\varphi}_8 = -2\left((1-\eta^2)\xi, (1-\xi^2)\eta, 0\right)^T$ \\
+			\bottomrule % <-- Bottomrule here
+		\end{tabular}
+		\caption{Élément Lagrange : Quad9N9DDL}
+		\label{tab:Quad9N9DDL}
+	\end{minipage}\hfill
+\end{table}
+
+
+\subsubsection{Élément Tet4N4DDL}
+\begin{table}[H]\hfill
+	\footnotesize
+%	\hspace*{-3.5cm}
+	\begin{minipage}[t]{0.48\linewidth}
+		\centering
+		\begin{tabular}{=>{\bfseries}l|+l}
+			\toprule
+			\rowcolor{black!10}\rowstyle{\color{MyRed}\bfseries} Code Soliton 	& Tet4N\\
+			\midrule
+			$\mytriangle$ Type & 2D\\
+			$\mytriangle$ Type physique & \textcolor{MyGreen}{\textbf{TYPE\_TETRAHEDRON}}\\
+			$\mytriangle$ Mesure de référence & $1$\\
+			%		\multicolumn{4}{l}\!\!\!\!\normalfont{\dotfill}\\
+			\midrule
+			\rowcolor{black!10}$\mytriangle$ \textbf{\textsc{Points}} &\\
+			\hspace{3mm}$\mybullet$ Nombre & 4\\
+			\hspace{3mm}$\mybullet$ Liste &  $p_0 = (0, 0, 0)$\\
+			&  $p_1 = (1, 0, 0)$\\
+			&  $p_2 = (0, 1, 0)$\\
+			&  $p_3 = (0, 0, 1)$\\
+			\midrule
+			\rowcolor{black!10}$\mytriangle$ \textbf{\textsc{Élément de bord}}  &\\
+			\hspace{3mm}$\mybullet$ Nombre & 6\\
+			\hspace{3mm}$\mybullet$ Type &  \textcolor{MyRed}{Lin2N}\\
+			\hspace{3mm}$\mybullet$ Liste & $p_0 \to p_1$\\
+			& $p_0 \to p_2$\\
+			& $p_0 \to p_3$\\
+			& $p_1 \to p_2$\\
+			& $p_1 \to p_3$\\
+			& $p_2 \to p_3$\\
+			\bottomrule % <-- Bottomrule here
+		\end{tabular}
+		\caption{Élément physique : Tet4N.}
+		\label{tab:Tet4N}
+	\end{minipage}\hfill
+	\begin{minipage}[t]{0.48\linewidth}
+		\centering
+%		\hspace*{-2.25cm}
+		\begin{tabular}{>{\bfseries} l|l}
+			\toprule % <-- Toprule here
+			\rowcolor{black!10}\rowstyle{\color{MyRed}\bfseries} Code Soliton & \textcolor{MyRed}{\textbf{Tet4N4DDLL}}\\
+			\midrule
+			$\mytriangle$ Élément physique & \textcolor{MyRed}{Tet4N}\\
+			$\mytriangle$ Classe $P_k$ & $P_2$\\
+			$\mytriangle$ Ordre de convergence & 3\\
+			\midrule
+			$\mytriangle$ $\widehat{\varphi}_i\, (\text{rel.} p_i)$ &  $\widehat{\varphi}_0 = 1-\xi-\eta-\zeta$\\
+			&  $\widehat{\varphi}_1 = \xi$\\
+			&  $\widehat{\varphi}_2 = \eta$\\
+			&  $\widehat{\varphi}_3 = \zeta$\\
+			\midrule
+			$\mytriangle$ $\widehat{\nabla}\widehat{\varphi}_i\, (\text{rel.} p_i)$ & $\widehat{\nabla}\widehat{\varphi}_0 =  \left(-1, -1, -1\right)^T$ \\
+			& $\widehat{\nabla}\widehat{\varphi}_1 = \left(+1, 0, 0\right)^T$ \\
+			& $\widehat{\nabla}\widehat{\varphi}_2 = \left(0, +1, 0\right)^T$ \\
+			& $\widehat{\nabla}\widehat{\varphi}_3 = \left(0, 0, +1\right)^T$ \\
+			\bottomrule % <-- Bottomrule here
+		\end{tabular}
+		\caption{Élément Lagrange : Tet4N4DDL}
+		\label{tab:Tet4N4DDL}
+	\end{minipage}\hfill
+\end{table}
+

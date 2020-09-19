@@ -77,6 +77,35 @@
 
 \usepackage[framemethod=TikZ]{mdframed}
 \usepackage{xargs}
+
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{colortbl}
+\usepackage{xcolor}
+\usepackage{pdflscape}
+
+
+\makeatletter
+
+\newcommand*{\@rowstyle}{}
+
+\newcommand*{\rowstyle}[1]{% sets the style of the next row
+	\gdef\@rowstyle{#1}%
+	\@rowstyle\ignorespaces%
+}
+
+\newcolumntype{=}{% resets the row style
+	>{\gdef\@rowstyle{}}%
+}
+
+\newcolumntype{+}{% adds the current row style to the next column
+	>{\@rowstyle}%
+}
+
+\makeatother
+
+%\usepackage{multirow}
+%\usepackage{siunitx}
 %\usepackage{yfonts}
 
 %\numberwithin{equation}{section}
@@ -120,6 +149,7 @@
 \newcommand{\lhs}{\hspace{3mm}}
 \newcommand{\thvector}[3]{#1 \lhs #2 \lhs #3}
 \newcommand{\id}{\mathcal{I}}
+\newcommand{\zero}{\mathcal{Z}}
 \newcommand{\nvec}{\boldsymbol{\vec{n}}}
 \newcommand{\gvec}{\boldsymbol{\vec{g}}}
 \newcommand{\piper}[1]{\left. #1 \right|}
@@ -135,6 +165,7 @@
 \newcommand{\mDelta}{\stackrel{\sim}{\smash{\Delta}\rule{0pt}{1.1ex}}}
 \newcommand{\cst}{\text{C}\text{\tiny st}}
 \newcommand{\mybullet}{\textcolor{MyRed}{\bullet}}
+\newcommand{\mytriangle}{\textcolor{MyRed}{\blacktriangleright}}
 \newcommand{\eps}{\varepsilon}
 \newcommand{\simmer}[1]{\overset{\sim}{#1}}
 \newcommand{\OLandau}[1]{\mathcal{O}\left(#1\right)}
@@ -158,6 +189,7 @@
 \newcommand{\un}{\mathfrak{1}}
 \newcommand{\deux}{\mathfrak{2}}
 \newcommand{\aire}[1]{\left|#1\right|}
+\newcommand{\matcol}[3]{\text{Col}\left(#1, #2, #3\right)}
 \usepackage{listofitems}
 
 \newcommand{\sob}[2][]{%
@@ -221,7 +253,7 @@
 
 \chapter{Résultats numériques}
 
-\chapter{Waflow : Wa(ter)Flow}
+\chapter{Soliton}
 
 \citet{bocchi_compressible-incompressible_2019}
 \citet{bosi_spectral_2019}
@@ -253,4 +285,6 @@
 }
 \appendix
 \include{Annexes/mathematique}
+\include{Annexes/listelements}
+\include{Annexes/quadratures}
 \end{document}

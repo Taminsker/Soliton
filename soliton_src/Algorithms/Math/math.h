@@ -7,7 +7,7 @@
 #include <Eigen/Sparse>
 #include <Eigen/Dense>
 
-#include <Core/Defs4Soliton/defs4soliton.h>
+#include <ProgDef/proddef.h>
 
 class Mesh;
 class Point;
@@ -18,18 +18,34 @@ template <typename T>
 using matrix = std::vector <std::vector <T>>;
 }
 
+
 typedef Eigen::SparseMatrix<double, Eigen::RowMajor>    SparseMatrix;
 typedef Eigen::Matrix<double, Eigen::Dynamic, 1>        PlainVector;
+typedef Eigen::Matrix<double, 3, 3>                     Matrix3x3;
+typedef Eigen::Triplet<double>                          Triplet;
 
-namespace Math {
 
+class Duo
+{
+public:
+  Duo () : m_id (0), m_value(0) {}
 
-double Det (std::matrix<double>& mat);
-std::matrix<double> Identity (std::size_t n);
-std::matrix<double> Ones (std::size_t n);
-std::matrix<double> Zeros (std::size_t n);
+  Duo (const int& id, const double& v = double(0))
+    : m_id(id), m_value(v)
+  {}
 
-}
+  std::size_t row () const { return std::size_t(m_id);}
+  std::size_t col () const { return std::size_t(m_id);}
+  const double& value() const { return m_value; }
+
+protected:
+  int m_id;
+  double m_value;
+};
+
+Matrix3x3 RotateZMatrix (double angle);
+
+std::vector<double> PlainVector2Vector (PlainVector* vec);
 
 void FunToVec (PlainVector* out, Mesh * mesh, double (*f) (Point, double), double t = 0.);
 

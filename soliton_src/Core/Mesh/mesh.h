@@ -4,7 +4,9 @@
 #include <vector>
 #include <string>
 
-#include "../Cell/vtkCellType.h"
+#include "../Cell/celltype.h"
+#include "tagphysical.h"
+#include <ProgDef/proddef.h>
 
 struct InputDatStruct;
 class Cell;
@@ -51,9 +53,9 @@ public:
 
     void            SetName (std::string name);
     std::string     GetName () const;
-    void            SetTagPhysical (std::vector <std::string> taglist);
 
-    friend class BorderLinker;
+    void            SetPrescribedSize(double h);
+    double          GetPrescribedSize ();
 
 private:
     PointsData*                     m_pointsdata;
@@ -64,11 +66,12 @@ private:
     std::vector <Cell*>             m_cells;
     std::vector <Edge*>             m_edges;
 
-    std::vector <std::string>       m_tag_physical;
     std::string                     m_name;
+    double                          m_h;
 
-    int             CountCellType (VTKCellType type) const;
-    int             CountEdgeType (VTKCellType type) const;
+
+    int             CountCellType (VTK_CELL_TYPE type) const;
+    int             CountEdgeType (VTK_CELL_TYPE type) const;
 
 };
 

@@ -1,9 +1,9 @@
 #include "algomesh.h"
 
 #include <Core/core.h>
+#include <IO/io.h>
 
-
-SOLITON_RETURN Build_NtoN (Mesh* mesh)
+void Build_NtoN (Mesh* mesh)
 {
     HEADERFUN("Build_NtoN");
 
@@ -16,8 +16,8 @@ SOLITON_RETURN Build_NtoN (Mesh* mesh)
         std::size_t np = std::size_t (c->GetNumberOfPoints ());
         auto lp = c->GetPoints ();
 
-        if (c->GetTypeVTK () == VTK_LINE ||
-                c->GetTypeVTK () == VTK_QUADRATIC_EDGE)
+        if (c->GetTypeVTK () == VTK_CELL_TYPE::VTK_LINE ||
+                c->GetTypeVTK () == VTK_CELL_TYPE::VTK_QUADRATIC_EDGE)
         {
             for (std::size_t j = 0; j < np-1; ++j)
             {
@@ -25,8 +25,8 @@ SOLITON_RETURN Build_NtoN (Mesh* mesh)
                 lp->at (j+1)->AddPointNeighbour (lp->at (j));
             }
         }
-        else if (c->GetTypeVTK () == VTK_TRIANGLE||
-                 c->GetTypeVTK () == VTK_QUADRATIC_TRIANGLE)
+        else if (c->GetTypeVTK () == VTK_CELL_TYPE::VTK_TRIANGLE||
+                 c->GetTypeVTK () == VTK_CELL_TYPE::VTK_QUADRATIC_TRIANGLE)
         {
             for (std::size_t j = 0; j < np-1; ++j)
             {
@@ -43,10 +43,10 @@ SOLITON_RETURN Build_NtoN (Mesh* mesh)
         }
     }
 
-    return SOLITON_SUCCESS;
+    return;
 }
 
-SOLITON_RETURN ComputeNormalsOnEdges (Mesh* mesh)
+void ComputeNormalsOnEdges (Mesh* mesh)
 {
     HEADERFUN("ComputeNormalsOnEdges");
 
@@ -67,17 +67,17 @@ SOLITON_RETURN ComputeNormalsOnEdges (Mesh* mesh)
         switch (edge->GetTypeVTK ())
         {
         default:
-            ERROR << "only VTK_LINE and VTK_TRIANGLE are supported now to compute normals on a edge. (" << GetNameVTKType (VTKCellType(edge->GetTypeVTK ())) << ")" << BLINKRETURN << ENDLINE;
-            return SOLITON_FAILURE;
-        case VTK_VERTEX:
+            ERROR << "only VTK_LINE and VTK_TRIANGLE are supported now to compute normals on a edge. (" << edge->GetTypeVTK () << ")" << BLINKRETURN << ENDLINE;
+            return;
+        case VTK_CELL_TYPE::VTK_VERTEX:
             vecnormals.at (std::size_t (edge->GetGlobalIndex ())) = new Point();
             break;
-        case VTK_LINE:
+        case VTK_CELL_TYPE::VTK_LINE:
         {
             if (listpts->size () != 2)
             {
                 ERROR << "something wrong, we have not 2 points for a edge, but is detected as VTK_LINE..." << BLINKRETURN << ENDLINE;
-                return SOLITON_FAILURE;
+                return;
             }
 
             Point* normal = new Point();
@@ -92,12 +92,12 @@ SOLITON_RETURN ComputeNormalsOnEdges (Mesh* mesh)
 
             continue;
         }
-        case VTK_TRIANGLE:
+        case VTK_CELL_TYPE::VTK_TRIANGLE:
         {
             if (listpts->size () != 3)
             {
                 ERROR << "something wrong, we have not 3 points for a cell, but is detected as VTK_TRIANGLE..." << BLINKRETURN << ENDLINE;
-                return SOLITON_FAILURE;
+                return;
             }
 
             Point p1 = *listpts->at (1) - *listpts->at (0);
@@ -119,17 +119,17 @@ SOLITON_RETURN ComputeNormalsOnEdges (Mesh* mesh)
 
     }
 
-    mesh->GetEdgesData ()->GetVecArrays ()->Add (NAME_NORMALONEDGES, vecnormals);
+    mesh->GetEdgesData ()->GetVecArrays ()->Add (NAME_NORMAL_ON_EDGES, vecnormals);
 
 #ifdef VERBOSE
     INFOS << "build : " << vecnormals.size () << " normals on edges." << ENDLINE;
     ENDFUN;
 #endif
 
-    return SOLITON_SUCCESS;
+    return;
 }
 
-SOLITON_RETURN ComputeNormalsOnCells (Mesh* mesh)
+void ComputeNormalsOnCells (Mesh* mesh)
 {
     HEADERFUN("ComputeNormalsOnCells");
 
@@ -149,14 +149,14 @@ SOLITON_RETURN ComputeNormalsOnCells (Mesh* mesh)
         switch (c->GetTypeVTK ())
         {
         default:
-            ERROR << "only VTK_LINE and VTK_TRIANGLE are supported now to compute normals on a cell." << BLINKRETURN << ENDLINE;
-            return SOLITON_FAILURE;
-        case VTK_LINE:
+            ERROR << "only VTK_LINE and VTK_TRIANGLE are supported now to compute normals on a cell. (" << c->GetTypeVTK () << ")" << BLINKRETURN << ENDLINE;
+            return;
+        case VTK_CELL_TYPE::VTK_LINE:
         {
             if (listpts->size () != 2)
             {
                 ERROR << "something wrong, we have not 2 points for a cell, but is detected as VTK_LINE..." << BLINKRETURN << ENDLINE;
-                return SOLITON_FAILURE;
+                return;
             }
 
             Point* normal = new Point();
@@ -171,12 +171,12 @@ SOLITON_RETURN ComputeNormalsOnCells (Mesh* mesh)
 
             continue;
         }
-        case VTK_TRIANGLE:
+        case VTK_CELL_TYPE::VTK_TRIANGLE:
         {
             if (listpts->size () != 3)
             {
                 ERROR << "something wrong, we have not 3 points for a cell, but is detected as VTK_TRIANGLE..." << BLINKRETURN << ENDLINE;
-                return SOLITON_FAILURE;
+                return;
             }
 
             Point p1 = *listpts->at (1) - *listpts->at (0);
@@ -196,16 +196,16 @@ SOLITON_RETURN ComputeNormalsOnCells (Mesh* mesh)
         }
     }
 
-    mesh->GetCellsData ()->GetVecArrays ()->Add (NAME_NORMALONCELLS, vecnormals);
+    mesh->GetCellsData ()->GetVecArrays ()->Add (NAME_NORMAL_ON_CELLS, vecnormals);
 
 #ifdef VERBOSE
     INFOS << "build : " << vecnormals.size () << " normals on cells." << ENDLINE;
     ENDFUN;
 #endif
-    return SOLITON_SUCCESS;
+    return;
 }
 
-SOLITON_RETURN ComputeNormalsOnPoints(Mesh* mesh)
+void ComputeNormalsOnPoints(Mesh* mesh)
 {
     HEADERFUN("ComputeNormalsOnPoints");
 
@@ -221,7 +221,7 @@ SOLITON_RETURN ComputeNormalsOnPoints(Mesh* mesh)
     if (normalsoncells == nullptr)
     {
         ERROR << "you need ton compute normals on cells before to compute normals on points please ! " << BLINKRETURN << ENDLINE;
-        return SOLITON_FAILURE;
+        return;
     }
 
     for (int ptid = 0; ptid < numpoints; ++ptid)
@@ -233,16 +233,16 @@ SOLITON_RETURN ComputeNormalsOnPoints(Mesh* mesh)
 
         for (Cell* c : listcells)
         {
-            if (c->GetSpecial () == IMACELL)
+            if (c->GetCat () == CAT_CELL_EDGE::CELL)
                 *normal = *normal + *normalsoncells->vec.at (std::size_t (c->GetGlobalIndex ()));
         }
 
-        *normal = *normal / double(listcells.size ());
+        *normal = *normal / static_cast<double>(listcells.size ());
 
         vecnormals.push_back (normal);
     }
 
-    mesh->GetPointsData ()->GetVecArrays ()->Add (NAME_NORMALONPOINTS, vecnormals);
+    mesh->GetPointsData ()->GetVecArrays ()->Add (NAME_NORMAL_ON_POINTS, vecnormals);
 
 #ifdef VERBOSE
 
@@ -250,10 +250,10 @@ SOLITON_RETURN ComputeNormalsOnPoints(Mesh* mesh)
 
     ENDFUN;
 #endif
-    return SOLITON_SUCCESS;
+    return;
 }
 
-SOLITON_RETURN MoveObject (Mesh* mesh, double radius, Point center)
+void MoveObject (Mesh* mesh, double radius, Point center)
 {
     HEADERFUN ("MoveObject");
 #ifdef VERBOSE
@@ -324,5 +324,159 @@ SOLITON_RETURN MoveObject (Mesh* mesh, double radius, Point center)
     ENDFUN;
 #endif
 
-    return SOLITON_SUCCESS;
+    return;
+}
+
+void TransfertTagPhysical (Mesh* mesh)
+{
+    HEADERFUN ("TransfertTagPhysical");
+
+    auto tagvec = mesh->GetCellsData ()->GetIntArrays ()->Get (NAME_TAG_PHYSICAL);
+
+    if (tagvec == nullptr)
+    {
+        INFOS << "no tag physical on cells : search under the name " << NAME_TAG_PHYSICAL << "! " << BLINKRETURN << ENDLINE;
+        return;
+    }
+
+    int numPoints = mesh->GetNumberOfPoints ();
+    int numCells = mesh->GetNumberOfCells ();
+    int numEdges = mesh->GetNumberOfEdges ();
+
+    std::vector<int> tagOnPt (std::size_t (numPoints), static_cast<int>(TAG_PHYSICAL::TAG_DOMAIN));
+
+    for (int i = 0; i < numCells; ++i)
+    {
+        TAG_PHYSICAL tag = static_cast<TAG_PHYSICAL>(tagvec->vec.at (std::size_t (i)));
+
+        if (tag == TAG_PHYSICAL::TAG_DOMAIN)
+            continue;
+
+        for (Point* p : *mesh->GetCell (i)->GetPoints ())
+            tagOnPt.at (std::size_t (p->GetGlobalIndex ())) = static_cast<int>(tag);
+    }
+
+    mesh->GetPointsData ()->GetIntArrays ()->Add (NAME_TAG_PHYSICAL, tagOnPt);
+
+    std::vector<int> tagOnEdges (std::size_t (numEdges), static_cast<int>(TAG_PHYSICAL::TAG_DOMAIN));
+
+    for (int i = 0; i < numEdges; ++i)
+    {
+        std::vector<Point*>* listPts = mesh->GetEdge (i)->GetPoints ();
+
+        int count_wall = 0;
+        int count_inlet = 0;
+        int count_outlet = 0;
+        int count_domain = 0;
+
+        for (Point* p : *listPts)
+        {
+            switch (TAG_PHYSICAL (tagOnPt.at (std::size_t (p->GetGlobalIndex ()))))
+            {
+            case TAG_PHYSICAL::TAG_WALL:
+                count_wall++;
+                break;
+            case TAG_PHYSICAL::TAG_INLET:
+                count_inlet++;
+                break;
+            case TAG_PHYSICAL::TAG_OUTLET:
+                count_outlet++;
+                break;
+            case TAG_PHYSICAL::TAG_DOMAIN:
+                count_domain++;
+                break;
+            default:
+                break;
+            }
+        }
+
+        if (count_domain != 0)
+            continue;
+
+        TAG_PHYSICAL tag = TAG_PHYSICAL::TAG_DOMAIN;
+
+        if (count_wall != 0)
+            tag = TAG_PHYSICAL::TAG_WALL;
+        if (count_inlet != 0)
+            tag = TAG_PHYSICAL::TAG_INLET;
+        if (count_outlet != 0)
+            tag = TAG_PHYSICAL::TAG_OUTLET;
+
+
+        tagOnEdges.at (std::size_t (i)) = static_cast<int>(tag);
+    }
+
+    mesh->GetEdgesData ()->GetIntArrays ()->Add (NAME_TAG_PHYSICAL, tagOnEdges);
+
+    return;
+}
+
+
+void ComputeDampingArea (Mesh* mesh, TAG_PHYSICAL tag, double h)
+{
+    int numPoints = mesh->GetNumberOfPoints ();
+    int numCells = mesh->GetNumberOfCells ();
+
+    std::vector<bool> tagpoint (std::size_t(numPoints), false);
+    std::vector<bool> tagcell (std::size_t(numCells), false);
+
+
+    for (int pointId = 0; pointId < numPoints; ++pointId)
+    {
+        double value = GetDampingCoeffFor (mesh->GetPoint (pointId), mesh, tag, h);
+
+        if (value >= 0)
+            tagpoint.at (std::size_t (pointId)) = true;
+    }
+
+    for (int cellId = 0; cellId < numCells; ++cellId)
+    {
+        bool value = true;
+        Cell* cell = mesh->GetCell (cellId);
+
+        for (Point* pointOnCell : *cell->GetPoints ())
+        {
+            int pointId = pointOnCell->GetGlobalIndex ();
+
+            if (!tagpoint.at (std::size_t (pointId)))
+            {
+                value = false;
+                break;
+            }
+        }
+
+        if (value)
+            tagcell.at (std::size_t (cellId)) = true;
+    }
+
+    mesh->GetPointsData ()->GetBooleanArrays ()->Add (NAME_TAG_DAMPING_AREA, tagpoint);
+    mesh->GetCellsData ()->GetBooleanArrays ()->Add (NAME_TAG_DAMPING_AREA, tagcell);
+
+    return;
+}
+
+double GetDampingCoeffFor (Point* atpoint, Mesh* mesh, TAG_PHYSICAL tag, double h)
+{
+    int numPoints = mesh->GetNumberOfPoints ();
+    HetInt::Array* tagphysical = mesh->GetPointsData ()->GetIntArrays ()->Get (NAME_TAG_PHYSICAL);
+
+    double distmin = 1e6;
+
+    for (int pointId = 0; pointId < numPoints; ++pointId)
+    {
+        if (tagphysical->vec.at (std::size_t (pointId)) != static_cast<int>(tag))
+            continue;
+        Point* point = mesh->GetPoint (pointId);
+
+        double dist = EuclidianDist (*point, *atpoint);
+
+        if (dist < distmin)
+            distmin = dist;
+    }
+
+
+    if (distmin < std::abs(10. * h))
+        return distmin;
+    return -1.;
+
 }

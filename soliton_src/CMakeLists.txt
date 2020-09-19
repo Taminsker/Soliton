@@ -21,7 +21,7 @@ if(BUILD_DOC)
         set(DOXYGEN_OUT ${CMAKE_BINARY_DIR}/Doxyfile)
 
         configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
-        message("Doxygen build started")
+#        message("Doxygen build started")
 
         add_custom_target(DocDoxygen ALL
             COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}

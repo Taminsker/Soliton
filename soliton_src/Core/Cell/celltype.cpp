@@ -1,0 +1,273 @@
+#include "celltype.h"
+
+
+std::string ToString (VTK_CELL_TYPE idtype)
+{
+    switch (idtype)
+    {
+    case VTK_CELL_TYPE::VTK_EMPTY_CELL:
+        return "VTK_EMPTY_CELL";
+    case VTK_CELL_TYPE::VTK_VERTEX:
+        return "VTK_VERTEX";
+    case VTK_CELL_TYPE::VTK_POLY_VERTEX:
+        return "VTK_POLY_VERTEX";
+    case VTK_CELL_TYPE::VTK_LINE:
+        return "VTK_LINE";
+    case VTK_CELL_TYPE::VTK_POLY_LINE:
+        return "VTK_POLY_LINE ";
+    case VTK_CELL_TYPE::VTK_TRIANGLE:
+        return "VTK_TRIANGLE";
+    case VTK_CELL_TYPE::VTK_TRIANGLE_STRIP:
+        return "VTK_TRIANGLE_STRIP";
+    case VTK_CELL_TYPE::VTK_POLYGON:
+        return "VTK_POLYGON";
+    case VTK_CELL_TYPE::VTK_PIXEL:
+        return "VTK_PIXEL";
+    case VTK_CELL_TYPE::VTK_QUAD:
+        return "VTK_QUAD ";
+    case VTK_CELL_TYPE::VTK_TETRA:
+        return "VTK_TETRA  ";
+    case VTK_CELL_TYPE::VTK_VOXEL:
+        return "VTK_VOXEL";
+    case VTK_CELL_TYPE::VTK_HEXAHEDRON:
+        return "VTK_HEXAHEDRON";
+    case VTK_CELL_TYPE::VTK_WEDGE:
+        return "VTK_WEDGE";
+    case VTK_CELL_TYPE::VTK_PYRAMID:
+        return "VTK_PYRAMID ";
+    case VTK_CELL_TYPE::VTK_PENTAGONAL_PRISM:
+        return "VTK_PENTAGONAL_PRISM";
+    case VTK_CELL_TYPE::VTK_HEXAGONAL_PRISM:
+        return "VTK_HEXAGONAL_PRISM";
+    case VTK_CELL_TYPE::VTK_QUADRATIC_EDGE:
+        return "VTK_QUADRATIC_EDGE";
+    case VTK_CELL_TYPE::VTK_QUADRATIC_TRIANGLE:
+        return "VTK_QUADRATIC_TRIANGLE ";
+    case VTK_CELL_TYPE::VTK_QUADRATIC_QUAD:
+        return "VTK_QUADRATIC_QUAD";
+    case VTK_CELL_TYPE::VTK_QUADRATIC_POLYGON:
+        return "VTK_QUADRATIC_POLYGON ";
+    case VTK_CELL_TYPE::VTK_QUADRATIC_TETRA:
+        return "VTK_QUADRATIC_TETRA ";
+    case VTK_CELL_TYPE::VTK_QUADRATIC_HEXAHEDRON:
+        return "VTK_QUADRATIC_HEXAHEDRON  ";
+    case VTK_CELL_TYPE::VTK_QUADRATIC_WEDGE:
+        return "VTK_QUADRATIC_WEDGE      ";
+    case VTK_CELL_TYPE::VTK_QUADRATIC_PYRAMID:
+        return "VTK_QUADRATIC_PYRAMID";
+    case VTK_CELL_TYPE::VTK_BIQUADRATIC_QUAD:
+        return "VTK_BIQUADRATIC_QUAD ";
+    case VTK_CELL_TYPE::VTK_TRIQUADRATIC_HEXAHEDRON:
+        return "VTK_TRIQUADRATIC_HEXAHEDRON  ";
+    case VTK_CELL_TYPE::VTK_QUADRATIC_LINEAR_QUAD:
+        return "VTK_QUADRATIC_LINEAR_QUAD ";
+    case VTK_CELL_TYPE::VTK_QUADRATIC_LINEAR_WEDGE:
+        return "VTK_QUADRATIC_LINEAR_WEDGE";
+    case VTK_CELL_TYPE::VTK_BIQUADRATIC_QUADRATIC_WEDGE:
+        return "VTK_BIQUADRATIC_QUADRATIC_WEDGE ";
+    case VTK_CELL_TYPE::VTK_BIQUADRATIC_QUADRATIC_HEXAHEDRON:
+        return "VTK_BIQUADRATIC_QUADRATIC_HEXAHEDRON";
+    case VTK_CELL_TYPE::VTK_BIQUADRATIC_TRIANGLE:
+        return "VTK_BIQUADRATIC_TRIANGLE";
+    case VTK_CELL_TYPE::VTK_CUBIC_LINE:
+        return "VTK_CUBIC_LINE";
+    case VTK_CELL_TYPE::VTK_CONVEX_POINT_SET:
+        return "VTK_CONVEX_POINT_SET";
+    case VTK_CELL_TYPE::VTK_POLYHEDRON:
+        return "VTK_POLYHEDRON";
+    case VTK_CELL_TYPE::VTK_PARAMETRIC_CURVE:
+        return "VTK_PARAMETRIC_CURVE";
+    case VTK_CELL_TYPE::VTK_PARAMETRIC_SURFACE:
+        return "VTK_PARAMETRIC_SURFACE";
+    case VTK_CELL_TYPE::VTK_PARAMETRIC_TRI_SURFACE:
+        return "VTK_PARAMETRIC_TRI_SURFACE";
+    case VTK_CELL_TYPE::VTK_PARAMETRIC_QUAD_SURFACE:
+        return "VTK_PARAMETRIC_QUAD_SURFACE";
+    case VTK_CELL_TYPE::VTK_PARAMETRIC_TETRA_REGION:
+        return "VTK_PARAMETRIC_TETRA_REGION";
+    case VTK_CELL_TYPE::VTK_PARAMETRIC_HEX_REGION:
+        return "VTK_PARAMETRIC_HEX_REGION";
+    case VTK_CELL_TYPE::VTK_HIGHER_ORDER_EDGE:
+        return "VTK_HIGHER_ORDER_EDGE";
+    case VTK_CELL_TYPE::VTK_HIGHER_ORDER_TRIANGLE:
+        return "VTK_HIGHER_ORDER_TRIANGLE";
+    case VTK_CELL_TYPE::VTK_HIGHER_ORDER_QUAD:
+        return "VTK_HIGHER_ORDER_QUAD";
+    case VTK_CELL_TYPE::VTK_HIGHER_ORDER_POLYGON:
+        return "VTK_HIGHER_ORDER_POLYGON";
+    case VTK_CELL_TYPE::VTK_HIGHER_ORDER_TETRAHEDRON:
+        return "VTK_HIGHER_ORDER_TETRAHEDRON";
+    case VTK_CELL_TYPE::VTK_HIGHER_ORDER_WEDGE:
+        return "VTK_HIGHER_ORDER_WEDGE";
+    case VTK_CELL_TYPE::VTK_HIGHER_ORDER_PYRAMID:
+        return "VTK_HIGHER_ORDER_PYRAMID";
+    case VTK_CELL_TYPE::VTK_HIGHER_ORDER_HEXAHEDRON:
+        return "VTK_HIGHER_ORDER_HEXAHEDRON";
+    case VTK_CELL_TYPE::VTK_LAGRANGE_CURVE:
+        return "VTK_LAGRANGE_CURVE";
+    case VTK_CELL_TYPE::VTK_LAGRANGE_TRIANGLE:
+        return "VTK_LAGRANGE_TRIANGLE ";
+    case VTK_CELL_TYPE::VTK_LAGRANGE_QUADRILATERAL:
+        return "VTK_LAGRANGE_QUADRILATERAL";
+    case VTK_CELL_TYPE::VTK_LAGRANGE_TETRAHEDRON:
+        return "VTK_LAGRANGE_TETRAHEDRON";
+    case VTK_CELL_TYPE::VTK_LAGRANGE_HEXAHEDRON:
+        return "VTK_LAGRANGE_HEXAHEDRON";
+    case VTK_CELL_TYPE::VTK_LAGRANGE_WEDGE:
+        return "VTK_LAGRANGE_WEDGE";
+    case VTK_CELL_TYPE::VTK_LAGRANGE_PYRAMID:
+        return "VTK_LAGRANGE_PYRAMID";
+    default:
+        return "UNKNOWN";
+    }
+}
+
+std::string ToString(GMSH_CELL_TYPE idtype)
+{
+    switch (idtype)
+    {
+    default:
+        return "GMSH_0_NODE_EMPTY";
+    case GMSH_CELL_TYPE::GMSH_2_NODE_LINE:
+        return "GMSH_2_NODE_LINE";
+    case GMSH_CELL_TYPE::GMSH_3_NODE_TRIANGLE:
+        return "GMSH_3_NODE_TRIANGLE";
+    case GMSH_CELL_TYPE::GMSH_4_NODE_QUADRANGLE:
+        return "GMSH_4_NODE_QUADRANGLE";
+    case GMSH_CELL_TYPE::GMSH_4_NODE_TETRAHEDRON:
+        return "GMSH_4_NODE_TETRAHEDRON";
+    case GMSH_CELL_TYPE::GMSH_8_NODE_HEXAEDRON:
+        return "GMSH_8_NODE_HEXAEDRON";
+    case GMSH_CELL_TYPE::GMSH_6_NODE_PRISM:
+        return "GMSH_6_NODE_PRISM";
+    case GMSH_CELL_TYPE::GMSH_5_NODE_PYRAMID:
+        return "GMSH_5_NODE_PYRAMID";
+    case GMSH_CELL_TYPE::GMSH_3_NODE_QUADRATIC_LINE:
+        return "GMSH_3_NODE_QUADRATIC_LINE";
+    case GMSH_CELL_TYPE::GMSH_6_NODE_QUADRATIC_TRIANGLE:
+        return "GMSH_6_NODE_QUADRATIC_TRIANGLE";
+    case GMSH_CELL_TYPE::GMSH_9_NODE_QUADRATIC_QUADRANGLE:
+        return "GMSH_9_NODE_QUADRATIC_QUADRANGLE";
+    case GMSH_CELL_TYPE::GMSH_10_NODE_QUADRATIC_TETRAHEDRON:
+        return "GMSH_10_NODE_QUADRATIC_TETRAHEDRON";
+    case GMSH_CELL_TYPE::GMSH_27_NODE_QUADRATIC_HEXAHEDRON:
+        return "GMSH_27_NODE_QUADRATIC_HEXAHEDRON";
+    case GMSH_CELL_TYPE::GMSH_18_NODE_QUADRATIC_PRISM:
+        return "GMSH_18_NODE_QUADRATIC_PRISM";
+    case GMSH_CELL_TYPE::GMSH_14_NODE_QUADRATIC_PYRAMID:
+        return "GMSH_14_NODE_QUADRATIC_PYRAMID";
+    case GMSH_CELL_TYPE::GMSH_1_NODE_POINT:
+        return "GMSH_1_NODE_POINT";
+    case GMSH_CELL_TYPE::GMSH_8_NODE_QUADRATIC_QUADRANGLE:
+        return "GMSH_8_NODE_QUADRATIC_QUADRANGLE";
+    case GMSH_CELL_TYPE::GMSH_20_NODE_QUADRATIC_HEXAHEDRON:
+        return "GMSH_20_NODE_QUADRATIC_HEXAHEDRON";
+    }
+}
+
+GMSH_CELL_TYPE Convert (VTK_CELL_TYPE type)
+{
+    switch (type)
+    {
+    default:
+    case VTK_CELL_TYPE::VTK_EMPTY_CELL:
+        return GMSH_CELL_TYPE::GMSH_0_NODE_EMPTY;
+    case VTK_CELL_TYPE::VTK_LINE:
+        return GMSH_CELL_TYPE::GMSH_2_NODE_LINE;//
+    case VTK_CELL_TYPE::VTK_TRIANGLE:
+        return GMSH_CELL_TYPE::GMSH_3_NODE_TRIANGLE;
+    case VTK_CELL_TYPE::VTK_QUAD:
+        return GMSH_CELL_TYPE::GMSH_4_NODE_QUADRANGLE;
+    case VTK_CELL_TYPE::VTK_TETRA:
+        return GMSH_CELL_TYPE::GMSH_4_NODE_TETRAHEDRON;
+    case VTK_CELL_TYPE::VTK_HEXAHEDRON:
+        return GMSH_CELL_TYPE::GMSH_8_NODE_HEXAEDRON;
+        //    case 6: // 6-node prism.
+        //        case VTK_CELL_TYPE::VTK_PYRAMID;
+    case VTK_CELL_TYPE::VTK_QUADRATIC_PYRAMID:
+        return GMSH_CELL_TYPE::GMSH_5_NODE_PYRAMID;
+    case VTK_CELL_TYPE::VTK_QUADRATIC_EDGE:
+        return GMSH_CELL_TYPE::GMSH_3_NODE_QUADRATIC_LINE;
+    case VTK_CELL_TYPE::VTK_QUADRATIC_TRIANGLE:
+        return GMSH_CELL_TYPE::GMSH_6_NODE_QUADRATIC_TRIANGLE;
+    case VTK_CELL_TYPE::VTK_QUADRATIC_QUAD:
+        return GMSH_CELL_TYPE::GMSH_9_NODE_QUADRATIC_QUADRANGLE;
+    case VTK_CELL_TYPE::VTK_QUADRATIC_TETRA:
+        return GMSH_CELL_TYPE::GMSH_10_NODE_QUADRATIC_TETRAHEDRON;
+    case VTK_CELL_TYPE::VTK_QUADRATIC_HEXAHEDRON:
+        return GMSH_CELL_TYPE::GMSH_27_NODE_QUADRATIC_HEXAHEDRON;
+        //    case 13: // 18-node second order prism
+        //        return ;
+        //    case VTK_CELL_TYPE::VTK_QUADRATIC_PYRAMID:
+        //        return GMSH_CELL_TYPE::GMSH_14_NODE_QUADRATIC_PYRAMID;
+    case VTK_CELL_TYPE::VTK_VERTEX:
+        return GMSH_CELL_TYPE::GMSH_1_NODE_POINT;
+    case VTK_CELL_TYPE::VTK_BIQUADRATIC_QUAD:
+        return GMSH_CELL_TYPE::GMSH_8_NODE_QUADRATIC_QUADRANGLE;
+    case VTK_CELL_TYPE::VTK_TRIQUADRATIC_HEXAHEDRON:
+        return GMSH_CELL_TYPE::GMSH_20_NODE_QUADRATIC_HEXAHEDRON;
+        //    case 18:       // 15-node second order prism
+        //        return ;       //
+        //    case 19:       // 13-node second order pyramid
+        //        return ;       //
+    }
+}
+
+VTK_CELL_TYPE Convert (GMSH_CELL_TYPE type)
+{
+    switch (type) {
+    default:
+    case GMSH_CELL_TYPE::GMSH_0_NODE_EMPTY:
+        return VTK_CELL_TYPE::VTK_EMPTY_CELL;
+    case GMSH_CELL_TYPE::GMSH_2_NODE_LINE:
+        return VTK_CELL_TYPE::VTK_LINE;
+    case GMSH_CELL_TYPE::GMSH_3_NODE_TRIANGLE:
+        return VTK_CELL_TYPE::VTK_TRIANGLE;
+    case GMSH_CELL_TYPE::GMSH_4_NODE_QUADRANGLE:
+        return VTK_CELL_TYPE::VTK_QUAD;
+    case GMSH_CELL_TYPE::GMSH_4_NODE_TETRAHEDRON:
+        return VTK_CELL_TYPE::VTK_TETRA;
+    case GMSH_CELL_TYPE::GMSH_8_NODE_HEXAEDRON:
+        return VTK_CELL_TYPE::VTK_HEXAHEDRON;
+        //    case 6: // 6-node prism.
+        //        return VTK_CELL_TYPE::VTK_PYRAMID;
+    case GMSH_CELL_TYPE::GMSH_5_NODE_PYRAMID:
+        return VTK_CELL_TYPE::VTK_QUADRATIC_PYRAMID;
+    case GMSH_CELL_TYPE::GMSH_3_NODE_QUADRATIC_LINE:
+        return VTK_CELL_TYPE::VTK_QUADRATIC_EDGE;
+    case GMSH_CELL_TYPE::GMSH_6_NODE_QUADRATIC_TRIANGLE:
+        return VTK_CELL_TYPE::VTK_QUADRATIC_TRIANGLE;
+    case GMSH_CELL_TYPE::GMSH_9_NODE_QUADRATIC_QUADRANGLE:
+        return VTK_CELL_TYPE::VTK_QUADRATIC_QUAD;
+    case GMSH_CELL_TYPE::GMSH_10_NODE_QUADRATIC_TETRAHEDRON:
+        return VTK_CELL_TYPE::VTK_QUADRATIC_TETRA;
+    case GMSH_CELL_TYPE::GMSH_27_NODE_QUADRATIC_HEXAHEDRON:
+        return VTK_CELL_TYPE::VTK_QUADRATIC_HEXAHEDRON;
+        //    case 13: // 18-node second order prism
+        //        return ;       //
+    case GMSH_CELL_TYPE::GMSH_14_NODE_QUADRATIC_PYRAMID:
+        return VTK_CELL_TYPE::VTK_QUADRATIC_PYRAMID;
+    case GMSH_CELL_TYPE::GMSH_1_NODE_POINT:
+        return VTK_CELL_TYPE::VTK_VERTEX;
+    case GMSH_CELL_TYPE::GMSH_8_NODE_QUADRATIC_QUADRANGLE:
+        return VTK_CELL_TYPE::VTK_BIQUADRATIC_QUAD;
+    case GMSH_CELL_TYPE::GMSH_20_NODE_QUADRATIC_HEXAHEDRON:
+        return VTK_CELL_TYPE::VTK_TRIQUADRATIC_HEXAHEDRON;
+        //    case 18:       // 15-node second order prism
+        //        return ;       //
+        //    case 19:       // 13-node second order pyramid
+        //        return ;       //
+    }
+}
+
+std::ostream& operator<< (std::ostream& out, VTK_CELL_TYPE type)
+{
+    out << ToString (type);
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, GMSH_CELL_TYPE type)
+{
+    out << ToString (type);
+    return out;
+}
