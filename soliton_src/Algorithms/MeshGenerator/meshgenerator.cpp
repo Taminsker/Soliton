@@ -18,7 +18,7 @@ std::string GenerateWithGMSH (InputDatStruct* input)
     std::string out = "temp_msh_file.msh";
 
     // Before
-    count = (input->xp - input->xm) * (input->yp - input->ym) / (input->hsize * input->hsize);
+    count = (input->grid_x_p - input->grid_x_m) * (input->grid_y_p - input->grid_y_m) / (input->hsize * input->hsize);
     count *= 1.2;
 
 
@@ -35,10 +35,10 @@ std::string GenerateWithGMSH (InputDatStruct* input)
 
     //    geofile << "Include \"" << input->filename << "\";" << std::endl;
 
-    geofile << "xm = " << input->xm << ";" << std::endl;
-    geofile << "xp = " << input->xp << ";" << std::endl;
-    geofile << "ym = " << input->ym << ";" << std::endl;
-    geofile << "yp = " << input->yp << ";" << std::endl;
+    geofile << "xm = " << input->grid_x_m << ";" << std::endl;
+    geofile << "xp = " << input->grid_x_p << ";" << std::endl;
+    geofile << "ym = " << input->grid_y_m << ";" << std::endl;
+    geofile << "yp = " << input->grid_y_p << ";" << std::endl;
     geofile << "hsize = " << input->hsize << ";" << std::endl;
 
     geofile << "// point" << std::endl;
@@ -55,16 +55,24 @@ std::string GenerateWithGMSH (InputDatStruct* input)
     geofile << "Curve Loop(1) = {1, -2, -4, -3};" << std::endl;
     geofile << "Plane Surface(1) = {1};" << std::endl;
 
-    geofile << "// physical" << std::endl;
-    geofile << "Physical Curve(\"wall\") = {1, 4};" << std::endl;
-    geofile << "Physical Curve(\"inlet\") = {2};" << std::endl;
-    geofile << "Physical Curve(\"outlet\") = {3};" << std::endl;
-    geofile << "Physical Surface(\"domain\") = {1};" << std::endl;
+//    geofile << "// physical" << std::endl;
+//    geofile << "Physical Curve(\"wall\") = {1, 4};" << std::endl;
+//    geofile << "Physical Curve(\"inlet\") = {2};" << std::endl;
+//    geofile << "Physical Curve(\"outlet\") = {3};" << std::endl;
+//    geofile << "Physical Surface(\"domain\") = {1};" << std::endl;
+
+//    geofile << "Physical Curve(" << int(PHYS::WALL) << ") = {1, 4};" << std::endl;
+//    geofile << "Physical Curve(" << int(PHYS::INLET) << ") = {2};" << std::endl;
+//    geofile << "Physical Curve(" << int(PHYS::OUTLET) << ") = {3};" << std::endl;
+    geofile << "Physical Surface(" << int(PHYS::DOMAIN) << ") = {1};" << std::endl;
 
     geofile << "// mesh generation" << std::endl;
-    geofile << "//Mesh.SaveAll=1;" << std::endl;
-    if (input->Pk == 1 || input->Pk == 2)
-        geofile << "Mesh.ElementOrder = " << input->Pk << ";" << std::endl;
+    geofile << "//Mesh.SaveAll=0;" << std::endl;
+
+    geofile << "Mesh.ElementOrder = " << input->ele_order << ";" << std::endl;
+    if (input->ele_type == 1)
+        geofile << "Mesh.RecombineAll = 1 ;" << std::endl;
+
     geofile << "Mesh.MshFileVersion = 2.2;" << std::endl;
     geofile << "Mesh 2;" << std::endl;
     geofile << "Save \"" << out << "\";" << std::endl;
@@ -110,9 +118,9 @@ void ObjectGenerator (InputDatStruct* data, Sto4Sol* store)
     {
         ObjectDatStruct obj = data->objects.at (num);
         Mesh* object = new Mesh();
-        object->SetName ("obj_"+std::to_string (num));
+        object->SetName (data->objects.at (num).basename);
 
-        if (obj.gen_with_algo)
+        if (obj.filename_msh.empty ())
         {
             if (obj.algo_gen == 1)
                 AlgoGen1 (&obj, object);
@@ -127,17 +135,16 @@ void ObjectGenerator (InputDatStruct* data, Sto4Sol* store)
         {
             ParseMSH (object, obj.filename_msh, true);
 
-            if (obj.enableMover)
-                MoveObject (object, obj.radius, {obj.xc, obj.yc});
+            if (obj.rinp)
+                MoveObject (object, obj.radius, {obj.x_center, obj.y_center, obj.z_center});
         }
 
-        if (obj.gen_with_algo)
-        {
-            BuildEdgesWithHashMap(object);
-//            ComputeNormalsOnEdges (object);
-//            ComputeNormalsOnCells (object);
-//            ComputeNormalsOnPoints (object);
-        }
+
+        BuildEdgesWithHashMap(object);
+        //            ComputeNormalsOnEdges (object);
+        //            ComputeNormalsOnCells (object);
+        //            ComputeNormalsOnPoints (object);
+
 
         store->listobjects.push_back (object);
 
@@ -168,8 +175,8 @@ void AlgoGen1 (ObjectDatStruct* data, Mesh* object)
     for (double rr = 0.; rr < 2. * M_PI; rr = rr + radmin)
     {
         Point* p = new Point();
-        p->x = data->radius * std::cos (rr) + data->xc;
-        p->y = data->radius * std::sin (rr) + data->yc;
+        p->x = data->radius * std::cos (rr) + data->x_center;
+        p->y = data->radius * std::sin (rr) + data->y_center;
         p->z = 0.0;
         p->SetGlobalIndex (countpt);
 
@@ -227,7 +234,7 @@ void AlgoGen2 (ObjectDatStruct* data, Mesh* object)
         p->y = 0.7 * std::sin (rr) - 0.07 * std::sin (3. * rr) + 0.2 * std::sin (7. * rr);
         p->z = 0.0;
 
-        *p = data->radius * *p + Point (data->xc, data->yc, 0.);
+        *p = data->radius * *p + Point (data->x_center, data->y_center, 0.);
         p->SetGlobalIndex (countpt);
 
         object->AddPoint (p);
@@ -285,7 +292,7 @@ void AlgoGen3 (ObjectDatStruct* data, Mesh* object)
         p->y = 0.7 * std::sin (rr) - 0.07 * std::sin (3. * rr) + 0.2 * std::sin (7. * rr);
         p->z = 0.0;
 
-        *p = data->radius * *p + Point (data->xc, data->yc, 0.);
+        *p = data->radius * *p + Point (data->x_center, data->y_center, 0.);
         p->SetGlobalIndex (countpt);
 
         object->AddPoint (p);

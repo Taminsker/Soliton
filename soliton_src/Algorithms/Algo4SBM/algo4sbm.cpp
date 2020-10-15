@@ -3,24 +3,24 @@
 #include <IO/io.h>
 #include <Solver/solver.h>
 
-std::string ToString (TAG_INTERSECTION tag)
+std::string ToString (INTER tag)
 {
     switch (tag)
     {
-    case TAG_INTERSECTION::TAG_UNKNOWN:
-        return "TAG_UNKNOWN";
-    case TAG_INTERSECTION::TAG_INSIDE:
-        return "TAG_INSIDE";
-    case TAG_INTERSECTION::TAG_OUTSIDE:
-        return "TAG_OUTSIDE";
-    case TAG_INTERSECTION::TAG_MIXED:
-        return "TAG_MIXED";
+    case INTER::UNKNOWN:
+        return "UNKNOWN";
+    case INTER::IN:
+        return "IN";
+    case INTER::OUT:
+        return "OUT";
+    case INTER::MIXED:
+        return "MIXED";
     }
 
-    return "TAG_UNKNOWN";
+    return "UNKNOWN";
 }
 
-std::ostream& operator<< (std::ostream& out, TAG_INTERSECTION tag)
+std::ostream& operator<< (std::ostream& out, INTER tag)
 {
     out << ToString (tag);
     return out;
@@ -48,7 +48,7 @@ void BuildDisplacementVectorsBounds2 (Mesh* mesh, Mesh* object)
         return;
     }
 
-    auto tagCellVec = object->GetCellsData ()->GetIntArrays ()->Get (namemesh + NAME_TAG_INTERSECTION);
+    auto tagCellVec = object->GetCellsData ()->GetIntArrays ()->Get (namemesh + NAME_INTER);
 
     if (tagCellVec == nullptr)
     {
@@ -86,7 +86,7 @@ void BuildDisplacementVectorsBounds2 (Mesh* mesh, Mesh* object)
         Edge* edge = mesh->GetEdge (edgeId);
 
         // Test if the edges is on mixed cell
-        if (tagEdgeSurrogateVec->vec.at (std::size_t (edgeId)) == int(TAG_INTERSECTION::TAG_MIXED))
+        if (tagEdgeSurrogateVec->vec.at (std::size_t (edgeId)) == int(INTER::MIXED))
         {
             // Compute d vectors
             // if we are now, the current edge is a surrogate edge ! We need
@@ -110,7 +110,7 @@ void BuildDisplacementVectorsBounds2 (Mesh* mesh, Mesh* object)
 
                 for (int cellId = 0; cellId < numCellsObject; ++cellId)
                 {
-                    if (tagCellVec->vec.at (std::size_t (cellId)) == int(TAG_INTERSECTION::TAG_MIXED))
+                    if (tagCellVec->vec.at (std::size_t (cellId)) == int(INTER::MIXED))
                     {
                         Cell* cell = object->GetCell (cellId);
 
@@ -175,65 +175,63 @@ void AddLevelSetBetween (Mesh* mesh, Mesh* object)
 {
     HEADERFUN("AddLevelSetBetween");
 #ifdef VERBOSE
-    BEGIN << "Add level set distance : " << COLOR_BLUE << mesh->GetName () << " <-> " << object->GetName () << ENDLINE;
+    BEGIN << "Add level set distance : on " << COLOR_BLUE << mesh->GetName () << COLOR_DEFAULT << REVERSE << " to " << COLOR_BLUE << object->GetName () << ENDLINE;
 #endif
 
     //    int numEdgesMesh = mesh->GetNumberOfEdges ();
-    //    int numCellsMesh = mesh->GetNumberOfCells ();
+    //        int numCellsMesh = mesh->GetNumberOfCells ();
     int numPointsMesh = mesh->GetNumberOfPoints ();
-    int numPointsObject = object->GetNumberOfPoints ();
+    //    int numPointsObject = object->GetNumberOfPoints ();
+    int numCellsObject = object->GetNumberOfCells ();
+
     std::string nameobject = object->GetName ();
     FEStore store;
     FELocalInfos loc;
-    std::vector <double> levelSetPoints (std::size_t (numPointsMesh), 0);
+    std::vector <double> levelSetPoints (std::size_t (numPointsMesh), MAX_VALUE);
     std::vector <bool> alreadyTreated (std::size_t (numPointsMesh), false);
-
+    int err_neg_zero = 0;
+    int err_too_much = 0;
 
     // levelSetPoints
     for (int pointId = 0; pointId < numPointsMesh; ++pointId)
     {
         int percent = static_cast<int>(static_cast<double>(pointId + 1) / static_cast<double>(numPointsMesh) * 100.);
 
-        std::cout << "\r";
+        COUT << "\r";
         STATUS << "compute level-set " << percent << "% ...        ";
 
         Point* p_cur = mesh->GetPoint (pointId);
-        Point* p_min = object->GetPoint (0);
+        Cell* c_min = object->GetCell (0);
+        Cell* cell = nullptr;
+        double dist = MAX_VALUE;
+        double distOnCell = MAX_VALUE;
 
-        double dist = EuclidianDist (*p_min, *p_cur);
-
-        for (int j = 0; j < numPointsObject; ++j)
+        for (int idCell = 0; idCell < numCellsObject; ++idCell)
         {
-            Point* p_curve = object->GetPoint (j);
-            double d_temp = EuclidianDist (*p_curve, *p_cur);
+            cell = object->GetCell (idCell);
+            distOnCell = EuclidianDist (*cell->GetCentroid (), *p_cur);
 
-            if (d_temp < dist)
+            if (distOnCell < dist)
             {
-                p_min = p_curve;
-                dist = d_temp;
+                c_min = cell;
+                dist = distOnCell;
             }
         }
 
-        Point meanNormal;
-        int count = 0;
-        for (Cell* cell : p_min->GetLinkedCell ())
+        FEBase* febase = store.GetElementFor (c_min);
+        febase->LocalCompute (c_min->GetCentroid (), &loc);
+        Point normal = loc.normalCell;
+
+        double value = (normal | (*p_cur - *c_min->GetCentroid ()));
+
+        if (std::abs(value) > MAX_VALUE)
+            err_too_much++;
+
+        if (std::abs(value - NEG_ZERO) < EPSILON * EPSILON)
         {
-            FEBase* febase = store.GetElementFor (cell);
-            Point ptonref = febase->TransformEleToRef (p_min);
-            febase->LocalCompute (&ptonref, &loc);
-
-            if (cell->GetCat () != CAT_CELL_EDGE::CELL)
-                continue;
-
-            meanNormal += loc.normalCell;
-            count++;
+            err_neg_zero++;
+            value = 0.;
         }
-
-        meanNormal /= static_cast<double>(count);
-
-        double value = (meanNormal | (*p_cur - *p_min));
-        //        if (std::abs (value) < 1e-2)
-        //            value = 0.;
 
         levelSetPoints.at (std::size_t (pointId)) = value;
     }
@@ -243,6 +241,11 @@ void AddLevelSetBetween (Mesh* mesh, Mesh* object)
     mesh->GetPointsData ()->GetDoubleArrays ()->Add (nameobject + NAME_LEVELSET, levelSetPoints);
 
 #ifdef VERBOSE
+    if (err_neg_zero != 0)
+        WARNING << "we found points with an anormal level-set (occure '-0') : " << err_neg_zero << ENDLINE;
+    if (err_too_much != 0)
+        WARNING << "we found points with an anormal level-set (occure '> " << MAX_VALUE << "') : " << err_too_much << ENDLINE;
+
     INFOS << "level-set computed." << ENDLINE;
     ENDFUN;
 #endif
@@ -267,7 +270,7 @@ void TagCellsFromLevelSet (Mesh* mesh, Mesh* object)
     int count_mixed = 0;
 
     HetDouble::Array* levelSetPoints = mesh->GetPointsData ()->GetDoubleArrays ()->Get (object->GetName () + NAME_LEVELSET);
-//    HetInt::Array* tagintersection = mesh->GetCellsData ()->GetIntArrays ()->Get (object->GetName () + NAME_TAG_INTERSECTION);
+    //    HetInt::Array* tagintersection = mesh->GetCellsData ()->GetIntArrays ()->Get (object->GetName () + NAME_INTER);
 
     if (levelSetPoints == nullptr)
     {
@@ -275,11 +278,13 @@ void TagCellsFromLevelSet (Mesh* mesh, Mesh* object)
         return;
     }
 
-    std::vector <int> tagCellInOut (std::size_t (numCellsMesh), static_cast<int>(TAG_INTERSECTION::TAG_MIXED));
+    std::vector <int> tagCellInOut (std::size_t (numCellsMesh), static_cast<int>(INTER::UNKNOWN));
 
     for (int i = 0; i < numCellsMesh; ++i)
     {
         Cell* c = mesh->GetCell (i);
+
+        int* value = &tagCellInOut.at (std::size_t(i));
 
         int countpstv = 0;
         int countnul = 0;
@@ -297,20 +302,15 @@ void TagCellsFromLevelSet (Mesh* mesh, Mesh* object)
                 countnul++;
         }
 
-        if (countneg == 0 && countpstv > 0)
-            tagCellInOut.at (std::size_t(i)) = int(TAG_INTERSECTION::TAG_OUTSIDE);
-        else if (countpstv == 0 && countneg > 0)
-            tagCellInOut.at (std::size_t(i)) = int(TAG_INTERSECTION::TAG_INSIDE);
-        else if (countnul > 0 && countneg == 0 && countpstv == 0)
+        if ((countneg > 0) && (countpstv > 0))
         {
-            tagCellInOut.at (std::size_t(i)) = static_cast<int>(TAG_INTERSECTION::TAG_MIXED);
+            *value = static_cast<int>(INTER::MIXED);
             count_mixed++;
         }
+        else if ((countneg <= 0) && (countpstv > 0))
+            *value = static_cast<int>(INTER::IN);
         else
-        {
-            tagCellInOut.at (std::size_t(i)) = static_cast<int>(TAG_INTERSECTION::TAG_MIXED);
-            count_mixed++;
-        }
+            *value = static_cast<int>(INTER::OUT);
     }
 
     if (count_mixed != numCellsMesh)
@@ -322,11 +322,11 @@ void TagCellsFromLevelSet (Mesh* mesh, Mesh* object)
         WARNING << REVERSE << "the tagging of the surrogate cells is done but we have all the cells are mixed." << ENDLINE;
 
         for (int id = 0; id < numCellsMesh; ++id)
-            tagCellInOut.at (std::size_t (id)) = static_cast<int>(TAG_INTERSECTION::TAG_MIXED);
+            tagCellInOut.at (std::size_t (id)) = static_cast<int>(INTER::MIXED);
 
     }
 
-    mesh->GetCellsData ()->GetIntArrays ()->Add (object->GetName () + NAME_TAG_INTERSECTION, tagCellInOut);
+    mesh->GetCellsData ()->GetIntArrays ()->Add (object->GetName () + NAME_INTER, tagCellInOut);
 
 #ifdef VERBOSE
     ENDFUN;
@@ -340,7 +340,7 @@ void TagEdgesFromTagCells (Mesh* mesh, Mesh* object)
     HEADERFUN ("TagCellsFromLevelSet");
 
 #ifdef VERBOSE
-    BEGIN << "tag edges from levelset entitled : " << COLOR_BLUE << object->GetName () + NAME_TAG_INTERSECTION << ENDLINE;
+    BEGIN << "tag edges from levelset entitled : " << COLOR_BLUE << object->GetName () + NAME_INTER << ENDLINE;
 #endif
 
     int numEdgesMesh = mesh->GetNumberOfEdges ();
@@ -350,7 +350,7 @@ void TagEdgesFromTagCells (Mesh* mesh, Mesh* object)
     //    std::string nameobject = mesh->GetName ();
     int count_mixed = 0;
 
-    auto tagCellInOut = mesh->GetCellsData ()->GetIntArrays ()->Get (object->GetName () + NAME_TAG_INTERSECTION);
+    auto tagCellInOut = mesh->GetCellsData ()->GetIntArrays ()->Get (object->GetName () + NAME_INTER);
 
     if (tagCellInOut == nullptr)
     {
@@ -358,7 +358,7 @@ void TagEdgesFromTagCells (Mesh* mesh, Mesh* object)
         return;
     }
 
-    std::vector <int> tagEdgeSurrogate (std::size_t (numEdgesMesh), static_cast<int>(TAG_INTERSECTION::TAG_MIXED));
+    std::vector <int> tagEdgeSurrogate (std::size_t (numEdgesMesh), static_cast<int>(INTER::UNKNOWN));
 
     for (int edgeId = 0; edgeId < numEdgesMesh; ++edgeId)
     {
@@ -372,38 +372,41 @@ void TagEdgesFromTagCells (Mesh* mesh, Mesh* object)
         int count_MIXED = 0;
 
         for (Cell* cell : *cellList)
+        {
             switch (tagCellInOut->vec.at (std::size_t (cell->GetGlobalIndex ())))
             {
-            case static_cast<int>(TAG_INTERSECTION::TAG_INSIDE):
+            case static_cast<int>(INTER::IN):
                 count_INSIDE++;
                 break;
-            case static_cast<int>(TAG_INTERSECTION::TAG_MIXED):
+            case static_cast<int>(INTER::MIXED):
                 count_MIXED++;
                 break;
-            default:
+            case static_cast<int>(INTER::OUT):
                 count_OUTSIDE++;
                 break;
+            default:
+                ERROR << "TAG UNKNOWN ??" << ENDLINE;
+                break;
             }
-
-
-        if (count_MIXED != 0)
-        {
-            if (count_INSIDE != 0)
-            {
-                *value = static_cast<int>(TAG_INTERSECTION::TAG_MIXED);
-                count_mixed++;
-            }
-            else
-                *value = static_cast<int>(TAG_INTERSECTION::TAG_OUTSIDE);
         }
+
+        //        ERROR << "EDGE : " << edgeId << " count cell " << cellList->size () << ENDLINE;
+
+        if (edgeId == 34546)
+        {
+            //            INFOS << "count IN " << count_INSIDE << ENDLINE;
+            //            INFOS << "count OUT " << count_OUTSIDE << ENDLINE;
+            //            INFOS << "count MIXED " << count_MIXED << ENDLINE;
+        }
+        if (count_MIXED != 0 && count_OUTSIDE != 0)
+        {
+            *value = static_cast<int>(INTER::MIXED);
+            count_mixed++;
+        }
+        else if ((count_INSIDE == 0) && (count_OUTSIDE != 0))
+            *value = static_cast<int>(INTER::OUT);
         else
-        {
-            if (count_INSIDE != 0)
-                *value = static_cast<int>(TAG_INTERSECTION::TAG_INSIDE);
-            else
-                *value = static_cast<int>(TAG_INTERSECTION::TAG_OUTSIDE);
-        }
-
+            *value = static_cast<int>(INTER::IN);
     }
 
     if (count_mixed != numEdgesMesh)
@@ -415,7 +418,7 @@ void TagEdgesFromTagCells (Mesh* mesh, Mesh* object)
         WARNING << REVERSE << "the tagging of the surrogate cells is done but we have all the cells are mixed." << ENDLINE;
 
         for (int id = 0; id < numEdgesMesh; ++id)
-            tagEdgeSurrogate.at (std::size_t (id)) = static_cast<int>(TAG_INTERSECTION::TAG_MIXED);
+            tagEdgeSurrogate.at (std::size_t (id)) = static_cast<int>(INTER::MIXED);
     }
 
     mesh->GetEdgesData ()->GetIntArrays ()->Add (object->GetName () + NAME_TAG_SURROGATE, tagEdgeSurrogate);
@@ -452,7 +455,7 @@ void BuildDisplacementVectorsBounds (Mesh* mesh, Mesh* object)
     }
 
     // Tag Intersection Cells Object (tagICO)
-    HetContainer<int>::Array* tagICO = object->GetCellsData ()->GetIntArrays ()->Get (namemesh + NAME_TAG_INTERSECTION);
+    HetContainer<int>::Array* tagICO = object->GetCellsData ()->GetIntArrays ()->Get (namemesh + NAME_INTER);
 
     if (tagICO == nullptr)
     {
@@ -483,7 +486,7 @@ void BuildDisplacementVectorsBounds (Mesh* mesh, Mesh* object)
         Edge* edge = mesh->GetEdge (edgeId);
 
         // Test if the edges is on mixed cell
-        if (tagSEM->vec.at (std::size_t (edgeId)) == static_cast<int>(TAG_INTERSECTION::TAG_MIXED))
+        if (tagSEM->vec.at (std::size_t (edgeId)) == static_cast<int>(INTER::MIXED))
         {
             // Compute d vectors
             // if we are now, the current edge is a surrogate edge ! We need
@@ -502,6 +505,7 @@ void BuildDisplacementVectorsBounds (Mesh* mesh, Mesh* object)
                 int ret = GetDisplacementVectorAtPoint (point, object, d);
 
                 count_d_vec++;
+
                 if (ret == EXIT_FAILURE)
                     count_error++;
 
@@ -527,7 +531,7 @@ int GetDisplacementVectorAtPoint (Point* atpoint, Mesh* targetToMap, Point* d)
 {
     int numCellsObject = targetToMap->GetNumberOfCells ();
     Cell* bestcell = nullptr;
-    double minDist = 1e6;
+    double minDist = MAX_VALUE;
     double meanDist = 0.;
 
     FEStore store;

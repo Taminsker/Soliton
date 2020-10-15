@@ -8,5 +8,6 @@
 #include "Method/method.h"
 
 #include "UpgradableSolver/upgradablesolver.h"
+#include "SuperSolver/supersolver.h"
 
 #endif // SOLVER_H

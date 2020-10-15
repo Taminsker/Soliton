@@ -7,6 +7,4 @@
 #include "Point/point.h"
 #include "HetContainer/hetcontainer.h"
 
-#include "EnumClass/enumclass.h"
-
 #endif // CORE_H

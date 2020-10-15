@@ -6,6 +6,14 @@
 #include <Solver/solver.h>
 #include <Core/core.h>
 
+#define BOOST_CHECK_EQUAL_MESSAGE(L, R, M)                                      \
+    BOOST_TEST_INFO(M);                                                         \
+    BOOST_CHECK_EQUAL(L, R)
+
+#define BOOST_WARN_EQUAL_MESSAGE(L, R, M)                                       \
+    BOOST_TEST_INFO(M);                                                         \
+    BOOST_WARN_EQUAL(L, R)
+
 BOOST_AUTO_TEST_SUITE(Emp0N0DDL_felag)
 
 BOOST_AUTO_TEST_CASE(Emp0N0DDL_constructor)
@@ -14,7 +22,7 @@ BOOST_AUTO_TEST_CASE(Emp0N0DDL_constructor)
     FELagrange<PHYSICAL_CELL_TYPE::EMPTY, 0, 0> obj;
 
     BOOST_CHECK_EQUAL(obj.GetNumberOfPoints (), 0);
-    BOOST_CHECK_EQUAL(obj.GetCellType (), VTK_CELL_TYPE::VTK_EMPTY_CELL);
+    BOOST_CHECK_EQUAL(int(obj.GetCellType ()), int(VTK_CELL_TYPE::VTK_EMPTY_CELL));
 
 }
 
@@ -34,7 +42,7 @@ BOOST_AUTO_TEST_CASE(Ver1N1DDL_constructor)
     obj.CastForCell (&cell);
 
     BOOST_CHECK_EQUAL(obj.GetNumberOfPoints (), 1);
-    BOOST_CHECK_EQUAL(obj.GetCellType (), VTK_CELL_TYPE::VTK_VERTEX);
+    BOOST_CHECK_EQUAL(int(obj.GetCellType ()), int(VTK_CELL_TYPE::VTK_VERTEX));
 
     Point k0(0, 0, 0);
     Point p00 = obj.TransformRefToEle (&k0);
@@ -63,7 +71,7 @@ BOOST_AUTO_TEST_CASE(Lin2N2DDL_constructor)
     obj.CastForCell (&cell);
 
     BOOST_CHECK_EQUAL(obj.GetNumberOfPoints (), 2);
-    BOOST_CHECK_EQUAL(obj.GetCellType (), VTK_CELL_TYPE::VTK_LINE);
+    BOOST_CHECK_EQUAL(int(obj.GetCellType ()), int(VTK_CELL_TYPE::VTK_LINE));
 
     Point k0(-1, 0, 0);
     Point k1(1, 0, 0);
@@ -106,7 +114,7 @@ BOOST_AUTO_TEST_CASE(Lin3N3DDL_constructor)
     obj.CastForCell (&cell);
 
     BOOST_CHECK_EQUAL(obj.GetNumberOfPoints (), 3);
-    BOOST_CHECK_EQUAL(obj.GetCellType (), VTK_CELL_TYPE::VTK_QUADRATIC_EDGE);
+    BOOST_CHECK_EQUAL(int(obj.GetCellType ()), int(VTK_CELL_TYPE::VTK_QUADRATIC_EDGE));
 
     Point k0(-1, 0, 0);
     Point p00 = obj.TransformRefToEle (&k0);
@@ -122,7 +130,7 @@ BOOST_AUTO_TEST_CASE(Lin3N3DDL_constructor)
 
     FELocalInfos loc;
     obj.LocalCompute (&k0, &loc);
-//        double vol = (p1 - p0).EuclidianNorm ();
+    //        double vol = (p1 - p0).EuclidianNorm ();
     BOOST_CHECK_EQUAL(std::isinf (loc.detJac), false);
     //    BOOST_CHECK_EQUAL (detJac, 0.5 * vol);
 
@@ -155,7 +163,7 @@ BOOST_AUTO_TEST_CASE(Tri3N3DDL_constructor)
 
     {
         BOOST_CHECK_EQUAL(obj.GetNumberOfPoints (), 3);
-        BOOST_CHECK_EQUAL(obj.GetCellType (), VTK_CELL_TYPE::VTK_TRIANGLE);
+        BOOST_CHECK_EQUAL(int(obj.GetCellType ()), int(VTK_CELL_TYPE::VTK_TRIANGLE));
 
         Point k0(0, 0, 0);
         Point p00 = obj.TransformRefToEle (&k0);
@@ -175,8 +183,8 @@ BOOST_AUTO_TEST_CASE(Tri3N3DDL_constructor)
 
         double vol = 0.5 * CrossProduct (p1-p0, p2-p0).EuclidianNorm ();
 
-//        std::cout << loc.detJac << std::endl;
-//        std::cout << obj.GetDimension () * vol << std::endl;
+        //        std::cout << loc.detJac << std::endl;
+        //        std::cout << obj.GetDimension () * vol << std::endl;
 
         BOOST_CHECK_EQUAL (std::abs(loc.detJac - static_cast<double>(obj.GetDimension ()) * vol) < 1e-7, true);
 
@@ -201,12 +209,12 @@ BOOST_AUTO_TEST_CASE(Tri3N3DDL_constructor)
 
         for (std::size_t i = 0; i < 3; ++i)
         {
-//            Point* p_i = cell.GetPoints ()->at (i);
+            //            Point* p_i = cell.GetPoints ()->at (i);
             std::function<Point(Point*)> grad_phi_i = febase->GetGradPhi (i);
 
             for (std::size_t j = 0; j < 3; ++j)
             {
-//                Point* p_j = cell.GetPoints ()->at (j);
+                //                Point* p_j = cell.GetPoints ()->at (j);
                 std::function<Point(Point*)> grad_phi_j = febase->GetGradPhi (j);
 
                 double coeff = 0.;
@@ -217,7 +225,7 @@ BOOST_AUTO_TEST_CASE(Tri3N3DDL_constructor)
                     double wk = quadobject->w [k];
 
                     febase->LocalCompute (&pk, &loc);
-//                    std::cout << "JacInvT : [" << i << ", " << j << "]" << std::endl << JacInvT << std::endl;
+                    //                    std::cout << "JacInvT : [" << i << ", " << j << "]" << std::endl << JacInvT << std::endl;
 
                     coeff += loc.detJac * wk * ((loc.JacInvT * grad_phi_i(&pk)) | (loc.JacInvT * grad_phi_j(&pk)));
 
@@ -283,7 +291,7 @@ BOOST_AUTO_TEST_CASE(Tri6N6DDL_constructor)
     obj.CastForCell (&cell);
 
     BOOST_CHECK_EQUAL(obj.GetNumberOfPoints (), 6);
-    BOOST_CHECK_EQUAL(obj.GetCellType (), VTK_CELL_TYPE::VTK_QUADRATIC_TRIANGLE);
+    BOOST_CHECK_EQUAL(int(obj.GetCellType ()), int(VTK_CELL_TYPE::VTK_QUADRATIC_TRIANGLE));
 
     Point k0(0, 0, 0);
     Point p00 = obj.TransformRefToEle (&k0);
@@ -321,6 +329,173 @@ BOOST_AUTO_TEST_CASE(Tri6N6DDL_constructor)
     Point kpt11 = obj.TransformEleToRef (&pt1);
 
     BOOST_CHECK_EQUAL(kpt1, kpt11);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(Quad4N4DDL_felag)
+
+BOOST_AUTO_TEST_CASE(Quad4N4DDL_constructor)
+{
+    BOOST_TEST_MESSAGE("-- Tests for Quad4N4DDL");
+
+    constexpr PHYSICAL_CELL_TYPE physicalType = PHYSICAL_CELL_TYPE::QUADRANGLE;
+    constexpr GMSH_CELL_TYPE gmshType = GMSH_CELL_TYPE::GMSH_4_NODE_QUADRANGLE;
+    //    VTK_CELL_TYPE vtkType = Convert (gmshType);
+    constexpr int npts = 4;
+    constexpr int ddl = 4;
+
+    FELagrange<physicalType, npts, ddl> obj;
+
+    Point p0(0, 0, 0);
+    Point p1(1, 0, 0);
+    Point p2(1, 1, 0);
+    Point p3(0, 1, 0);
+
+    double vol = 0.5 * CrossProduct (p1-p0, p2-p0).EuclidianNorm ();
+    vol += 0.5 * CrossProduct (p1-p3, p2-p3).EuclidianNorm ();
+
+    BOOST_WARN_EQUAL_MESSAGE (std::abs (vol) < EPSILON, false, "WARNING volume of element is null");
+
+    std::vector<Point*> listPoints = {&p0, &p1, &p2, &p3};
+    BOOST_CHECK_EQUAL_MESSAGE(listPoints.size (), npts, "test");
+
+    Cell cell;
+    cell.AddPoints (listPoints)->SetType (gmshType);
+    obj.CastForCell (&cell);
+
+    BOOST_CHECK_EQUAL_MESSAGE(obj.GetNumberOfPoints (), listPoints.size (), "Misconfigured number of points");
+    VTK_CELL_TYPE vtkType = Convert<GMSH_CELL_TYPE, VTK_CELL_TYPE>(gmshType);
+    BOOST_CHECK_EQUAL(int(obj.GetCellType ()), int(vtkType));
+
+    FELocalInfos loc;
+    for (std::size_t idPoint = 0; idPoint < obj.GetNumberOfPoints (); ++idPoint)
+    {
+        Point pt = obj.TransformRefToEle (obj.GetPoint (idPoint));
+        BOOST_CHECK_EQUAL_MESSAGE(pt, *listPoints.at (idPoint), "The point " + std::to_string (idPoint) + " is misconfigured (TransformRefToEle)");
+        obj.LocalCompute (obj.GetPoint (idPoint), &loc);
+        BOOST_CHECK_EQUAL_MESSAGE (std::isinf (loc.detJac), false, "The point " + std::to_string (idPoint) + " is misconfigured (detJac == INF)");
+    }
+
+
+    //    obj.LocalCompute (obj.GetPoint (0), &loc);
+    //    BOOST_CHECK_EQUAL (loc.detJac, static_cast<double>(obj.GetDimension ()) * vol);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+
+
+BOOST_AUTO_TEST_SUITE(Quad8N8DDL_felag)
+
+BOOST_AUTO_TEST_CASE(Quad8N8DDL_constructor)
+{
+    BOOST_TEST_MESSAGE("-- Tests for Quad8N8DDL");
+
+    constexpr PHYSICAL_CELL_TYPE physicalType = PHYSICAL_CELL_TYPE::QUADRANGLE;
+    constexpr GMSH_CELL_TYPE gmshType = GMSH_CELL_TYPE::GMSH_8_NODE_QUADRATIC_QUADRANGLE;
+    //    VTK_CELL_TYPE vtkType = Convert (gmshType);
+    constexpr int npts = 8;
+    constexpr int ddl = 8;
+
+    FELagrange<physicalType, npts, ddl> obj;
+
+    Point p0(0, 0, 0);
+    Point p1(1, 0, 0);
+    Point p2(1, 1, 0);
+    Point p3(0, 1, 0);
+    Point p4(0.5, 0, 0);
+    Point p5(1, 0.5, 0);
+    Point p6(0.5, 1, 0);
+    Point p7(0, 0.5, 0);
+
+
+    double vol = 0.5 * CrossProduct (p1-p0, p2-p0).EuclidianNorm ();
+    vol += 0.5 * CrossProduct (p1-p3, p2-p3).EuclidianNorm ();
+
+    BOOST_WARN_EQUAL_MESSAGE (std::abs (vol) < EPSILON, false, "WARNING volume of element is null");
+
+    std::vector<Point*> listPoints = {&p0, &p1, &p2, &p3, &p4, &p5, &p6, &p7};
+    BOOST_CHECK_EQUAL_MESSAGE(listPoints.size (), npts, "test");
+
+    Cell cell;
+    cell.AddPoints (listPoints)->SetType (gmshType);
+    obj.CastForCell (&cell);
+
+    BOOST_CHECK_EQUAL_MESSAGE(obj.GetNumberOfPoints (), listPoints.size (), "Misconfigured number of points");
+    VTK_CELL_TYPE vtkType = Convert<GMSH_CELL_TYPE, VTK_CELL_TYPE>(gmshType);
+    BOOST_CHECK_EQUAL(int(obj.GetCellType ()), int(vtkType));
+
+    FELocalInfos loc;
+    for (std::size_t idPoint = 0; idPoint < obj.GetNumberOfPoints (); ++idPoint)
+    {
+        Point pt = obj.TransformRefToEle (obj.GetPoint (idPoint));
+        BOOST_CHECK_EQUAL_MESSAGE(pt, *listPoints.at (idPoint), "The point " + std::to_string (idPoint) + " is misconfigured (TransformRefToEle)");
+        obj.LocalCompute (obj.GetPoint (idPoint), &loc);
+        BOOST_CHECK_EQUAL_MESSAGE (std::isinf (loc.detJac), false, "The point " + std::to_string (idPoint) + " is misconfigured (detJac == INF)");
+    }
+
+
+    //    obj.LocalCompute (obj.GetPoint (0), &loc);
+    //    BOOST_CHECK_EQUAL (loc.detJac, static_cast<double>(obj.GetDimension ()) * vol);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+
+
+BOOST_AUTO_TEST_SUITE(Quad9N9DDL_felag)
+
+BOOST_AUTO_TEST_CASE(Quad9N9DDL_constructor)
+{
+    BOOST_TEST_MESSAGE("-- Tests for Quad9N9DDL");
+
+    constexpr PHYSICAL_CELL_TYPE physicalType = PHYSICAL_CELL_TYPE::QUADRANGLE;
+    constexpr GMSH_CELL_TYPE gmshType = GMSH_CELL_TYPE::GMSH_9_NODE_QUADRATIC_QUADRANGLE;
+    //    VTK_CELL_TYPE vtkType = Convert (gmshType);
+    constexpr int npts = 9;
+    constexpr int ddl = 9;
+
+    FELagrange<physicalType, npts, ddl> obj;
+
+    Point p0(0, 0, 0);
+    Point p1(1, 0, 0);
+    Point p2(1, 1, 0);
+    Point p3(0, 1, 0);
+    Point p4(0.5, 0, 0);
+    Point p5(1, 0.5, 0);
+    Point p6(0.5, 1, 0);
+    Point p7(0, 0.5, 0);
+    Point p8(0.5, 0.5, 0);
+
+    double vol = 0.5 * CrossProduct (p1-p0, p2-p0).EuclidianNorm ();
+    vol += 0.5 * CrossProduct (p1-p3, p2-p3).EuclidianNorm ();
+
+    BOOST_WARN_EQUAL_MESSAGE (std::abs (vol) < EPSILON, false, "WARNING volume of element is null");
+
+    std::vector<Point*> listPoints = {&p0, &p1, &p2, &p3, &p4, &p5, &p6, &p7, &p8};
+    BOOST_CHECK_EQUAL_MESSAGE(listPoints.size (), npts, "test");
+
+    Cell cell;
+    cell.AddPoints (listPoints)->SetType (gmshType);
+    obj.CastForCell (&cell);
+
+    BOOST_CHECK_EQUAL_MESSAGE(obj.GetNumberOfPoints (), listPoints.size (), "Misconfigured number of points");
+    VTK_CELL_TYPE vtkType = Convert<GMSH_CELL_TYPE, VTK_CELL_TYPE>(gmshType);
+    BOOST_CHECK_EQUAL(int(obj.GetCellType ()), int(vtkType));
+
+    FELocalInfos loc;
+    for (std::size_t idPoint = 0; idPoint < obj.GetNumberOfPoints (); ++idPoint)
+    {
+        Point pt = obj.TransformRefToEle (obj.GetPoint (idPoint));
+        BOOST_CHECK_EQUAL_MESSAGE(pt, *listPoints.at (idPoint), "The point " + std::to_string (idPoint) + " is misconfigured (TransformRefToEle)");
+        obj.LocalCompute (obj.GetPoint (idPoint), &loc);
+        BOOST_CHECK_EQUAL_MESSAGE (std::isinf (loc.detJac), false, "The point " + std::to_string (idPoint) + " is misconfigured (detJac == INF)");
+    }
+
+
+    //    obj.LocalCompute (obj.GetPoint (0), &loc);
+    //    BOOST_CHECK_EQUAL (loc.detJac, static_cast<double>(obj.GetDimension ()) * vol);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

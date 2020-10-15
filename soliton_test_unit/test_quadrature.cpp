@@ -9,13 +9,13 @@
 
 double fun1d (Point p)
 {
-    (void)p;
+    VOID_USE(p);
     return p.x;
 }
 
 double fun2d (Point p)
 {
-    (void)p;
+    VOID_USE(p);
     return p.x + p.y;
 }
 
@@ -26,7 +26,7 @@ Point grad2d_1 (Point p)
 
 Point grad2d_2 (Point p)
 {
-    (void)p;
+    VOID_USE(p);
 
     return Point(1, 1, 1);
 }
@@ -48,6 +48,7 @@ BOOST_AUTO_TEST_CASE(quadrature_1d)
         obj->CastForCell (&cell);
 
         QuadStore quadstore;
+
         QuadStore::QuadObject* quadobj =  quadstore.Get (obj);
         std::size_t npts = quadobj->npts;
 
@@ -62,15 +63,15 @@ BOOST_AUTO_TEST_CASE(quadrature_1d)
             Point intp = obj->TransformRefToEle (&pk);
             obj->LocalCompute (&pk, &loc);
 
-//            INFOS << loc.detJac << ENDLINE;
+            //            INFOS << loc.detJac << ENDLINE;
 
             value += loc.detJac * wk * fun1d(intp);
         }
 
         double realvalue = 0.5 * (p1.x * p1.x - p0.x * p0.x);
 
-//        std::cout << realvalue << std::endl;
-//        std::cout << value << std::endl;
+        //        std::cout << realvalue << std::endl;
+        //        std::cout << value << std::endl;
         BOOST_CHECK_EQUAL (std::abs(value - realvalue) < 1e-3, true);
     }
 
@@ -140,15 +141,15 @@ BOOST_AUTO_TEST_CASE(quadrature_2d)
     QuadStore::QuadObject* quadobj =  quadstore.Get (obj);
     std::size_t npts = quadobj->npts;
 
-//    INFOS << "quadobj : type " << quadobj->type << ENDLINE;
-//    INFOS << "quadobj : npts " << quadobj->npts << ENDLINE;
-//    INFOS << "quadobj : order " << quadobj->order << ENDLINE;
-//    INFOS << "quadobj : w " << ENDLINE;
-//    for (std::size_t i = 0; i < quadobj->npts; ++i)
-//        std::cout << "$ " << quadobj->w [i] << ENDLINE;
-//    INFOS << "quadobj : pts " << ENDLINE;
-//    for (std::size_t i = 0; i < quadobj->npts; ++i)
-//        std::cout << "$ " << quadobj->pts [i] << ENDLINE;
+    //    INFOS << "quadobj : type " << quadobj->type << ENDLINE;
+    //    INFOS << "quadobj : npts " << quadobj->npts << ENDLINE;
+    //    INFOS << "quadobj : order " << quadobj->order << ENDLINE;
+    //    INFOS << "quadobj : w " << ENDLINE;
+    //    for (std::size_t i = 0; i < quadobj->npts; ++i)
+    //        std::cout << "$ " << quadobj->w [i] << ENDLINE;
+    //    INFOS << "quadobj : pts " << ENDLINE;
+    //    for (std::size_t i = 0; i < quadobj->npts; ++i)
+    //        std::cout << "$ " << quadobj->pts [i] << ENDLINE;
 
     std::vector<Triplet> triplet;
     triplet.push_back ({0, 0, 1});
@@ -158,7 +159,7 @@ BOOST_AUTO_TEST_CASE(quadrature_2d)
     m.setFromTriplets(triplet.begin(), triplet.end());
     // m is ready to go!
 
-//    std::cout << m << std::endl;
+    //    std::cout << m << std::endl;
 
 
     double value1 = 0.;
@@ -180,11 +181,15 @@ BOOST_AUTO_TEST_CASE(quadrature_2d)
 
     double realvalue = 20.;
 
-//    INFOS << "value1 = " << value1 << ENDLINE;
-//    INFOS << "value2 = " << value2 << ENDLINE;
+    //    INFOS << "value1 = " << value1 << ENDLINE;
+    //    INFOS << "value2 = " << value2 << ENDLINE;
 
     BOOST_CHECK_EQUAL (std::abs(value1 - realvalue) < 1e-10, true);
-//    BOOST_CHECK_EQUAL (std::abs(value2 - realvalue) < 1e-10, true);
+    //    BOOST_CHECK_EQUAL (std::abs(value2 - realvalue) < 1e-10, true);
+
+
+
+
 }
 
-    BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_SUITE_END()

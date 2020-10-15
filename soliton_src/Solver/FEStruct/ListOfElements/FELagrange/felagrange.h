@@ -3,18 +3,8 @@
 #ifndef FELAGRANGE_H
 #define FELAGRANGE_H
 
+#include <Enums/enums.h>
 #include <Solver/FEStruct/ListOfElements/PhysicalElements/physicalelements.h>
-
-enum class LAGRANGE_ORDER : int
-{
-    ORDER_P0 = 0,
-    ORDER_P1 = 1,
-    ORDER_P2 = 2,
-    ORDER_P3 = 3,
-    ORDER_P4 = 4,
-    FIRST   = ORDER_P0,
-    LAST    = ORDER_P4
-};
 
 /** @class FELagrange
  * \brief Defines a class for stuff.
@@ -33,10 +23,6 @@ public:
     /** @brief Destructor for FELagrange<_name, _npts, _nddl>
      */
     ~FELagrange () override = default;
-
-    /** @brief Generic update FELagrange<_name, _npts, _nddl>
-     */
-    void CastForCell (Cell* target) override;
 
     /** @brief Generic local computation of the transposed inverse Jacobian matrix and of the determinant of the transformation from the reference element to the physical element.
      */
@@ -69,13 +55,14 @@ FELagrange<t_name, t_npts, t_nddl>::FELagrange () :
 template <PHYSICAL_CELL_TYPE t_name, int t_npts, int t_nddl>
 Point FELagrange<t_name, t_npts, t_nddl>::TransformRefToEle (Point* p)
 {
-    Point out;
+    Point out = {0., 0., 0.};
 
     if (this->m_target->GetPoints()->size() != this->m_coor.size())
     {
-        ERROR << "Wrong Cell in 'TransformRefToEle'" << ENDLINE;
+        ERROR << to_string(this->m_type_vtk) << " : Wrong Cell in 'TransformRefToEle' (target : " << this->m_target->GetPoints()->size() << " FeObject : " << this->m_coor.size() << " )" << ENDLINE;
         return out;
     }
+
     for (std::size_t i = 0; i < this->m_coor.size(); ++i)
         out = out + this->m_phi[i](p) * *this->m_target->GetPoints ()->at (i);
     return out;
@@ -84,8 +71,6 @@ Point FELagrange<t_name, t_npts, t_nddl>::TransformRefToEle (Point* p)
 template <PHYSICAL_CELL_TYPE t_name, int t_npts, int t_nddl>
 Point FELagrange<t_name, t_npts, t_nddl>::TransformEleToRef (Point *p)
 {
-    (void)p;
-
     // We try to solve F(t) = T(t) - p = 0
     // with jac_{F}(t) = Jac_{T}(t)
 
@@ -137,7 +122,7 @@ void FELagrange<t_name, t_npts, t_nddl>::LocalCompute (Point* atpoint, FELocalIn
 
     if (this->m_target->GetPoints()->size() != this->m_coor.size())
     {
-        ERROR << "internal error" << ENDLINE;
+        ERROR << to_string(this->m_type_vtk) << " : internal error in local compute (target : " << this->m_target->GetPoints()->size() << " FeObject : " << this->m_coor.size() << " )" << ENDLINE;
         return;
     }
 
@@ -202,14 +187,6 @@ void FELagrange<t_name, t_npts, t_nddl>::LocalCompute (Point* atpoint, FELocalIn
     obj->normalCell.Normalize ();
     obj->normalCell_ref = CrossProduct (obj->normalEdge_ref, obj->tangentEdge_ref);
     obj->normalCell_ref.Normalize ();
-
-    return;
-}
-
-template <PHYSICAL_CELL_TYPE t_name, int t_npts, int t_nddl>
-void FELagrange<t_name, t_npts, t_nddl>::CastForCell (Cell* target)
-{
-    this->m_target = target;
 
     return;
 }

@@ -9,3 +9,4 @@ docs/doc_doxygen/
 *.toc
 *.log
 *.user
+.*/

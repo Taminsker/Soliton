@@ -1,1 +1,2 @@
-#  Waver
+#  Soliton Core
+Example Of Readme

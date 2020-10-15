@@ -17,10 +17,13 @@ void ComputeGradGrad (Mesh* mesh, std::vector<Triplet>* listTriplets);
 void ComputeSecondMember (Mesh* mesh, PlainVector* vec, double (*f)(Point, double));
 
 
-void ComputeDirichletNoSBM (Mesh* mesh, std::vector<Triplet>* listTriplets, PlainVector* F, double (*f)(Point, double), TAG_PHYSICAL tagToApply, double hPerp = -1, double t = 0);
+void ComputeDirichletNoSBM (Mesh* mesh, std::vector<Triplet>* listTriplets, PlainVector* F, double (*f)(Point, double), PHYS tagToApply, double hPerp = -1, double t = 0);
 
 void ComputeDirichletSBM (Mesh* mesh, Mesh* object, std::vector<Triplet>* listTriplets, PlainVector* F, double (*f)(Point, double), double hPerp = -1, double t = 0);
 
-void ComputeNeumannNoSBM (Mesh* mesh, std::vector<Triplet>* listTriplets, PlainVector* F, double (*f)(Point, double), TAG_PHYSICAL tagToApply, double hPerp = 1., double t = 0);
+void ComputeNeumannNoSBM (Mesh* mesh, std::vector<Triplet>* listTriplets, PlainVector* F, double (*f)(Point, double), PHYS tagToApply, double hPerp = 1., double t = 0);
+
+SuperSolverBase* NewSuperSolver(Sto4Sol *store, InputDatStruct *inputdatfile);
+
 }
 #endif // ROUTINES_H

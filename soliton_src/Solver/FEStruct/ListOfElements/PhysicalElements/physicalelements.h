@@ -22,6 +22,7 @@ private:
 
     int count_points;
     int count_edges;
+
     void AddPointDefinition (double x = 0, double y = 0., double z = 0.);
     void AddEdgeElement (std::vector <std::size_t> vec, GMSH_CELL_TYPE type, Point normal, Point tangent);
 };

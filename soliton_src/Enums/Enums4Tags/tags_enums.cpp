@@ -1,0 +1,38 @@
+#include "tags_enums.h"
+#include "../def_macros.h"
+
+FROM_STRING_SPECIALIZATION(PHYS)
+{
+    SIMPLE_IF(WALL);
+    ELSEIF(INLET);
+    ELSEIF(OUTLET);
+    ELSEIF(DOMAIN);
+    ELSE(NONE);
+}
+
+TO_STRING_SPECIALIZATION(PHYS)
+{
+    CASE(WALL);
+    CASE(INLET);
+    CASE(OUTLET);
+    CASE(DOMAIN);
+    END_CASE_DEFAULT(NONE);
+}
+
+TO_STRING_SPECIALIZATION(INTER)
+{
+    CASE(IN);
+    CASE(OUT);
+    CASE(MIXED);
+    END_CASE_DEFAULT(TAG_UNKNOW);
+}
+
+FROM_STRING_SPECIALIZATION(INTER)
+{
+    SIMPLE_IF(IN);
+    ELSEIF(OUT);
+    ELSEIF(MIXED);
+    ELSE(UNKNOWN);
+}
+
+#include "../undef_macros.h"

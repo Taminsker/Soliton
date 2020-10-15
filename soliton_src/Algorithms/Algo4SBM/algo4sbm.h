@@ -3,20 +3,10 @@
 
 #include <ProgDef/proddef.h>
 #include <IO/parsers.h>
+#include <Enums/enums.h>
 
-enum class TAG_INTERSECTION
-{
-    TAG_UNKNOWN     = 0,
-    TAG_INSIDE      = 1,
-    TAG_OUTSIDE     = 2,
-    TAG_MIXED       = 3,
-    FIRST           = TAG_UNKNOWN,
-    LAST            = TAG_MIXED
-};
-
-
-std::string ToString (TAG_INTERSECTION tag);
-std::ostream& operator<< (std::ostream& out, TAG_INTERSECTION tag);
+std::string ToString (INTER tag);
+std::ostream& operator<< (std::ostream& out, INTER tag);
 
 class Mesh;
 class Point;

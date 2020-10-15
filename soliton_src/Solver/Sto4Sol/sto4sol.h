@@ -4,6 +4,7 @@
 #include <vector>
 
 class Mesh;
+class InputDatStruct;
 
 class Sto4Sol
 {

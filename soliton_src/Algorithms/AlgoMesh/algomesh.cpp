@@ -37,9 +37,21 @@ void Build_NtoN (Mesh* mesh)
             lp->at (np-1)->AddPointNeighbour (lp->at (0));
             lp->at (0)->AddPointNeighbour (lp->at (np-1));
         }
+        else if (c->GetTypeVTK () == VTK_CELL_TYPE::VTK_QUAD||
+                 c->GetTypeVTK () == VTK_CELL_TYPE::VTK_QUADRATIC_QUAD)
+        {
+            for (std::size_t j = 0; j < np-1; ++j)
+            {
+                lp->at (j)->AddPointNeighbour (lp->at (j+1));
+                lp->at (j+1)->AddPointNeighbour (lp->at (j));
+            }
+
+            lp->at (np-1)->AddPointNeighbour (lp->at (0));
+            lp->at (0)->AddPointNeighbour (lp->at (np-1));
+        }
         else
         {
-            ERROR << "the cell " << i << " (type " << c->GetTypeVTK () << ") is not supported yet.. please look the meshtools file in Build_NtoN." << ENDLINE;
+            ERROR << "the cell " << i << " (type " << to_string(c->GetTypeVTK ()) << ") is not supported yet.. please look the meshtools file in Build_NtoN." << ENDLINE;
         }
     }
 
@@ -67,7 +79,7 @@ void ComputeNormalsOnEdges (Mesh* mesh)
         switch (edge->GetTypeVTK ())
         {
         default:
-            ERROR << "only VTK_LINE and VTK_TRIANGLE are supported now to compute normals on a edge. (" << edge->GetTypeVTK () << ")" << BLINKRETURN << ENDLINE;
+            ERROR << "only VTK_LINE and VTK_TRIANGLE are supported now to compute normals on a edge. (" << to_string(edge->GetTypeVTK ()) << ")" << BLINKRETURN << ENDLINE;
             return;
         case VTK_CELL_TYPE::VTK_VERTEX:
             vecnormals.at (std::size_t (edge->GetGlobalIndex ())) = new Point();
@@ -149,7 +161,7 @@ void ComputeNormalsOnCells (Mesh* mesh)
         switch (c->GetTypeVTK ())
         {
         default:
-            ERROR << "only VTK_LINE and VTK_TRIANGLE are supported now to compute normals on a cell. (" << c->GetTypeVTK () << ")" << BLINKRETURN << ENDLINE;
+            ERROR << "only VTK_LINE and VTK_TRIANGLE are supported now to compute normals on a cell. (" << to_string(c->GetTypeVTK ()) << ")" << BLINKRETURN << ENDLINE;
             return;
         case VTK_CELL_TYPE::VTK_LINE:
         {
@@ -263,6 +275,7 @@ void MoveObject (Mesh* mesh, double radius, Point center)
     Point mover;
 
     int numPoints = mesh->GetNumberOfPoints ();
+    int numCells = mesh->GetNumberOfCells ();
 
     // center
 
@@ -284,7 +297,7 @@ void MoveObject (Mesh* mesh, double radius, Point center)
     }
 
     // radius
-    mover = center + Point({0, 0, mover.z});
+    mover = center;// + Point({0, 0, mover.z});
 
 #ifdef VERBOSE
     INFOS << "new center             :\t" << mover << ENDLINE;
@@ -324,41 +337,57 @@ void MoveObject (Mesh* mesh, double radius, Point center)
     ENDFUN;
 #endif
 
+    for (int idCell = 0; idCell < numCells; ++idCell)
+        mesh->GetCell (idCell)->ForceUpdateCentroid ();
+
     return;
 }
 
-void TransfertTagPhysical (Mesh* mesh)
+void ComputeTagPhysical (Mesh* mesh, InputDatStruct* struc)
 {
-    HEADERFUN ("TransfertTagPhysical");
-
-    auto tagvec = mesh->GetCellsData ()->GetIntArrays ()->Get (NAME_TAG_PHYSICAL);
-
-    if (tagvec == nullptr)
-    {
-        INFOS << "no tag physical on cells : search under the name " << NAME_TAG_PHYSICAL << "! " << BLINKRETURN << ENDLINE;
-        return;
-    }
+    HEADERFUN ("ComputeTagPhysical");
 
     int numPoints = mesh->GetNumberOfPoints ();
     int numCells = mesh->GetNumberOfCells ();
     int numEdges = mesh->GetNumberOfEdges ();
 
-    std::vector<int> tagOnPt (std::size_t (numPoints), static_cast<int>(TAG_PHYSICAL::TAG_DOMAIN));
+    double heps = 0.1 * struc->hsize;
+    double xm = struc->grid_x_m;
+    double xp = struc->grid_x_p;
+    double ym = struc->grid_y_m;
+    double yp = struc->grid_y_p;
 
-    for (int i = 0; i < numCells; ++i)
+    // POINTS
+    std::vector<int> tagpoints(std::size_t(numPoints), static_cast<int>(PHYS::NONE));
+
+    for (int ptId = 0; ptId < numPoints; ++ptId)
     {
-        TAG_PHYSICAL tag = static_cast<TAG_PHYSICAL>(tagvec->vec.at (std::size_t (i)));
+        int* value = &tagpoints.at (static_cast<std::size_t>(ptId));
 
-        if (tag == TAG_PHYSICAL::TAG_DOMAIN)
-            continue;
+        Point* pt = mesh->GetPoint (ptId);
 
-        for (Point* p : *mesh->GetCell (i)->GetPoints ())
-            tagOnPt.at (std::size_t (p->GetGlobalIndex ())) = static_cast<int>(tag);
+        if (std::abs(pt->y - ym) < heps)
+            *value = static_cast<int>(PHYS::WALL);
+        else if (std::abs(pt->y - yp) < heps)
+            *value = static_cast<int>(PHYS::WALL);
+        else if (std::abs(pt->x - xm) < heps)
+            *value = static_cast<int>(PHYS::OUTLET);
+        else if (std::abs(pt->x - xp) < heps)
+            *value = static_cast<int>(PHYS::INLET);
+        else
+            *value = static_cast<int>(PHYS::DOMAIN);
     }
 
-    mesh->GetPointsData ()->GetIntArrays ()->Add (NAME_TAG_PHYSICAL, tagOnPt);
+    mesh->GetPointsData ()->GetIntArrays ()->Add (NAME_PHYS, tagpoints);
 
-    std::vector<int> tagOnEdges (std::size_t (numEdges), static_cast<int>(TAG_PHYSICAL::TAG_DOMAIN));
+    // CELLS
+    std::vector<int> tagcells(std::size_t(numCells), static_cast<int>(PHYS::DOMAIN));
+
+    mesh->GetCellsData ()->GetIntArrays ()->Add (NAME_PHYS, tagcells);
+
+    // EDGES
+
+    std::vector<int> tagedges(std::size_t(numEdges), static_cast<int>(PHYS::DOMAIN));
 
     for (int i = 0; i < numEdges; ++i)
     {
@@ -371,18 +400,18 @@ void TransfertTagPhysical (Mesh* mesh)
 
         for (Point* p : *listPts)
         {
-            switch (TAG_PHYSICAL (tagOnPt.at (std::size_t (p->GetGlobalIndex ()))))
+            switch (PHYS (tagpoints.at (std::size_t (p->GetGlobalIndex ()))))
             {
-            case TAG_PHYSICAL::TAG_WALL:
+            case PHYS::WALL:
                 count_wall++;
                 break;
-            case TAG_PHYSICAL::TAG_INLET:
+            case PHYS::INLET:
                 count_inlet++;
                 break;
-            case TAG_PHYSICAL::TAG_OUTLET:
+            case PHYS::OUTLET:
                 count_outlet++;
                 break;
-            case TAG_PHYSICAL::TAG_DOMAIN:
+            case PHYS::DOMAIN:
                 count_domain++;
                 break;
             default:
@@ -393,27 +422,31 @@ void TransfertTagPhysical (Mesh* mesh)
         if (count_domain != 0)
             continue;
 
-        TAG_PHYSICAL tag = TAG_PHYSICAL::TAG_DOMAIN;
+        PHYS tag = PHYS::DOMAIN;
 
         if (count_wall != 0)
-            tag = TAG_PHYSICAL::TAG_WALL;
+            tag = PHYS::WALL;
         if (count_inlet != 0)
-            tag = TAG_PHYSICAL::TAG_INLET;
+            tag = PHYS::INLET;
         if (count_outlet != 0)
-            tag = TAG_PHYSICAL::TAG_OUTLET;
+            tag = PHYS::OUTLET;
 
 
-        tagOnEdges.at (std::size_t (i)) = static_cast<int>(tag);
+        tagedges.at (std::size_t (i)) = static_cast<int>(tag);
     }
 
-    mesh->GetEdgesData ()->GetIntArrays ()->Add (NAME_TAG_PHYSICAL, tagOnEdges);
+    mesh->GetEdgesData ()->GetIntArrays ()->Add (NAME_PHYS, tagedges);
 
     return;
+
 }
 
 
-void ComputeDampingArea (Mesh* mesh, TAG_PHYSICAL tag, double h)
+void ComputeDampingArea (Mesh* mesh, PHYS tag, double h)
 {
+
+    BEGIN << "Compute Damping Area" << ENDLINE;
+
     int numPoints = mesh->GetNumberOfPoints ();
     int numCells = mesh->GetNumberOfCells ();
 
@@ -423,14 +456,22 @@ void ComputeDampingArea (Mesh* mesh, TAG_PHYSICAL tag, double h)
 
     for (int pointId = 0; pointId < numPoints; ++pointId)
     {
+        int percent = static_cast<int>(pointId + 1) / numPoints;
+        COUT << "\r[" << percent << "%] compute area on points ...              " << FLUSHLINE;
+
         double value = GetDampingCoeffFor (mesh->GetPoint (pointId), mesh, tag, h);
 
         if (value >= 0)
             tagpoint.at (std::size_t (pointId)) = true;
     }
 
+    COUT << ENDLINE;
+
     for (int cellId = 0; cellId < numCells; ++cellId)
     {
+        int percent = static_cast<int>(cellId + 1) / numCells;
+        COUT << "\r[" << percent << "%] compute area on points ...              " << FLUSHLINE;
+
         bool value = true;
         Cell* cell = mesh->GetCell (cellId);
 
@@ -449,16 +490,18 @@ void ComputeDampingArea (Mesh* mesh, TAG_PHYSICAL tag, double h)
             tagcell.at (std::size_t (cellId)) = true;
     }
 
+    COUT << ENDLINE;
+
     mesh->GetPointsData ()->GetBooleanArrays ()->Add (NAME_TAG_DAMPING_AREA, tagpoint);
     mesh->GetCellsData ()->GetBooleanArrays ()->Add (NAME_TAG_DAMPING_AREA, tagcell);
 
     return;
 }
 
-double GetDampingCoeffFor (Point* atpoint, Mesh* mesh, TAG_PHYSICAL tag, double h)
+double GetDampingCoeffFor (Point* atpoint, Mesh* mesh, PHYS tag, double h)
 {
     int numPoints = mesh->GetNumberOfPoints ();
-    HetInt::Array* tagphysical = mesh->GetPointsData ()->GetIntArrays ()->Get (NAME_TAG_PHYSICAL);
+    HetInt::Array* tagphysical = mesh->GetPointsData ()->GetIntArrays ()->Get (NAME_PHYS);
 
     double distmin = 1e6;
 

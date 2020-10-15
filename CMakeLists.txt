@@ -4,7 +4,7 @@ project(Soliton)
 include(FindPkgConfig)
 
 
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -ansi -Wwrite-strings -Wuninitialized -Wunused-result -Wunreachable-code -Wno-undefined-func-template -Wmissing-braces -Wmissing-field-initializers -ftrack-macro-expansion=0 -fno-diagnostics-show-caret -m64 -O3 -g -std=c++14" )
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -ansi -Wwrite-strings -Wuninitialized -Wunused-result -Wunreachable-code -Wmissing-braces -Wmissing-field-initializers -ftrack-macro-expansion=0 -fno-diagnostics-show-caret -m64 -O3 -g -std=c++14" )
 
 message(STATUS "COMPILE OPTIONS : ${CMAKE_CXX_FLAGS}\n")
 
@@ -32,12 +32,12 @@ if (USE_VERBOSE)
   add_definitions(-DVERBOSE)
 endif()
 
-#option(PRINT_HASHMAP "Write Hashmap in file (can take a long time)" OFF)
-#message(STATUS "PRINT_HASHMAP : ${PRINT_HASHMAP}")
+option(PRINT_HASHMAP "Write Hashmap in file (can take a long time)" OFF)
+message(STATUS "PRINT_HASHMAP : ${PRINT_HASHMAP}")
 
-#if (PRINT_HASHMAP)
-#  add_definitions(-DPRINTHASHMAP)
-#endif()
+if (PRINT_HASHMAP)
+  add_definitions(-DPRINTHASHMAP)
+endif()
 
 set(RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/build)
@@ -80,10 +80,7 @@ endif()
 
 
 # Executable
-add_subdirectory (${CMAKE_SOURCE_DIR}/poisson_example1_NOTSB_src)
-add_subdirectory (${CMAKE_SOURCE_DIR}/poisson_example2_NOTSB_src)
-add_subdirectory (${CMAKE_SOURCE_DIR}/poisson_convergence_NOTSB_src)
-
-add_subdirectory (${CMAKE_SOURCE_DIR}/poisson_example1_SB_src)
+add_subdirectory (${CMAKE_SOURCE_DIR}/genexe_src)
+add_subdirectory (${CMAKE_SOURCE_DIR}/meshconvergence_src)
 
 

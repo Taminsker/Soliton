@@ -85,7 +85,7 @@ void WriteVTKWithCells (Mesh* mesh, std::string add2basename)
     {
         outfile << "SCALARS " << arr->name << " int " << std::endl;
         outfile << "LOOKUP_TABLE default" << std::endl;
-        outfile << arr->vec << std::endl;
+        outfile << std::scientific << arr->vec << std::endl;
         outfile << std::endl;
 #ifdef VERBOSE
         INFOS << arr->name << " ";
@@ -96,7 +96,7 @@ void WriteVTKWithCells (Mesh* mesh, std::string add2basename)
     {
         outfile << "SCALARS " << arr->name << " int " << std::endl;
         outfile << "LOOKUP_TABLE default" << std::endl;
-        outfile << arr->vec << std::endl;
+        outfile << std::scientific << arr->vec << std::endl;
         outfile << std::endl;
 #ifdef VERBOSE
         INFOS << arr->name << " ";
@@ -107,7 +107,7 @@ void WriteVTKWithCells (Mesh* mesh, std::string add2basename)
     {
         outfile << "SCALARS " << arr->name << " double " << std::endl;
         outfile << "LOOKUP_TABLE default" << std::endl;
-        outfile << arr->vec << std::endl;
+        outfile << std::scientific << arr->vec << std::endl;
         outfile << std::endl;
 #ifdef VERBOSE
         INFOS << arr->name << " ";
@@ -117,7 +117,7 @@ void WriteVTKWithCells (Mesh* mesh, std::string add2basename)
     for (auto arr : *pointsData->GetVecArrays ()->GetAll ())
     {
         outfile << "VECTORS " << arr->name << " double " << std::endl;
-        outfile << arr->vec << std::endl;
+        outfile << std::scientific << arr->vec << std::endl;
         outfile << std::endl;
 #ifdef VERBOSE
         INFOS << arr->name << " ";
@@ -137,7 +137,7 @@ void WriteVTKWithCells (Mesh* mesh, std::string add2basename)
     {
         outfile << "SCALARS " << arr->name << " int " << std::endl;
         outfile << "LOOKUP_TABLE default" << std::endl;
-        outfile << arr->vec << std::endl;
+        outfile << std::scientific << arr->vec << std::endl;
         outfile << std::endl;
 #ifdef VERBOSE
         INFOS << arr->name << " ";
@@ -148,7 +148,7 @@ void WriteVTKWithCells (Mesh* mesh, std::string add2basename)
     {
         outfile << "SCALARS " << arr->name << " int " << std::endl;
         outfile << "LOOKUP_TABLE default" << std::endl;
-        outfile << arr->vec << std::endl;
+        outfile << std::scientific << arr->vec << std::endl;
         outfile << std::endl;
 #ifdef VERBOSE
         INFOS << arr->name << " ";
@@ -159,7 +159,7 @@ void WriteVTKWithCells (Mesh* mesh, std::string add2basename)
     {
         outfile << "SCALARS " << arr->name << " double " << std::endl;
         outfile << "LOOKUP_TABLE default" << std::endl;
-        outfile << arr->vec << std::endl;
+        outfile << std::scientific << arr->vec << std::endl;
         outfile << std::endl;
 #ifdef VERBOSE
         INFOS << arr->name << " ";
@@ -169,7 +169,7 @@ void WriteVTKWithCells (Mesh* mesh, std::string add2basename)
     for (auto arr : *cellsData->GetVecArrays ()->GetAll ())
     {
         outfile << "VECTORS " << arr->name << " double " << std::endl;
-        outfile << arr->vec << std::endl;
+        outfile << std::scientific << arr->vec << std::endl;
         outfile << std::endl;
 #ifdef VERBOSE
         INFOS << arr->name << " ";

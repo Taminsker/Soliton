@@ -9,11 +9,13 @@
 
 #include <ProgDef/proddef.h>
 
+#include "Iterator/iterators.h"
+
 class Mesh;
 class Point;
 class Cell;
 
-namespace std {
+namespace unstd {
 template <typename T>
 using matrix = std::vector <std::vector <T>>;
 }
@@ -44,11 +46,8 @@ protected:
 };
 
 Matrix3x3 RotateZMatrix (double angle);
-
 std::vector<double> PlainVector2Vector (PlainVector* vec);
-
 void FunToVec (PlainVector* out, Mesh * mesh, double (*f) (Point, double), double t = 0.);
-
 void FunToVec (PlainVector* out, Mesh * mesh, double value = 0.);
 
 #endif // MATH_H

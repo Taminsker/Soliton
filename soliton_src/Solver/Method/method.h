@@ -20,11 +20,11 @@ void ImposeDirichlet (Mesh* mesh, SparseMatrix* A, PlainVector* secondMember,
                       double (*g) (Point, double), std::vector <int>* listIndex,
                       double t = 0.);
 
-double      GetErrorl1 (Mesh * mesh, const PlainVector *u_ana, const PlainVector *u_num, double h_indic = 1.);
-double      GetErrorl2 (Mesh * mesh, const PlainVector *u_ana, const PlainVector *u_num, double h_indic = 1.);
-double      GetErrorlinf (Mesh * mesh, const PlainVector *u_ana, const PlainVector *u_num, double h_indic = 1.);
+double      GetErrorl1 (Mesh * mesh, const PlainVector *u_ana, const PlainVector *u_num);
+double      GetErrorl2 (Mesh * mesh, const PlainVector *u_ana, const PlainVector *u_num);
+double      GetErrorlinf (Mesh * mesh, const PlainVector *u_ana, const PlainVector *u_num);
 PlainVector GetErrorAbs (Mesh * mesh, const PlainVector *u_ana, const PlainVector *u_num);
 PlainVector GetErrorRelaPercent (Mesh * mesh, const PlainVector *u_ana, const PlainVector *u_num);
-double      GetErrorRela (Mesh * mesh, const PlainVector *u_ana, const PlainVector *u_num, double h_indic = 1.);
+double      GetErrorRela (Mesh * mesh, const PlainVector *u_ana, const PlainVector *u_num);
 
 #endif // METHOD_H

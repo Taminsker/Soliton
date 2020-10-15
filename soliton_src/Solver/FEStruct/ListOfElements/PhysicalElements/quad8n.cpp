@@ -7,7 +7,7 @@ template<>
 void Quad8N::Build ()
 {
     m_type_physical = PHYSICAL_CELL_TYPE::QUADRANGLE;
-    m_type_vtk = VTK_CELL_TYPE::VTK_QUADRATIC_QUAD;
+    m_type_vtk = VTK_CELL_TYPE::VTK_BIQUADRATIC_QUAD;
     m_volref = 1;
 
     // Points

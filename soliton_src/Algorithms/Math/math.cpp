@@ -12,7 +12,7 @@ Matrix3x3 RotateZMatrix (double angle)
     out.row (2) << 0., 0., 1.;
     return out;
 }
-//double Det (std::matrix<double>& mat)
+//double Det (unstd::matrix<double>& mat)
 //{
 //    HEADERFUN("ComputeDet");
 
@@ -30,7 +30,7 @@ Matrix3x3 RotateZMatrix (double angle)
 
 //    for (std::size_t id = 0; id < n; ++id)
 //    {
-//        std::matrix<double> matcopy = mat;
+//        unstd::matrix<double> matcopy = mat;
 
 //        for (std::size_t i = 0; i < n; ++i)
 //            for (std::size_t j = 0; j < n; ++j)
@@ -45,35 +45,35 @@ Matrix3x3 RotateZMatrix (double angle)
 //    return det;
 //}
 
-//std::matrix<double> Math::Identity (std::size_t n)
+//unstd::matrix<double> Math::Identity (std::size_t n)
 //{
-//    std::matrix<double> mat(n, std::vector<double>(n));
+//    unstd::matrix<double> mat(n, std::vector<double>(n));
 //    for (std::size_t id = 0; id < n; id++)
 //        mat [id][id] = 1.;
 
 //    return mat;
 //}
 
-//std::matrix<double> Math::Ones (std::size_t n)
+//unstd::matrix<double> Math::Ones (std::size_t n)
 //{
-//    return std::matrix<double>(n, std::vector<double>(n, 1.));
+//    return unstd::matrix<double>(n, std::vector<double>(n, 1.));
 //}
 
-//std::matrix<double> Math::Zeros (std::size_t n)
+//unstd::matrix<double> Math::Zeros (std::size_t n)
 //{
-//    return std::matrix<double> (n, std::vector<double>(n, 0.));
+//    return unstd::matrix<double> (n, std::vector<double>(n, 0.));
 //}
 
-//std::matrix<double> Math::Transpose (const std::matrix<double>& mat)
+//unstd::matrix<double> Math::Transpose (const unstd::matrix<double>& mat)
 //{
-//    std::matrix<double> out = mat;
+//    unstd::matrix<double> out = mat;
 //    Math::TransposeInPlace (&out);
 
 //    return out;
 //}
 
 
-//void Math::TransposeInPlace (std::matrix<double>* mat)
+//void Math::TransposeInPlace (unstd::matrix<double>* mat)
 //{
 //    std::size_t n = mat->size ();
 

@@ -4,7 +4,8 @@ QuadStore::QuadStore() :
     m_quad_empty (nullptr),
     m_quad_vertex (nullptr),
     m_quad_line ({}),
-    m_quad_triangle ({})
+    m_quad_triangle ({}),
+    m_quad_quadrangle ({})
 {
     // 0D
     m_quad_empty = new QuadObject (PHYSICAL_CELL_TYPE::EMPTY, 0, 0);
@@ -25,6 +26,7 @@ QuadStore::QuadStore() :
     line_2->w = {1., 1.};
     line_2->pts = {{-0.577350269189625}, {+0.577350269189625}};
     m_quad_line.push_back (line_2);
+
 
     QuadObject* line_3 = new QuadObject (PHYSICAL_CELL_TYPE::LINE, 3, 5);
     line_3->w = {0.555555555555556, 0.888888888888889, 0.555555555555556};
@@ -125,11 +127,17 @@ QuadStore::QuadStore() :
                         {+0.053145049844816, +0.636502499121399}};
     m_quad_triangle.push_back (triangle_12);
 
-    //    QuadObject* triangle_16 = new QuadObject (TYPE_TRIANGLE, 16, 8);
-    //    triangle_16->w = {0.5};
-    //    triangle_16->pts = {{+0.3333333333333333, +0.3333333333333333}};
-    //    m_quad_triangle.push_back (triangle_16);
+    //        QuadObject* triangle_16 = new QuadObject (TYPE_TRIANGLE, 16, 8);
+    //        triangle_16->w = {0.5};
+    //        triangle_16->pts = {{+0.3333333333333333, +0.3333333333333333}};
+    //        m_quad_triangle.push_back (triangle_16);
 
+
+    m_quad_quadrangle.push_back (QuadrangleFromLine (line_1));
+    m_quad_quadrangle.push_back (QuadrangleFromLine (line_2));
+    m_quad_quadrangle.push_back (QuadrangleFromLine (line_3));
+    m_quad_quadrangle.push_back (QuadrangleFromLine (line_4));
+    m_quad_quadrangle.push_back (QuadrangleFromLine (line_5));
 }
 
 QuadStore::~QuadStore ()
@@ -143,8 +151,11 @@ QuadStore::~QuadStore ()
 
     for (QuadObject * obj : m_quad_triangle)
         delete obj;
-
     m_quad_triangle.clear ();
+
+    for (QuadObject * obj : m_quad_quadrangle)
+        delete obj;
+    m_quad_quadrangle.clear ();
 }
 
 QuadStore::QuadObject* QuadStore::Get (FEBase *object)
@@ -167,6 +178,11 @@ QuadStore::QuadObject* QuadStore::Get (FEBase *object)
             if (m_quad_triangle [id]->order > order_attempt)
                 return m_quad_triangle [id];
         break;
+    case PHYSICAL_CELL_TYPE::QUADRANGLE:
+        for (std::size_t id = 0; id < m_quad_quadrangle.size (); ++id)
+            if (m_quad_quadrangle [id]->order > order_attempt)
+                return m_quad_quadrangle [id];
+        break;
     }
 
     return m_quad_empty;
@@ -187,4 +203,35 @@ QuadStore::QuadObject::~QuadObject ()
     order = 0;
     w.clear ();
     pts.clear ();
+}
+
+void QuadStore::QuadObject::Print()
+{
+    INFOS << "Quad : type " << to_string(type) << " npts " << npts << " order " << order << ENDLINE;
+
+    for (std::size_t i = 0; i < npts; ++i)
+        INFOS << "\t P : " << pts.at (i) << " --- W : " << w.at (i) << ENDLINE;
+
+    return;
+}
+
+
+QuadStore::QuadObject* QuadrangleFromLine(QuadStore::QuadObject* line)
+{
+    std::size_t npts = line->npts;
+    npts *= npts;
+
+    QuadStore::QuadObject* quadrangle = new QuadStore::QuadObject (PHYSICAL_CELL_TYPE::QUADRANGLE, npts, line->order);
+
+    for (std::size_t i = 0; i < line->npts; ++i)
+        for (std::size_t j = 0; j < line->npts; ++j)
+        {
+            double w = line->w.at (i) * line->w.at (j);
+            Point p = {line->pts.at (i).x, line->pts.at (j).x};
+
+            quadrangle->w.push_back (w);
+            quadrangle->pts.push_back (p);
+        }
+
+    return quadrangle;
 }

@@ -39,6 +39,13 @@ FEBase::~FEBase ()
     m_edges_tangents.clear ();
 }
 
+void FEBase::CastForCell (Cell* target)
+{
+    this->m_target = target;
+
+    return;
+}
+
 Cell* FEBase::GetTarget ()
 {
     return m_target;
@@ -100,22 +107,12 @@ Point* FEBase::GetTangentToEdge (std::size_t id)
     return m_edges_tangents.at (id);
 }
 
-LambdaOnPoint<double> FEBase::GetPhi (std::size_t id)
+LambdaOnPoint<double>& FEBase::GetPhi (std::size_t id)
 {
     return m_phi.at (id);
 }
 
-LambdaOnPoint<Point> FEBase::GetGradPhi (std::size_t id)
+LambdaOnPoint<Point>& FEBase::GetGradPhi (std::size_t id)
 {
     return m_grad_phi.at (id);
-}
-
-double FEBase::EvalPhi (std::size_t id, Point *atpoint)
-{
-    return m_phi [id](atpoint);
-}
-
-Point FEBase::EvalGradPhi (std::size_t id, Point *atpoint)
-{
-    return m_grad_phi [id](atpoint);
 }

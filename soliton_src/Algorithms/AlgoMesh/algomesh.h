@@ -57,10 +57,9 @@ void ComputeNormalsOnPoints (Mesh* mesh);
 void MoveObject (Mesh* mesh, double radius, Point center);
 
 
-void TransfertTagPhysical (Mesh* mesh);
-
-void ComputeDampingArea (Mesh* mesh, TAG_PHYSICAL tag, double h);
-double GetDampingCoeffFor (Point* atpoint, Mesh* mesh, TAG_PHYSICAL tag, double h);
+void    ComputeTagPhysical (Mesh* mesh, InputDatStruct* struc);
+void    ComputeDampingArea (Mesh* mesh, PHYS tag, double h);
+double  GetDampingCoeffFor (Point* atpoint, Mesh* mesh, PHYS tag, double h);
 
 /*! @} End of Doxygen Groups*/
 

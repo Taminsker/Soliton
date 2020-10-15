@@ -3,6 +3,7 @@
 
 #include "Algorithms/algorithms.h"
 #include "Core/core.h"
+#include <Enums/enums.h>
 #include "IO/io.h"
 #include "Solver/solver.h"
 #include "Routines/routines.h"

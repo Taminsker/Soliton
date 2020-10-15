@@ -29,14 +29,14 @@ void ParseInputDatFile (InputDatStruct* out, std::string filename)
         return;
     } else
     {
-        STATUS << "the file " << filename << " is open." << ENDLINE;
+        STATUS << "the file " << COLOR_BLUE << filename << COLOR_DEFAULT << " is open." << ENDLINE;
     }
 
-    out->filename = filename;
+    //    out->filename_msh = filename;
 
     while (std::getline(infile, line))
     {
-        if (line.front () != '#' && line.size () != 0)
+        if (line.front () != '@' && line.size () != 0)
         {
             RemoveBlankSpace (&line, &spl);
 
@@ -50,51 +50,32 @@ void ParseInputDatFile (InputDatStruct* out, std::string filename)
                 field = spl.at(0);
                 value = spl.at (2);
 
-                if (field == "xm")
-                    out->xm = stod(value);
-                else if (field == "xp")
-                    out->xp = stod(value);
-                else if (field == "ym")
-                    out->ym = stod(value);
-                else if (field == "yp")
-                    out->yp = stod(value);
+                if (field == "file_msh")
+                    out->filename_msh = value;
+                else if (field == "grid_x_m")
+                    out->grid_x_m = stod(value);
+                else if (field == "grid_x_p")
+                    out->grid_x_p = stod(value);
+                else if (field == "grid_y_m")
+                    out->grid_y_m = stod(value);
+                else if (field == "grid_y_p")
+                    out->grid_y_p = stod(value);
                 else if (field == "hsize")
                     out->hsize = stod(value);
-                else if (field == "dt")
-                    out->dt = stod(value);
-                else if (field == "Pk")
-                    out->Pk = stoi(value);
-                else if (field == "mouv")
-                {
-                    out->mouv = false;
-                    if (value == "true")
-                        out->mouv = true;
-                }
+                else if (field == "ele_type")
+                    out->ele_type = stoi(value);
+                else if (field == "ele_order")
+                    out->ele_order = stoi(value);
                 else if (field == "damping")
-                {
-                    out->damping = false;
-                    if (value == "true")
-                        out->damping = true;
-                }
-                else if (field == "gen")
-                {
-                    out->gen = false;
-                    if (value == "true")
-                        out->gen= true;
-                }
-                else if (field == "eq_type")
-                {
-                    if (value == "poisson" || value == "wave")
-                        out->eq_type = value;
-                    else
-                        ERRORPARAMS
-                }
+                    out->damping = CastToBool (&value);
                 else if (field == "zeta_0")
                     out->zeta_0 = stod(value);
                 else if (field == "beta_0")
                     out->beta_0 = stod(value);
-                else if (field == "file_msh")
-                    out->filename_msh = value;
+                else if (field == "penal")
+                    out->penal = stod(value);
+                else if (field == "colContItem")
+                    out->colConcItem = CastToBool (&value);
                 else
                     ERRORPARAMS
             }
@@ -107,7 +88,15 @@ void ParseInputDatFile (InputDatStruct* out, std::string filename)
 
                 while (std::getline(infile, line))
                 {
-                    if (line == "$END_OBJECT")
+                    if (line.empty ())
+                        continue;
+
+                    RemoveBlankSpace (&line, &spl);
+
+                    if (spl.size () == 0)
+                        continue;
+
+                    if (spl[0] == "$END_OBJECT")
                         break;
 
                     if (infile.eof ())
@@ -116,7 +105,68 @@ void ParseInputDatFile (InputDatStruct* out, std::string filename)
                         return;
                     }
 
-                    if (line.front () != '#' && line.size () != 0)
+                    if (line.front () != '@' && line.size () != 0)
+                    {
+                        RemoveBlankSpace (&line, &spl);
+
+                        if (spl.size () >= 3)
+                        {
+                            count++;
+
+                            field = spl.at(0);
+                            value = spl.at (2);
+
+                            if (field == "file_msh")
+                                obs.filename_msh = value;
+                            else if (field == "algo_gen")
+                                obs.algo_gen = static_cast<unsigned int>(stod(value));
+                            else if (field == "nbpts")
+                                obs.nbpts = stoi(value);
+                            else if (field == "rinp")
+                                obs.rinp = CastToBool (&value);
+                            else if (field == "x_center")
+                                obs.x_center = stod(value);
+                            else if (field == "y_center")
+                                obs.y_center = stod(value);
+                            else if (field == "z_center")
+                                obs.z_center = stod(value);
+                            else if (field == "basename")
+                                obs.basename = value;
+                            else if (field == "radius")
+                                obs.radius = stod(value);
+                            else
+                                ERRORPARAMS
+                        }
+                    }
+                }
+
+                out->objects.push_back (obs);
+            }
+
+            if (field == "$BEGIN_ITEM_SOLVER")
+            {
+                ItemSolverDatStruct item;
+
+                while (std::getline(infile, line))
+                {
+                    if (line.empty ())
+                        continue;
+
+                    RemoveBlankSpace (&line, &spl);
+
+                    if (spl.size () == 0)
+                        continue;
+
+                    if (spl[0] == "$END_ITEM_SOLVER")
+                        break;
+
+                    if (infile.eof ())
+                    {
+                        ERROR << "not enabled to find $END_ITEM_SOLVER..." << BLINKRETURN << ENDLINE;
+                        return;
+                    }
+
+                    if (line.front () != '@' && line.size () != 0)
                     {
                         RemoveBlankSpace (&line, &spl);
 
@@ -128,44 +178,71 @@ void ParseInputDatFile (InputDatStruct* out, std::string filename)
                             value = spl.at (2);
 
                             if (field == "type")
-                            {
-                                if (value != "object")
-                                {
-                                    ERROR << "only object type is now supported" << BLINKRETURN << ENDLINE;
-                                    return;
-                                }
-                            }
-                            else if (field == "xc")
-                                obs.xc = stod(value);
-                            else if (field == "yc")
-                                obs.yc = stod(value);
-                            else if (field == "r")
-                                obs.radius = stod(value);
-                            else if (field == "nbpts")
-                                obs.nbpts = stoi(value);
-                            else if (field == "gen")
-                            {
-                                obs.gen_with_algo = false;
-                                if (value == "true")
-                                    obs.gen_with_algo = true;
-                            }
-                            else if (field == "enableMover")
-                            {
-                                obs.enableMover = false;
-                                if (value == "true")
-                                    obs.enableMover = true;
-                            }
-                            else if (field == "algo_gen")
-                                obs.algo_gen = static_cast<unsigned int>(stod(value));
-                            else if (field == "file_msh")
-                                obs.filename_msh = value;
+                                item.type = from_string<ITEM_T> (value);
+                            else if (field == "tagToApply")
+                                item.tagToApply = from_string<PHYS>(value);
+                            else if (field == "function")
+                                item.fun = value;
+                            else if (field == "derivate_id")
+                                item.dert = stoi(value);
+                            else if (field == "id_obj")
+                                item.id_obj = stoi(value);
+                            else if (field == "varOverT")
+                                item.varTime = CastToBool (&value);
                             else
                                 ERRORPARAMS
                         }
                     }
                 }
 
-                out->objects.push_back (obs);
+                out->items.push_back (item);
+            }
+
+            if (field == "$BEGIN_SOLVER")
+            {
+                while (std::getline(infile, line))
+                {
+                    if (line.empty ())
+                        continue;
+
+                    RemoveBlankSpace (&line, &spl);
+
+                    if (spl.size () == 0)
+                        continue;
+
+                    if (spl[0] == "$END_SOLVER")
+                        break;
+
+                    if (infile.eof ())
+                    {
+                        ERROR << "not enabled to find $END_SOLVER..." << BLINKRETURN << ENDLINE;
+                        return;
+                    }
+
+                    if (line.front () != '@' && line.size () != 0)
+                    {
+                        RemoveBlankSpace (&line, &spl);
+
+                        if (spl.size () >= 3)
+                        {
+                            count++;
+
+                            field = spl.at(0);
+                            value = spl.at (2);
+
+                            if (field == "dt")
+                                out->dt = stod(value);
+                            else if (field == "object_policy")
+                                out->objectsAreFixed = CastToBool (&value);
+                            else if (field == "time_scheme")
+                                out->scheme = from_string<SCH_T>(value);
+                            else if (field == "specialize")
+                                out->listTagsSolver.push_back (from_string<INTER>(value));
+                            else
+                                ERRORPARAMS
+                        }
+                    }
+                }
             }
         }
     }
@@ -177,7 +254,6 @@ void ParseInputDatFile (InputDatStruct* out, std::string filename)
 #ifdef DEBUG
     Print (out);
 #endif
-
     return;
 }
 
@@ -195,9 +271,7 @@ void ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
     std::ifstream infile (filename);
     std::string line;
     std::string delimeter = "\"";
-    std::vector <std::string> sv, tagphysical;
-    std::vector<int> tag;
-    int numtag = 0;
+    std::vector <std::string> sv;
     int numpoints = 0;
     int numcells = 0;
     int err = 0;
@@ -240,67 +314,67 @@ void ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
         return;
     }
 
-    // PhysicalNames
-    while (line != "$PhysicalNames")
-    {
-        if (infile.eof ())
-        {
-            ERROR << "the $PhysicalNames field does not seem to be present" << BLINKRETURN << ENDLINE;
-            return;
-        }
+    //    // PhysicalNames
+    //    while (line != "$PhysicalNames")
+    //    {
+    //        if (infile.eof ())
+    //        {
+    //            ERROR << "the $PhysicalNames field does not seem to be present" << BLINKRETURN << ENDLINE;
+    //            return;
+    //        }
 
-        std::getline(infile, line);
-    }
+    //        std::getline(infile, line);
+    //    }
 
-#ifdef DEBUG
-    STATUS << "$PhysicalNames detected." << ENDLINE;
-#endif
+    //#ifdef DEBUG
+    //    STATUS << "$PhysicalNames detected." << ENDLINE;
+    //#endif
 
-    std::getline(infile, line);
-    RemoveBlankSpace (&line, &sv);
+    //    std::getline(infile, line);
+    //    RemoveBlankSpace (&line, &sv);
 
-    numtag = stoi(sv.at (0));
+    //    numtag = stoi(sv.at (0));
 
-    count = 0;
-    while (count < 10 * numtag)
-    {
-        if (infile.eof ())
-        {
-            ERROR << "the $EndPhysicalNames field does not seem to be present" << BLINKRETURN << ENDLINE;
-            return;
-        }
+    //    count = 0;
+    //    while (count < 10 * numtag)
+    //    {
+    //        if (infile.eof ())
+    //        {
+    //            ERROR << "the $EndPhysicalNames field does not seem to be present" << BLINKRETURN << ENDLINE;
+    //            return;
+    //        }
 
-        std::getline(infile, line);
-        RemoveBlankSpace (&line, &sv);
+    //        std::getline(infile, line);
+    //        RemoveBlankSpace (&line, &sv);
 
-        if (line == "$EndPhysicalNames")
-            break;
+    //        if (line == "$EndPhysicalNames")
+    //            break;
 
-        if (sv.size () < 3)
-        {
-            ERROR << "one physical name doesn't respect the rule : onid id str, please check your msh file." << BLINKRETURN << ENDLINE;
-            return;
-        }
+    //        if (sv.size () < 3)
+    //        {
+    //            ERROR << "one physical name doesn't respect the rule : onid id str, please check your msh file." << BLINKRETURN << ENDLINE;
+    //            return;
+    //        }
 
-        split (&sv.at (2), &delimeter, &sv);
+    //        split (&sv.at (2), &delimeter, &sv);
 
-        tagphysical.push_back (sv.at (1));
-        count++;
-    }
+    //        tagphysical.push_back (sv.at (1));
+    //        count++;
+    //    }
 
-    if (count != numtag)
-    {
-        ERROR << "the number of physical names does not coincide." << BLINKRETURN << ENDLINE;
-        return;
-    }
+    //    if (count != numtag)
+    //    {
+    //        ERROR << "the number of physical names does not coincide." << BLINKRETURN << ENDLINE;
+    //        return;
+    //    }
 
-//    mesh->SetTagPhysical (tagphysical);
+    //    //    mesh->SetTagPhysical (tagphysical);
 
-#ifdef DEBUG
-    STATUS << "$EndPhysicalNames detected." << ENDLINE;
-#endif
+    //#ifdef DEBUG
+    //    STATUS << "$EndPhysicalNames detected." << ENDLINE;
+    //#endif
 
-    INFOS << "physical names : \t" << count << ENDLINE;
+    //    INFOS << "physical names : \t" << count << ENDLINE;
 
     // NODES
     while (line != "$Nodes")
@@ -386,7 +460,6 @@ void ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
     RemoveBlankSpace (&line, &sv);
 
     numcells = stoi(sv.at (0));
-    tag.resize (std::size_t (numcells));
 
     count = 0;
     while (count < 10 * numcells)
@@ -413,8 +486,6 @@ void ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
         C->SetType (GMSH_CELL_TYPE (stoi (sv.at (1))));
         C->SetGlobalIndex (count);
 
-        tag.at (std::size_t (count)) = stoi (sv.at (3));
-
         depth_tag = 3 + stoi (sv.at (2));
 
         for (std::size_t i = std::size_t(depth_tag); i < sv.size (); ++i)
@@ -438,15 +509,15 @@ void ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
     INFOS << "elements : \t" << count << ENDLINE;
     // END READ
 
-    if (!keep_original)
-    {
-        err = system( ("rm " + filename).c_str ());
+    VOID_USE(err);
+    VOID_USE(keep_original);
+    //    if (!keep_original)
+    //    {
+    //        err = system( ("rm " + filename).c_str ());
 
-        if (err != 0)
-            ERROR << "can not delete the msh file..." << ENDLINE;
-    }
-
-    mesh->GetCellsData ()->GetIntArrays ()->Add (NAME_TAG_PHYSICAL, tag);
+    //        if (err != 0)
+    //            ERROR << "can not delete the msh file..." << ENDLINE;
+    //    }
 
     ENDFUN;
 
@@ -463,30 +534,46 @@ void Print (InputDatStruct* input)
     HEADERFUN("Print");
 
     INFOS << "dt       = " << input->dt << ENDLINE;
-    INFOS << "mouv     = " << input->mouv << ENDLINE;
-    INFOS << "eq_type  = " << input->eq_type << ENDLINE;
     INFOS << "zeta_0   = " << input->zeta_0<< ENDLINE;
     INFOS << "beta_0   = " << input->beta_0<< ENDLINE;
 
-    INFOS << "xm       = " << input->xm << ENDLINE;
-    INFOS << "xp       = " << input->xp << ENDLINE;
-    INFOS << "ym       = " << input->ym << ENDLINE;
-    INFOS << "yp       = " << input->yp << ENDLINE;
-
+    INFOS << "file     = " << input->filename_msh << ENDLINE;
+    INFOS << "xm       = " << input->grid_x_m << ENDLINE;
+    INFOS << "xp       = " << input->grid_x_p << ENDLINE;
+    INFOS << "ym       = " << input->grid_y_m << ENDLINE;
+    INFOS << "yp       = " << input->grid_y_p << ENDLINE;
     INFOS << "hsize    = " << input->hsize << ENDLINE;
+    INFOS << "eltype   = " << input->ele_type << ENDLINE;
+    INFOS << "elorder  = " << input->ele_order << ENDLINE;
+
 
     for (std::size_t i = 0; i < input->objects.size (); ++i)
     {
         auto obj = input->objects.at (i);
         INFOS << SEPARATOR << ENDLINE;
-        INFOS << "\txc       = " << obj.xc << ENDLINE;
-        INFOS << "\tyc       = " << obj.yc << ENDLINE;
+        INFOS << "object" << ENDLINE;
+        INFOS << "\txc       = " << obj.x_center << ENDLINE;
+        INFOS << "\tyc       = " << obj.y_center << ENDLINE;
         INFOS << "\tr        = " << obj.radius << ENDLINE;
-        INFOS << "\tgen      = " << obj.gen_with_algo << ENDLINE;
         INFOS << "\talgo     = " << obj.algo_gen << ENDLINE;
+        INFOS << "\trinp       = " << obj.rinp << ENDLINE;
         INFOS << "\tnbpts    = " << obj.nbpts << ENDLINE;
         INFOS << "\tfile_msh = " << obj.filename_msh << ENDLINE;
     }
+
+    for (std::size_t i = 0; i < input->items.size (); ++i)
+    {
+        auto obj = input->items.at (i);
+        INFOS << SEPARATOR << ENDLINE;
+        INFOS << "item" << ENDLINE;
+        INFOS << "\ttype     = " << to_string(obj.type) << ENDLINE;
+        INFOS << "\ttag      = " << to_string(obj.tagToApply) << ENDLINE;
+        INFOS << "\tfun      = " << obj.fun << ENDLINE;
+        INFOS << "\tder      = " << obj.dert << ENDLINE;
+        INFOS << "\tid_obj   = " << obj.id_obj << ENDLINE;
+        INFOS << "\tvartime  = " << obj.varTime << ENDLINE;
+    }
+
     ENDFUN;
 
     return;
@@ -514,4 +601,9 @@ void RemoveBlankSpace (std::string* s, std::vector<std::string>* out)
     *out = {std::istream_iterator<std::string>{iss},           std::istream_iterator<std::string>{}};
 
     return;
+}
+
+bool CastToBool(std::string *s)
+{
+    return (*s == "true" ? true : false);
 }

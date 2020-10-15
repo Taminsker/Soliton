@@ -22,57 +22,8 @@ Point::Point (double a, double b, double c) :
     m_globalIndex (NONE_ID_SELECTED) // Il n'a pas encore d'indice global
 {}
 
-Point& Point::operator= (const Point& p)
-{
-    x = p.x;
-    y = p.y;
-    z = p.z;
-    m_cells  = p.m_cells;
-    m_listNeighbours  = p.m_listNeighbours;
-
-    if (p.m_globalIndex != NONE_ID_SELECTED)
-        m_globalIndex = p.m_globalIndex;
-
-    return *this;
-}
-
-Point& Point::operator= (std::initializer_list<double> ilist)
-{
-    auto iter = ilist.begin ();
-    x = (ilist.size () >= 1 ? *iter : 0.);
-    iter++;
-    y = (ilist.size () >= 2 ? *iter : 0.);
-    iter++;
-    z = (ilist.size () >= 3 ? *iter : 0.);
-
-    return *this;
-}
-
-Point& Point::operator= (std::initializer_list<int> ilist)
-{
-    auto iter = ilist.begin ();
-    x = double (ilist.size () >= 1 ? *iter : 0.);
-    iter++;
-    y = double (ilist.size () >= 2 ? *iter : 0.);
-    iter++;
-    z = double (ilist.size () >= 3 ? *iter : 0.);
-
-    return *this;
-}
-
 Point::~Point ()
 {}
-
-Point* Point::SetGlobalIndex (int index)
-{
-    m_globalIndex = index;
-    return this;
-}
-
-int Point::GetGlobalIndex () const
-{
-    return m_globalIndex;
-}
 
 void Point::AddPointNeighbour (Point* p)
 {
@@ -100,18 +51,6 @@ void Point::RemoveThisNeighbourPoint (Point* p)
     }
 
     return;
-}
-
-void Point::ClearListNeighbours ()
-{
-    m_listNeighbours.clear ();
-    return;
-}
-
-
-std::vector<Point*> Point::GetListNeighbours ()
-{
-    return m_listNeighbours;
 }
 
 void Point::SetListNeighbours (std::vector <Point *>& list)
@@ -152,11 +91,6 @@ void Point::UnlinkToCell (Cell *c)
     return;
 }
 
-std::vector <Cell*> Point::GetLinkedCell () const
-{
-    return m_cells;
-}
-
 Point* Point::DetachFromAll ()
 {
     for (Cell* c : m_cells)
@@ -176,123 +110,6 @@ Point* Point::DetachFromAll ()
     return this;
 }
 
-Point& Point::operator+= (Point&& p)
-{
-    x += p.x;
-    y += p.y;
-    z += p.z;
-
-    return *this;
-}
-
-Point& Point::operator-= (Point&& p)
-{
-    x -= p.x;
-    y -= p.y;
-    z -= p.z;
-
-    return *this;
-}
-
-Point& Point::operator*= (Point&& p)
-{
-    x *= p.x;
-    y *= p.y;
-    z *= p.z;
-
-    return *this;
-}
-
-Point& Point::operator+= (Point& p)
-{
-    x += p.x;
-    y += p.y;
-    z += p.z;
-
-    return *this;
-}
-
-Point& Point::operator-= (Point& p)
-{
-    x -= p.x;
-    y -= p.y;
-    z -= p.z;
-
-    return *this;
-}
-
-Point& Point::operator*= (Point& p)
-{
-    x *= p.x;
-    y *= p.y;
-    z *= p.z;
-
-    return *this;
-}
-
-Point& Point::operator+= (double value)
-{
-    x += value;
-    y += value;
-    z += value;
-
-    return *this;
-}
-
-Point& Point::operator-= (double value)
-{
-    x -= value;
-    y -= value;
-    z -= value;
-
-    return *this;
-}
-
-Point& Point::operator*= (double value)
-{
-    x *= value;
-    y *= value;
-    z *= value;
-
-    return *this;
-}
-
-Point& Point::operator/= (double value)
-{
-    if (std::abs (value) < 1e-20)
-        return *this;
-
-    x /= value;
-    y /= value;
-    z /= value;
-
-    return *this;
-}
-
-std::vector<double> Point::data ()
-{
-    return {x, y, z};
-}
-
-Point& Point::Normalize ()
-{
-    double norm = this->EuclidianNorm ();
-    if (std::abs (norm) < 1e-15)
-        return *this;
-
-    this->x /= norm;
-    this->y /= norm;
-    this->z /= norm;
-
-    return *this;
-}
-
-double Point::EuclidianNorm ()
-{
-    return std::sqrt (x * x + y * y + z * z);
-}
-
-
 std::ostream & operator<< (std::ostream &out, const Point &p)
 {
     out << SPACE << p.x << " "
@@ -306,6 +123,11 @@ std::ostream & operator<< (std::ostream &out, const std::vector<Point*> vec)
     for (std::size_t i = 0; i < vec.size (); ++i)
         out << *(vec.at (i)) << std::endl;
     return out;
+}
+
+bool CompareIdx (const Point& a, const Point& b)
+{
+    return a.GetGlobalIndex () > b.GetGlobalIndex ();
 }
 
 Point operator* (double value, const Point& p)

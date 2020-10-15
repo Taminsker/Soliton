@@ -1,0 +1,141 @@
+@ SOLITON FILE
+@ Name : input.slt
+@ Creator : Valentin Pannetier
+@ Date : August 2020
+
+@ ---------------------------------------------------------------------------- @
+@ Resolution mesh
+@
+@ If the field "file_msh" is configured then it covers all other definitions
+@ ---------------------------------------------------------------------------- @
+
+@ file_msh       = ../data/mesh.msh                                             @ filename of msh file : path from executable
+
+grid_x_m        = 0.0                                                           @ x minus
+grid_x_p        = 1.0                                                           @ x sup
+grid_y_m        = 0.0                                                           @ y minus
+grid_y_p        = 1.0                                                           @ y sup
+hsize           = 0.01                                                          @ Prescribed space step
+ele_type        = 0                                                             @ 0 : P-Lagrange / 1 : Q-Lagrange
+ele_order       = 1                                                             @ Element order : 1 / 2 / 3 ...
+
+@ ---------------------------------------------------------------------------- @
+@ Objects
+@
+@ Object's definition is delimited by $BEGIN_OBJECT and $END_OBJECT
+@ You can add as many objects as you want.
+@ They will be numbered in the same order as you define them.
+@
+@ As Resolution Mesh part :
+@ If the field "file_msh" is configured then it covers definitions of
+@   - nbpts
+@   - algo_gen
+@
+@ In addition you can move the object like :
+@   1/ Set "rinp" (aka replace in place) on true
+@   2/ Set "x_center" and "y_center"
+@   3/ Set "radius"
+@ Be careful : if you want an object generated with an algorithm-generator, the
+@ definitions of "x_center", "y_center" and "radius" are used.
+@ ---------------------------------------------------------------------------- @
+
+$BEGIN_OBJECT
+@     file_msh  = ../data/flotteur_type_1.msh                                     @ filename of msh file : path from executable
+    algo_gen  = 1                                                               @ type of algorithm generator
+    nbpts     = 300                                                             @ number of points
+
+    basename  = body                                                            @ basename
+    rinp      = true                                                            @ replace in place : true or false
+    x_center  = 0.5                                                             @ x center (double)
+    y_center  = 0.5                                                             @ y center (double)
+    z_center  = 0.0                                                             @ z center (double)
+    radius    = 0.4                                                             @ radius-indicator (double)
+$END_OBJECT
+
+
+@ ---------------------------------------------------------------------------- @
+@ Solver
+@ Item's definition is delimited by $BEGIN_ITEM_SOLVER and $END_ITEM_SOLVER
+@ You can add as many items as you want.
+@
+@ Already defined items :
+@   - GRAD_GRAD
+@   - PHI_PHI
+@   - DAMPING_PHI_PHI
+@   - SECOND_MEMBER
+@   - DIRICHLET_BOUNDARY
+@   - DIRICHLET_BOUNDARY_SBM
+@   - NEUMANN_BOUNDARY
+@   - NEUMANN_BOUNDARY_SBM
+@
+@ Already defined type of solver :
+@   - NO_TIME
+@   - NEWMARK_SCHEME
+@ ---------------------------------------------------------------------------- @
+
+$BEGIN_SOLVER
+    dt              = 1.0                                                       @ time step indicator
+    object_policy   = free                                                      @ free or fixed
+    time_scheme     = NO_TIME                                                   @ temporal scheme
+    specialize      = TAG_INSIDE
+    specialize      += TAG_OUTSIDE
+$END_SOLVER
+
+$BEGIN_ITEM_SOLVER
+    type  = GRAD_GRAD
+    tagToApply = TAG_DOMAIN
+    derivate_id = 0
+    varOverT = false
+@     id_obj = -1
+@     function =
+$END_ITEM_SOLVER
+$BEGIN_ITEM_SOLVER
+    type  = SECOND_MEMBER
+    tagToApply = TAG_DOMAIN
+    derivate_id = 0
+    varOverT = false
+@     id_obj = -1
+    function = fun_secondmember
+$END_ITEM_SOLVER
+$BEGIN_ITEM_SOLVER
+    type  = DIRICHLET_BOUNDARY
+    tagToApply = TAG_INLET
+    derivate_id = 0
+    varOverT = false
+@     id_obj = -1
+    function = fun_dirichlet
+$END_ITEM_SOLVER
+$BEGIN_ITEM_SOLVER
+    type  = DIRICHLET_BOUNDARY
+    tagToApply = TAG_OUTLET
+    derivate_id = 0
+    varOverT = false
+@     id_obj = -1
+    function = fun_dirichlet
+$END_ITEM_SOLVER
+$BEGIN_ITEM_SOLVER
+    type  = DIRICHLET_BOUNDARY
+    tagToApply = TAG_WALL
+    derivate_id = 0
+    varOverT = false
+@     id_obj = -1
+    function = fun_dirichlet
+$END_ITEM_SOLVER
+
+@ ---------------------------------------------------------------------------- @
+@ Add-ons definitions
+@
+@ Currently supported :
+@   - damping
+@   - zeta_0
+@   - beta_0
+@   - penal
+@ ---------------------------------------------------------------------------- @
+
+damping = false                                                                 @ Compute damping area : true or false
+zeta_0  = 1.0                                                                   @ free surface coor z
+beta_0  = 0.0                                                                   @ bed coor z
+penal   = 1000                                                                  @ coeff penalization
+colContItem = false                                                             @ Collect Item's Contribution : true or false
+
+

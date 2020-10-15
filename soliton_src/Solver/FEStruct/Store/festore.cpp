@@ -51,16 +51,17 @@ FEBase* FEStore::GetElementFor (Cell* cell, FE_CLASS_TYPE typeOfEle)
         case VTK_CELL_TYPE::VTK_QUAD:
             m_quad4n4ddl->CastForCell (cell);
             return m_quad4n4ddl;
-        case VTK_CELL_TYPE::VTK_QUADRATIC_QUAD:
+        case VTK_CELL_TYPE::VTK_BIQUADRATIC_QUAD:
             m_quad8n8ddl->CastForCell (cell);
             return m_quad8n8ddl;
-        case VTK_CELL_TYPE::VTK_BIQUADRATIC_QUAD:
+        case VTK_CELL_TYPE::VTK_QUADRATIC_QUAD:
             m_quad9n9ddl->CastForCell (cell);
             return m_quad9n9ddl;
         case VTK_CELL_TYPE::VTK_TETRA:
             m_tet4n4ddl->CastForCell (cell);
             return m_tet4n4ddl;
         default:
+            WARNING << "FEStore returns Emp0N0DDL... cell is set with type " << to_string(cell->GetTypeVTK ()) << " | " << to_string(cell->GetTypeGMSH ()) << ENDLINE;
             m_emp0n0ddl->CastForCell (cell);
             return m_emp0n0ddl;
         }

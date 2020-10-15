@@ -121,36 +121,33 @@ void ImposeDirichlet (Mesh* mesh, SparseMatrix* A, PlainVector* secondMember,
     return;
 }
 
-double GetErrorl1 (Mesh * mesh, const PlainVector *u_ana, const PlainVector *u_num, double h_indic)
+double GetErrorl1 (Mesh * mesh, const PlainVector *u_ana, const PlainVector *u_num)
 {
-    (void)mesh;
-    (void)h_indic;
+    VOID_USE(mesh);
 
     double error_l1;
-    PlainVector u_abs = (h_indic * *u_ana - h_indic * *u_num).cwiseAbs();
+    PlainVector u_abs = mesh->GetPrescribedSize () * (*u_ana - *u_num).cwiseAbs();
     error_l1 = u_abs.sum();
 
     INFOS << COLOR_GREEN << "error l^1 has been calculated : " << std::scientific << error_l1 << ENDLINE;
     return error_l1;
 }
 
-double GetErrorl2 (Mesh * mesh, const PlainVector *u_ana, const PlainVector *u_num, double h_indic)
+double GetErrorl2 (Mesh * mesh, const PlainVector *u_ana, const PlainVector *u_num)
 {
-    (void)mesh;
-    (void)h_indic;
+    VOID_USE(mesh);
 
-    double error_l2 = (h_indic * *u_ana - h_indic * *u_num).norm ();
+    double error_l2 = mesh->GetPrescribedSize () *(*u_ana - *u_num).norm ();
 
     INFOS << COLOR_GREEN << "error l^2 has been calculated : " << std::scientific << error_l2 << ENDLINE;
     return error_l2;
 }
 
-double GetErrorlinf (Mesh * mesh, const PlainVector *u_ana, const PlainVector *u_num, double h_indic)
+double GetErrorlinf (Mesh * mesh, const PlainVector *u_ana, const PlainVector *u_num)
 {
-    (void)mesh;
-    (void)h_indic;
+    VOID_USE(mesh);
 
-    PlainVector u_abs = (h_indic * *u_ana - h_indic * *u_num).cwiseAbs();
+    PlainVector u_abs = mesh->GetPrescribedSize () * (*u_ana - *u_num).cwiseAbs();
     double error_linf = u_abs.maxCoeff();
 
     INFOS << COLOR_GREEN << "error l^inf has been calculated : " << std::scientific << error_linf << ENDLINE;
@@ -160,7 +157,7 @@ double GetErrorlinf (Mesh * mesh, const PlainVector *u_ana, const PlainVector *u
 
 PlainVector GetErrorAbs (Mesh * mesh, const PlainVector *u_ana, const PlainVector *u_num)
 {
-    (void)mesh;
+    VOID_USE(mesh);
     INFOS << COLOR_GREEN << "error abs has been calculated." << ENDLINE;
 
     return (*u_ana - *u_num).cwiseAbs ();
@@ -168,19 +165,18 @@ PlainVector GetErrorAbs (Mesh * mesh, const PlainVector *u_ana, const PlainVecto
 
 PlainVector GetErrorRelaPercent (Mesh * mesh, const PlainVector *u_ana, const PlainVector *u_num)
 {
-    (void)mesh;
+    VOID_USE(mesh);
     INFOS << COLOR_GREEN << "error rela percent has been calculated." << ENDLINE;
 
     return  (*u_ana - *u_num).cwiseAbs ().cwiseQuotient((u_ana->cwiseAbs ().array () + EPSILON).matrix ());
 }
 
-double GetErrorRela (Mesh * mesh, const PlainVector *u_ana, const PlainVector *u_num, double h_indic)
+double GetErrorRela (Mesh * mesh, const PlainVector *u_ana, const PlainVector *u_num)
 {
-    (void)mesh;
-    (void)h_indic;
+    VOID_USE(mesh);
 
     double error_rela = (*u_ana - *u_num).norm () / u_ana->norm ();
-    INFOS << COLOR_GREEN << "error rela has been calculated : " << std::scientific << error_rela << ENDLINE;
+    INFOS << COLOR_GREEN << "error rela has been calculated : " << std::scientific << error_rela << std::defaultfloat << " " << error_rela * 100. << "%..." << ENDLINE;
 
     return error_rela;
 }

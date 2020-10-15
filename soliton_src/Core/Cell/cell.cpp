@@ -2,7 +2,7 @@
 #include "../Point/point.h"
 #include "../Edge/edge.h"
 
-#include "celltype.h"
+#include <Enums/enums.h>
 
 Cell::Cell() :
     m_globalIndex (NONE_ID_SELECTED), // Il n'a pas encore d'indice global
@@ -13,10 +13,20 @@ Cell::Cell() :
 
 Cell::Cell (const Cell& c) :
     m_globalIndex (NONE_ID_SELECTED),
+    m_cat_cell (c.m_cat_cell),
+    m_celltag (c.m_celltag),
+    m_celltype (c.m_celltype),
     m_centroid (new Point (*c.m_centroid)),
-    m_points (c.m_points),
-    m_edges (c.m_edges)
+    m_points ({}),
+    m_edges ({})
 {
+    for (Point* p : c.m_points)
+        m_points.push_back (p);
+
+    for (Edge* e : c.m_edges)
+        m_edges.push_back (e);
+
+
     UpdateCentroid ();
 }
 
@@ -40,17 +50,6 @@ Cell::~Cell ()
     m_edges.clear ();
 }
 
-
-Cell* Cell::SetGlobalIndex (int index)
-{
-    m_globalIndex = index;
-    return this;
-}
-
-int Cell::GetGlobalIndex () const
-{
-    return m_globalIndex;
-}
 
 Cell* Cell::AddPoint (Point *p, bool l)
 {
@@ -124,67 +123,6 @@ Cell* Cell::RemoveEdge (Edge *e)
     }
 
     return this;
-}
-
-void Cell::SetTag (CELLTAG tag)
-{
-    m_celltag = tag;
-    return;
-}
-
-CELLTAG Cell::GetTag () const
-{
-    return m_celltag;
-}
-
-void Cell::SetType (GMSH_CELL_TYPE type)
-{
-    m_celltype = type;
-    return;
-}
-
-GMSH_CELL_TYPE Cell::GetTypeGMSH () const
-{
-    return m_celltype;
-}
-
-VTK_CELL_TYPE Cell::GetTypeVTK () const
-{
-    return Convert (m_celltype);
-}
-
-int Cell::GetNumberOfInfos () const
-{
-    return 1 + int (m_points.size ()); // +1 pour le label de comptage de labels
-}
-
-std::vector <Point *>* Cell::GetPoints ()
-{
-    return &m_points;
-}
-std::vector <Edge *>* Cell::GetEdges ()
-{
-    return &m_edges;
-}
-
-int Cell::GetNumberOfPoints () const
-{
-    return static_cast<int>(m_points.size ());
-}
-
-int Cell::GetNumberOfEdges () const
-{
-    return static_cast<int>(m_edges.size ());
-}
-
-CAT_CELL_EDGE Cell::GetCat ()
-{
-    return m_cat_cell;
-}
-
-Point* Cell::GetCentroid ()
-{
-    return m_centroid;
 }
 
 void Cell::UpdateCentroid ()

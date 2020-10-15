@@ -1,246 +1,262 @@
-#include "upgradablesolver.h"
-#include <Solver/Method/method.h>
+//#include "upgradablesolver.h"
+//#include <Solver/Method/method.h>
 
-template<>
-PlainVector*
-UpgradableSolver<SCHEME_TEMPORAL_SOLVER::NO_TIME>::Compute ()
-{
-    /**
-     * Dt_2*MAT_2*U + Dt_1*MAT_1*U + MAT_0*U = SECMEMBER*U
-     *  =>
-     * MAT_0*U = SECMEMBER*U
-     */
+//template<>
+//PlainVector*
+//UpgradableSolver<SCHEME_TEMPORAL_SOLVER::NO_TIME>::Compute ()
+//{
+//    /**
+//     * Dt_2*MAT_2*U + Dt_1*MAT_1*U + MAT_0*U = SECMEMBER*U
+//     *  =>
+//     * MAT_0*U = SECMEMBER*U
+//     */
 
-    INFOS << *this << ENDLINE;
+//    INFOS << *this << ENDLINE;
 
-    std::vector<SparseMatrix> listMats;
-    PlainVector sec;
+//    std::vector<SparseMatrix> listMats;
+//    PlainVector sec;
 
-    this->ComputeSecMemberAndMats (&listMats, &sec);
+//    this->ComputeSecMemberAndMats (&listMats, &sec, false);
 
-    int numPoints = m_store->mesh->GetNumberOfPoints ();
-    SparseMatrix matrix(numPoints, numPoints);
-    PlainVector secMember = PlainVector::Zero (numPoints);
+//    int numPoints = m_store->mesh->GetNumberOfPoints ();
+//    SparseMatrix matrix(numPoints, numPoints);
+//    PlainVector secMember = PlainVector::Zero (numPoints);
 
-    matrix += listMats.at (0);
-    //    INFOS << matrix << ENDLINE;
-    secMember += sec;
-    //    INFOS << secMember.transpose ()<< ENDLINE;
+//    matrix = listMats.at (0);
+////    ERROR << "LISTITEM" << ENDLINE;
+////    std::cout << matrix << std::endl;
+//    secMember = sec;
+////        INFOS << sec.transpose ()<< ENDLINE;
 
 //    /*******************************/
 
-//    matrix = *m_items [0][0]->CastSparseMatrix ();
-//    secMember.setZero ();
+////    auto matTemp = *m_items [0][0]->CastSparseMatrix ();
+////    ERROR << SEPARATOR << "MATRIX LISTITEM MINUS GRAD" << SEPARATOR << ENDLINE;
+////    std::cout << Eigen::MatrixXd(matrix - *m_items [0][0]->CastSparseMatrix ()) << ENDLINE;
+////    ERROR << SEPARATOR << "NEW" << SEPARATOR << ENDLINE;
 
-//    auto g = m_items.at (0).at (2)->m_fun;
+////    matrix = *m_items [0][0]->CastSparseMatrix ();
+////    secMember.setZero ();
+////    secMember = *m_items [0][1]->CastPlainVector ();
 
-//    for(int i = 0; i < numPoints; ++i)
+//////    INFOS << *m_items [0][1] << ENDLINE;
+
+////    auto g = m_items.at (0).at (2)->m_fun;
+
+////    for(int i = 0; i < numPoints; ++i)
+////    {
+////        PHYS tag = PHYS(m_store->mesh->GetPointsData ()->GetIntArrays ()->Get (NAME_PHYS)->vec.at (std::size_t (i)));
+
+////        if (tag == PHYS::WALL || tag == PHYS::INLET || tag == PHYS::OUTLET)
+////        {
+////            matrix.row (i) *= 0.;
+
+////            auto temp = matrix.transpose (); // Pour pouvoir manipuler les colonnes de A
+////            matrix = temp;
+
+////            secMember -= g(*m_store->mesh->GetPoint (i), m_time) * matrix.row (i).transpose ();
+////            matrix.row (i) *= 0.;
+////            matrix.coeffRef (i,i) = 1.;
+////            secMember.coeffRef (i) = g(*m_store->mesh->GetPoint (i), m_time);
+
+////            temp = matrix.transpose ();
+////            temp.pruned ();
+////            matrix = temp;
+////        }
+////    }
+
+////    ERROR << "MATRIX AFTER OLD DIRICHLET" << ENDLINE;
+////    std::ofstream outfile("txt_matrix.txt");
+////    outfile << matrix << std::endl;
+////    outfile.close ();
+
+////    ERROR << secMember.transpose () << ENDLINE;
+
+
+////    /******************************/
+
+//    PlainVector solution;
+//    Solver::AutoDeduceBest (&matrix, &secMember, &solution);
+
+//    m_sols [0]->New (solution);
+//    return m_sols [0]->GetNumber (0);
+//}
+
+//template<>
+//PlainVector*
+//UpgradableSolver<SCHEME_TEMPORAL_SOLVER::EULER_IMPLICIT>::Compute ()
+//{
+//    INFOS << *this << ENDLINE;
+
+//    std::vector<SparseMatrix> listMats;
+//    PlainVector sec;
+
+//    this->ComputeSecMemberAndMats (&listMats, &sec);
+
+//    /**
+//     * Dt_2*MAT_2*U + Dt_1*MAT_1*U + MAT_0*U = SECMEMBER*U
+//     */
+
+//    std::vector<DF_ORDER_NAMES> orders = {DF_ORDER_NAMES::ORDER_1_CENTRAL, DF_ORDER_NAMES::ORDER_3_BACKWARD, DF_ORDER_NAMES::ORDER_2_BACKWARD};
+//    std::vector<int> idx;
+//    std::vector<double> coeffs;
+
+//    int numPoints = m_store->mesh->GetNumberOfPoints ();
+//    SparseMatrix matrix(numPoints, numPoints);
+//    PlainVector secMember = PlainVector::Zero (numPoints);
+
+//    for (std::size_t idDer = 1; idDer < 3; ++idDer)
 //    {
-//        TAG_PHYSICAL tag = TAG_PHYSICAL(m_store->mesh->GetPointsData ()->GetIntArrays ()->Get (NAME_TAG_PHYSICAL)->vec.at (std::size_t (i)));
-
-//        if (tag == TAG_PHYSICAL::TAG_WALL || tag == TAG_PHYSICAL::TAG_INLET || tag == TAG_PHYSICAL::TAG_OUTLET)
-//        {
-//            matrix.row (i) *= 0.;
-
-//            auto temp = matrix.transpose (); // Pour pouvoir manipuler les colonnes de A
-//            matrix = temp;
-
-//            secMember -= g(*m_store->mesh->GetPoint (i), m_time) * matrix.row (i).transpose ();
-//            matrix.row (i) *= 0.;
-//            matrix.coeffRef (i,i) = 1.;
-//            secMember.coeffRef (i) = g(*m_store->mesh->GetPoint (i), m_time);
-
-
-//            temp = matrix.transpose ();
-//            temp.pruned ();
-//            matrix = temp;
-//        }
+//        m_dfstore->Get (static_cast<int> (idDer), orders.at (idDer), &idx, &coeffs);
+//        for (std::size_t id = 0; id < idx.size (); ++id)
+//            if (idx.at (id) == 0)
+//                matrix += coeffs.at (id) * listMats.at (idDer);
+//            else
+//                sec += coeffs.at (id) * listMats.at (idDer) * *m_sols [0]->GetNumber (idx.at (id));
 //    }
 
-//    /******************************/
+//    matrix += listMats.at (0);
+//    secMember += sec;
 
-    PlainVector solution;
-    Solver::AutoDeduceBest (&matrix, &secMember, &solution);
+//    PlainVector solution;
+//    Solver::AutoDeduceBest (&matrix, &secMember, &solution);
 
-    m_sols [0]->New (solution);
-    return m_sols [0]->GetNumber (0);
-}
+//    m_sols [0]->New (solution);
+//    return m_sols [0]->GetNumber (0);
+//}
 
-template<>
-PlainVector*
-UpgradableSolver<SCHEME_TEMPORAL_SOLVER::EULER_IMPLICIT>::Compute ()
-{
-    INFOS << *this << ENDLINE;
+//template<>
+//[[deprecated("Not sure of this...")]]
+//PlainVector*
+//UpgradableSolver<SCHEME_TEMPORAL_SOLVER::EULER_EXPLICIT>::Compute ()
+//{
+//    /**
+//     * Dt_2*MAT_2*U + Dt_1*MAT_1*U + MAT_0*U = SECMEMBER*U
+//     *  =>
+//     * MAT_0*U = SECMEMBER*U
+//     */
 
-    std::vector<SparseMatrix> listMats;
-    PlainVector sec;
+//    INFOS << *this << ENDLINE;
 
-    this->ComputeSecMemberAndMats (&listMats, &sec);
+//    std::vector<SparseMatrix> listMats;
+//    PlainVector sec;
 
-    /**
-     * Dt_2*MAT_2*U + Dt_1*MAT_1*U + MAT_0*U = SECMEMBER*U
-     */
+//    this->ComputeSecMemberAndMats (&listMats, &sec);
 
-    std::vector<DF_ORDER_NAMES> orders = {DF_ORDER_NAMES::ORDER_1_CENTRAL, DF_ORDER_NAMES::ORDER_3_BACKWARD, DF_ORDER_NAMES::ORDER_2_BACKWARD};
-    std::vector<int> idx;
-    std::vector<double> coeffs;
+//    int numPoints = m_store->mesh->GetNumberOfPoints ();
+//    SparseMatrix matrix(numPoints, numPoints);
+//    PlainVector secMember = PlainVector::Zero (numPoints);
 
-    int numPoints = m_store->mesh->GetNumberOfPoints ();
-    SparseMatrix matrix(numPoints, numPoints);
-    PlainVector secMember = PlainVector::Zero (numPoints);
+//    matrix += listMats.at (0);
+//    secMember += sec;
 
-    for (std::size_t idDer = 1; idDer < 3; ++idDer)
-    {
-        m_dfstore->Get (static_cast<int> (idDer), orders.at (idDer), &idx, &coeffs);
-        for (std::size_t id = 0; id < idx.size (); ++id)
-            if (idx.at (id) == 0)
-                matrix += coeffs.at (id) * listMats.at (idDer);
-            else
-                sec += coeffs.at (id) * listMats.at (idDer) * *m_sols [0]->GetNumber (idx.at (id));
-    }
+//    PlainVector solution;
+//    Solver::AutoDeduceBest (&matrix, &secMember, &solution);
 
-    matrix += listMats.at (0);
-    secMember += sec;
+//    m_sols [0]->New (solution);
+//    return m_sols [0]->GetNumber (0);
+//}
 
-    PlainVector solution;
-    Solver::AutoDeduceBest (&matrix, &secMember, &solution);
+//template<>
+//[[deprecated("Not sure of this...")]]
+//PlainVector*
+//UpgradableSolver<SCHEME_TEMPORAL_SOLVER::TVD_RK_2>::Compute ()
+//{
+//    /**
+//     * Dt_2*MAT_2*U + Dt_1*MAT_1*U + MAT_0*U = SECMEMBER*U
+//     *  =>
+//     * MAT_0*U = SECMEMBER*U
+//     */
 
-    m_sols [0]->New (solution);
-    return m_sols [0]->GetNumber (0);
-}
+//    INFOS << *this << ENDLINE;
 
-template<>
-[[deprecated("Not sure of this...")]]
-PlainVector*
-UpgradableSolver<SCHEME_TEMPORAL_SOLVER::EULER_EXPLICIT>::Compute ()
-{
-    /**
-     * Dt_2*MAT_2*U + Dt_1*MAT_1*U + MAT_0*U = SECMEMBER*U
-     *  =>
-     * MAT_0*U = SECMEMBER*U
-     */
+//    std::vector<SparseMatrix> listMats;
+//    PlainVector sec;
 
-    INFOS << *this << ENDLINE;
+//    this->ComputeSecMemberAndMats (&listMats, &sec);
 
-    std::vector<SparseMatrix> listMats;
-    PlainVector sec;
+//    int numPoints = m_store->mesh->GetNumberOfPoints ();
+//    SparseMatrix matrix(numPoints, numPoints);
+//    PlainVector secMember = PlainVector::Zero (numPoints);
 
-    this->ComputeSecMemberAndMats (&listMats, &sec);
+//    matrix += listMats.at (0);
+//    secMember += sec;
 
-    int numPoints = m_store->mesh->GetNumberOfPoints ();
-    SparseMatrix matrix(numPoints, numPoints);
-    PlainVector secMember = PlainVector::Zero (numPoints);
+//    PlainVector solution;
+//    Solver::AutoDeduceBest (&matrix, &secMember, &solution);
 
-    matrix += listMats.at (0);
-    secMember += sec;
-
-    PlainVector solution;
-    Solver::AutoDeduceBest (&matrix, &secMember, &solution);
-
-    m_sols [0]->New (solution);
-    return m_sols [0]->GetNumber (0);
-}
-
-template<>
-[[deprecated("Not sure of this...")]]
-PlainVector*
-UpgradableSolver<SCHEME_TEMPORAL_SOLVER::TVD_RK_2>::Compute ()
-{
-    /**
-     * Dt_2*MAT_2*U + Dt_1*MAT_1*U + MAT_0*U = SECMEMBER*U
-     *  =>
-     * MAT_0*U = SECMEMBER*U
-     */
-
-    INFOS << *this << ENDLINE;
-
-    std::vector<SparseMatrix> listMats;
-    PlainVector sec;
-
-    this->ComputeSecMemberAndMats (&listMats, &sec);
-
-    int numPoints = m_store->mesh->GetNumberOfPoints ();
-    SparseMatrix matrix(numPoints, numPoints);
-    PlainVector secMember = PlainVector::Zero (numPoints);
-
-    matrix += listMats.at (0);
-    secMember += sec;
-
-    PlainVector solution;
-    Solver::AutoDeduceBest (&matrix, &secMember, &solution);
-
-    m_sols [0]->New (solution);
-    return m_sols [0]->GetNumber (0);
-}
+//    m_sols [0]->New (solution);
+//    return m_sols [0]->GetNumber (0);
+//}
 
 
 
-template<>
-[[deprecated("Not sure of this...")]]
-PlainVector*
-UpgradableSolver<SCHEME_TEMPORAL_SOLVER::TVD_RK_4>::Compute ()
-{
-    /**
-     * Dt_2*MAT_2*U + Dt_1*MAT_1*U + MAT_0*U = SECMEMBER*U
-     *  =>
-     * MAT_0*U = SECMEMBER*U
-     */
+//template<>
+//[[deprecated("Not sure of this...")]]
+//PlainVector*
+//UpgradableSolver<SCHEME_TEMPORAL_SOLVER::TVD_RK_4>::Compute ()
+//{
+//    /**
+//     * Dt_2*MAT_2*U + Dt_1*MAT_1*U + MAT_0*U = SECMEMBER*U
+//     *  =>
+//     * MAT_0*U = SECMEMBER*U
+//     */
 
-    INFOS << *this << ENDLINE;
+//    INFOS << *this << ENDLINE;
 
-    std::vector<SparseMatrix> listMats;
-    PlainVector sec;
+//    std::vector<SparseMatrix> listMats;
+//    PlainVector sec;
 
-    this->ComputeSecMemberAndMats (&listMats, &sec);
+//    this->ComputeSecMemberAndMats (&listMats, &sec);
 
-    int numPoints = m_store->mesh->GetNumberOfPoints ();
-    SparseMatrix matrix(numPoints, numPoints);
-    PlainVector secMember = PlainVector::Zero (numPoints);
+//    int numPoints = m_store->mesh->GetNumberOfPoints ();
+//    SparseMatrix matrix(numPoints, numPoints);
+//    PlainVector secMember = PlainVector::Zero (numPoints);
 
-    matrix += listMats.at (0);
-    secMember += sec;
+//    matrix += listMats.at (0);
+//    secMember += sec;
 
-    PlainVector solution;
-    Solver::AutoDeduceBest (&matrix, &secMember, &solution);
+//    PlainVector solution;
+//    Solver::AutoDeduceBest (&matrix, &secMember, &solution);
 
-    m_sols [0]->New (solution);
-    return m_sols [0]->GetNumber (0);
-}
+//    m_sols [0]->New (solution);
+//    return m_sols [0]->GetNumber (0);
+//}
 
-template<>
-[[deprecated("Not sure of this...")]]
-PlainVector*
-UpgradableSolver<SCHEME_TEMPORAL_SOLVER::NEWMARK_SCHEME>::Compute ()
-{
-    /**
-     * Dt_2*MAT_2*U + Dt_1*MAT_1*U + MAT_0*U = SECMEMBER*U
-     */
+//template<>
+//[[deprecated("Not sure of this...")]]
+//PlainVector*
+//UpgradableSolver<SCHEME_TEMPORAL_SOLVER::NEWMARK_SCHEME>::Compute ()
+//{
+//    /**
+//     * Dt_2*MAT_2*U + Dt_1*MAT_1*U + MAT_0*U = SECMEMBER*U
+//     */
 
-    /**
-      * Newmark-beta method (based on df temporal)
-      * u'_{n+1} = u'_{n} + dt * u"_{alph}
-      **** u"_{alpha} = (1-alpha) * u"_{n} + alpha * u"_{n}
-      * u_{n+1} = u_{n} + dt * u'_{n} + 0.5 * dt^2 * u"_{beta}
-      **** u"_{beta} = (1-2*beta) * u"_{n} + 2 * beta * u"_{n+1}
-      **/
+//    /**
+//      * Newmark-beta method (based on df temporal)
+//      * u'_{n+1} = u'_{n} + dt * u"_{alph}
+//      **** u"_{alpha} = (1-alpha) * u"_{n} + alpha * u"_{n}
+//      * u_{n+1} = u_{n} + dt * u'_{n} + 0.5 * dt^2 * u"_{beta}
+//      **** u"_{beta} = (1-2*beta) * u"_{n} + 2 * beta * u"_{n+1}
+//      **/
 
-    INFOS << *this << ENDLINE;
+//    INFOS << *this << ENDLINE;
 
-    std::vector<SparseMatrix> listMats;
-    PlainVector sec;
+//    std::vector<SparseMatrix> listMats;
+//    PlainVector sec;
 
-    this->ComputeSecMemberAndMats (&listMats, &sec);
+//    this->ComputeSecMemberAndMats (&listMats, &sec);
 
-    int numPoints = m_store->mesh->GetNumberOfPoints ();
-    SparseMatrix matrix(numPoints, numPoints);
-    PlainVector secMember = PlainVector::Zero (numPoints);
+//    int numPoints = m_store->mesh->GetNumberOfPoints ();
+//    SparseMatrix matrix(numPoints, numPoints);
+//    PlainVector secMember = PlainVector::Zero (numPoints);
 
-    matrix += listMats.at (0);
-    secMember += sec;
+//    matrix += listMats.at (0);
+//    secMember += sec;
 
-    PlainVector solution;
-    Solver::AutoDeduceBest (&matrix, &secMember, &solution);
+//    PlainVector solution;
+//    Solver::AutoDeduceBest (&matrix, &secMember, &solution);
 
-    m_sols [0]->New (solution);
-    return m_sols [0]->GetNumber (0);
-}
+//    m_sols [0]->New (solution);
+//    return m_sols [0]->GetNumber (0);
+//}

@@ -8,7 +8,7 @@ void Quad4N::Build ()
 {
     m_type_physical = PHYSICAL_CELL_TYPE::QUADRANGLE;
     m_type_vtk = VTK_CELL_TYPE::VTK_QUAD;
-    m_volref = 1;
+    m_volref = 4;
 
     // Points
     AddPointDefinition (-1., -1., 0.);

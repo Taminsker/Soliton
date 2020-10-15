@@ -14,11 +14,11 @@ void SolitonRoutines::PrintMacros ()
     INFOS << "DEBUG is OFF" << ENDLINE;
 #endif
 
-//#ifdef PRINTHASHMAP
-//    INFOS << "PRINTHASHMAP is ON" << ENDLINE;
-//#else
-//    INFOS << "PRINTHASHMAP is OFF" << ENDLINE;
-//#endif
+    //#ifdef PRINTHASHMAP
+    //    INFOS << "PRINTHASHMAP is ON" << ENDLINE;
+    //#else
+    //    INFOS << "PRINTHASHMAP is OFF" << ENDLINE;
+    //#endif
 
     std::cout << ENDLINE;
 
@@ -59,7 +59,7 @@ void SolitonRoutines::PrintExecutableName (std::string executablename)
 void SolitonRoutines::Generation (Sto4Sol* store, InputDatStruct* inputdatfile)
 {
 
-    if (inputdatfile->gen)
+    if (inputdatfile->filename_msh.empty ())
     {
         ParseMSH (store->mesh, GenerateWithGMSH (inputdatfile), false);
         store->mesh->SetPrescribedSize (inputdatfile->hsize);
@@ -67,13 +67,12 @@ void SolitonRoutines::Generation (Sto4Sol* store, InputDatStruct* inputdatfile)
     else
         ParseMSH (store->mesh, inputdatfile->filename_msh, true);
 
-
     /*************************/
 
-    TransfertTagPhysical (store->mesh);
+    ComputeTagPhysical (store->mesh, inputdatfile);
 
     if (inputdatfile->damping)
-        ComputeDampingArea (store->mesh, TAG_PHYSICAL::TAG_OUTLET, inputdatfile->hsize);
+        ComputeDampingArea (store->mesh, PHYS::OUTLET, inputdatfile->hsize);
 
 
     ObjectGenerator (inputdatfile, store);
@@ -221,7 +220,7 @@ void SolitonRoutines::ComputeSecondMember (Mesh* mesh, PlainVector* vec, double 
 
 
 
-void SolitonRoutines::ComputeNeumannNoSBM (Mesh* mesh, std::vector<Triplet>* listTriplets, PlainVector* F, double (*f)(Point, double), TAG_PHYSICAL tagToApply, double hPerp, double t)
+void SolitonRoutines::ComputeNeumannNoSBM (Mesh* mesh, std::vector<Triplet>* listTriplets, PlainVector* F, double (*f)(Point, double), PHYS tagToApply, double hPerp, double t)
 {
     // * +<phi_j, grad(u).n - t_n>
 
@@ -229,19 +228,19 @@ void SolitonRoutines::ComputeNeumannNoSBM (Mesh* mesh, std::vector<Triplet>* lis
     // * A : +<phi_j, grad(u).n>
     // * B : +<phi_j, t_n>
 
-    (void)hPerp;
+    VOID_USE(hPerp);
 
     FEStore festore;
     QuadStore quadstore;
 
-    INFOS << "Impose Neumann : tag " << tagToApply << ENDLINE;
+    INFOS << "Impose Neumann : tag " << to_string(tagToApply) << ENDLINE;
     int numCells = mesh->GetNumberOfCells ();
 
-    auto tagedgevec = mesh->GetEdgesData ()->GetIntArrays ()->Get (NAME_TAG_PHYSICAL);
+    auto tagedgevec = mesh->GetEdgesData ()->GetIntArrays ()->Get (NAME_PHYS);
 
     if (tagedgevec == nullptr)
     {
-        ERROR << "no array with the name : " << NAME_TAG_PHYSICAL << "." << BLINKRETURN << ENDLINE;
+        ERROR << "no array with the name : " << NAME_PHYS << "." << BLINKRETURN << ENDLINE;
         return;
     }
 
@@ -360,7 +359,7 @@ void SolitonRoutines::ComputeNeumannNoSBM (Mesh* mesh, std::vector<Triplet>* lis
 }
 
 
-void SolitonRoutines::ComputeDirichletNoSBM (Mesh* mesh, std::vector<Triplet>* listTriplets, PlainVector* F, double (*f)(Point, double), TAG_PHYSICAL tagToApply, double hsz, double t)
+void SolitonRoutines::ComputeDirichletNoSBM (Mesh* mesh, std::vector<Triplet>* listTriplets, PlainVector* F, double (*f)(Point, double), PHYS tagToApply, double hsz, double t)
 {
 
     // * -<phi_j, grad(u).n>
@@ -384,14 +383,14 @@ void SolitonRoutines::ComputeDirichletNoSBM (Mesh* mesh, std::vector<Triplet>* l
 
     double alpha = 20 / std::abs(hsz);
 
-    INFOS << "Impose Dirichlet : tag " << tagToApply << ", penal. coeff. = " << alpha << ENDLINE;
+    INFOS << "Impose Dirichlet : tag " << to_string(tagToApply) << ", penal. coeff. = " << alpha << ENDLINE;
     int numCells = mesh->GetNumberOfCells ();
 
-    auto tagedgevec = mesh->GetEdgesData ()->GetIntArrays ()->Get (NAME_TAG_PHYSICAL);
+    auto tagedgevec = mesh->GetEdgesData ()->GetIntArrays ()->Get (NAME_PHYS);
 
     if (tagedgevec == nullptr)
     {
-        ERROR << "no array with the name : " << NAME_TAG_PHYSICAL << "." << BLINKRETURN << ENDLINE;
+        ERROR << "no array with the name : " << NAME_PHYS << "." << BLINKRETURN << ENDLINE;
         return;
     }
 
@@ -693,3 +692,42 @@ void SolitonRoutines::ComputeDirichletNoSBM (Mesh* mesh, std::vector<Triplet>* l
 //    }
 //    return;
 //}
+
+SuperSolverBase* SolitonRoutines::NewSuperSolver(Sto4Sol *store, InputDatStruct *inputdatfile)
+{
+    auto tags = inputdatfile->listTagsSolver;
+
+    bool f_i = false;
+    bool f_o = false;
+    bool f_m = false;
+
+    for (INTER tag : tags)
+        switch (tag)
+        {
+        case INTER::UNKNOWN:
+            f_i = true;
+            f_o = true;
+            break;
+        case INTER::IN:
+            f_i = true;
+            break;
+        case INTER::OUT:
+            f_o = true;
+            break;
+        case INTER::MIXED:
+            f_m = true;
+            break;
+        }
+
+    if (f_i && !f_o && !f_m)
+        return new SuperSolver<INTER::IN> (store, inputdatfile);
+        //        out = new  (store);
+    else if (!f_i && f_o && !f_m)
+        return new SuperSolver<INTER::OUT> (store, inputdatfile);
+    else if (f_i && !f_o && f_m)
+        return new SuperSolver<INTER::IN, INTER::MIXED> (store, inputdatfile);
+    else if (!f_i && f_o && f_m)
+        return new SuperSolver<INTER::OUT, INTER::MIXED> (store, inputdatfile);
+    else
+        return new SuperSolver<INTER::IN, INTER::OUT> (store, inputdatfile);
+}

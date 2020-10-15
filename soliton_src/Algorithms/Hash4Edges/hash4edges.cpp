@@ -1,155 +1,22 @@
 #include "hash4edges.h"
 
 #include <Core/core.h>
+#include <Solver/FEStruct/festruct.h>
 #include <fstream>
 
 #include <algorithm>
 
 
-//long int HashFunction (std::vector <Point*> pointlist, int KeyGenerator)
-//{
-//    std::size_t numidx = pointlist.size ();
-//    long int out = 0;
-
-//    std::sort (pointlist.begin (), pointlist.end ());
-
-//    for (std::size_t id = 0; id < numidx; ++id)
-//        out += static_cast<long int>(KeyGenerator)^static_cast<long int>(id + 1) * static_cast<long int>(pointlist.at (id)->GetGlobalIndex ());
-
-
-//    return out;
-
-//}
-
-std::string HashFunction (std::vector <Point*>* pointlist)
+std::string HashFunction (std::vector<int>* idx)
 {
-    std::size_t numidx = pointlist->size ();
     std::string out = "";
 
-    std::sort (pointlist->begin (), pointlist->end ());
+    std::sort (idx->begin (), idx->end ());
 
-    for (std::size_t id = 0; id < numidx; ++id)
-        out += std::to_string (pointlist->at (id)->GetGlobalIndex ())+",";
-
-
-    return out;
-
-}
-
-std::vector <SolitonHashCell *> ExtractUndergroundCells (Cell* cell)
-{
-    HEADERFUN("ExtractUndergroundCells");
-
-    std::vector <SolitonHashCell *> out;
-    std::size_t np = std::size_t (cell->GetNumberOfPoints ());
-    auto lp = cell->GetPoints ();
-    VTK_CELL_TYPE type = cell->GetTypeVTK ();
-
-    switch (type)
-    {
-    case VTK_CELL_TYPE::VTK_LINE:
-    {
-        GMSH_CELL_TYPE edgeType = GMSH_CELL_TYPE::GMSH_1_NODE_POINT;
-
-        for (std::size_t j = 0; j < np; j++)
-        {
-            SolitonHashCell* add = new SolitonHashCell();
-
-            add->gmshcelltype = edgeType;
-            add->cell = cell;
-            add->listpoints.push_back (lp->at (j));
-            out.push_back (add);
-        }
-        break;
-    }
-    case VTK_CELL_TYPE::VTK_QUADRATIC_EDGE:
-    {
-        GMSH_CELL_TYPE edgeType = GMSH_CELL_TYPE::GMSH_1_NODE_POINT;
-
-        for (std::size_t j = 0; j < np-2; j=j+2)
-        {
-            SolitonHashCell* add = new SolitonHashCell();
-
-            add->gmshcelltype = edgeType;
-            add->cell = cell;
-            add->listpoints.push_back (lp->at (j));
-            out.push_back (add);
-        }
-        break;
-    }
-    case VTK_CELL_TYPE::VTK_TRIANGLE:
-    {
-        GMSH_CELL_TYPE edgeType = GMSH_CELL_TYPE::GMSH_2_NODE_LINE;
-
-        for (std::size_t j = 0; j < np; ++j)
-        {
-            SolitonHashCell* add = new SolitonHashCell();
-
-            add->gmshcelltype = edgeType;
-            add->cell = cell;
-
-            if (j != np -1)
-                add->listpoints = {lp->at (j), lp->at (j+1)};
-            else
-                add->listpoints = {lp->at (j), lp->at (0)};
-
-            out.push_back (add);
-        }
-
-        break;
-    }
-    case VTK_CELL_TYPE::VTK_QUADRATIC_TRIANGLE:
-    {
-        GMSH_CELL_TYPE edgeType = GMSH_CELL_TYPE::GMSH_3_NODE_QUADRATIC_LINE;
-
-        for (std::size_t j = 0; j < np - 1; ++j)
-        {
-            SolitonHashCell* add = new SolitonHashCell();
-
-            add->gmshcelltype = edgeType;
-            add->cell = cell;
-
-            if (j != np -2)
-                add->listpoints = {lp->at (j), lp->at (j+1), lp->at (j+2)};
-            else
-                add->listpoints = {lp->at (j), lp->at (j+1), lp->at (0)};
-
-            out.push_back (add);
-        }
-
-        break;
-    }
-    default:
-    {
-        ERROR << "the cell (type " << type << ") is not supported yet.. please look the meshtools file in ExtractBoundary." << ENDLINE;
-        break;
-    }
-    }
+    for (std::size_t id = 0; id < idx->size (); ++id)
+        out += std::to_string (idx->at(id))+",";
 
     return out;
-}
-
-void AddToHashMap (SolitonHashMap* map, std::vector <SolitonHashCell *>* HashCells)
-{
-    HEADERFUN("AddToHashMap");
-
-    for (SolitonHashCell* obj : *HashCells)
-    {
-        std::string id = obj->id;
-        bool noid = (obj->id == std::to_string (NONE_ID_SELECTED));
-        bool nocell = (obj->cell == nullptr);
-        bool nopoints = (obj->listpoints.size () == 0);
-
-        if (noid || nocell || nopoints)
-        {
-            ERROR << "seems to be an error when we try add to hash map, but we continue..." << ENDLINE;
-            continue;
-        }
-
-        map->insert ({id, obj});
-    }
-
-    return;
 }
 
 void BuildEdgesWithHashMap (Mesh* mesh)
@@ -159,72 +26,62 @@ void BuildEdgesWithHashMap (Mesh* mesh)
     BEGIN << "Build edges with a hash map on the mesh : " << COLOR_BLUE << mesh->GetName () << ENDLINE;
 
     SolitonHashMap map;
-//    int numPoints = mesh->GetNumberOfPoints ();
+    FEStore store;
     int numCells = mesh->GetNumberOfCells ();
-
-//    int keyGenerator = numPoints;
+    int globalIdx = 0;
 
     for (int cellId = 0; cellId < numCells; ++cellId)
     {
         Cell* cell = mesh->GetCell (cellId);
-        std::vector <SolitonHashCell *> vectorHash = ExtractUndergroundCells (cell);
-        // Compute key hash
+        std::vector<Point*>* ptsOnCell = cell->GetPoints ();
 
-        for (SolitonHashCell* obj : vectorHash)
-                    obj->id = HashFunction (&obj->listpoints);
+        FEBase* febase = store.GetElementFor (cell);
 
-        AddToHashMap (&map, &vectorHash);
+        for (std::size_t edgeId = 0; edgeId < febase->GetNumberOfEdges (); ++edgeId)
+        {
+            Edge* edge = febase->GetEdge (edgeId);
+
+            std::vector<int>    idxPoints = {};
+            std::vector<Point*> listPoints = {};
+            for (Point* pt : *edge->GetPoints ())
+            {
+                listPoints.push_back (ptsOnCell->at (static_cast<std::size_t>(pt->GetGlobalIndex ())));
+                idxPoints.push_back (listPoints.back ()->GetGlobalIndex ());
+            }
+
+            std::string key = HashFunction (&idxPoints);
+
+            SolitonHashMap::iterator list = map.find (key);
+
+            if (list != map.end ())
+                list->second->AddCell (cell);
+            else
+            {
+                Edge* newEdge = new Edge();
+                newEdge->AddPoints (listPoints);
+                newEdge->SetTag (edge->GetTag ());
+                newEdge->SetType (edge->GetTypeGMSH ());
+                newEdge->SetGlobalIndex (globalIdx);
+                newEdge->AddCell (cell);
+
+                map.insert ({key, newEdge});
+                globalIdx++;
+            }
+        }
     }
 
 #ifdef PRINTHASHMAP
-    Print(&map, "hashmap.txt");
+    Print(&map, "hashmap_"+mesh->GetName()+".txt");
 #endif
 
 #ifdef VERBOSE
     INFOS << "Hash table size : " << map.size () << ENDLINE;
 #endif
 
-    Edge* currentedge = nullptr;
-    std::string idx = std::to_string (NONE_ID_SELECTED);
-    int globalId = 0;
+    for (std::pair<std::string, Edge*> obj : map)
+        mesh->AddEdge (obj.second);
 
-    std::vector <int> counter;
-    counter.resize (map.bucket_count ());
-
-    for (auto obj : map)
-    {
-        Cell* cell = obj.second->cell;
-
-        if (idx != obj.first)
-        {
-            if (idx != std::to_string (NONE_ID_SELECTED) && currentedge != nullptr)
-                mesh->AddEdge (currentedge);
-
-            std::string objIdx = obj.first;
-            std::vector<Point*> vecPoints = obj.second->listpoints;
-
-            idx = objIdx;
-            currentedge = new Edge ();
-
-            for (Point* point : vecPoints)
-                currentedge->AddPoint (point);
-
-            currentedge->SetType (obj.second->gmshcelltype);
-            currentedge->SetGlobalIndex (globalId);
-            globalId++;
-        }
-
-        currentedge->AddCell (cell);
-
-        delete obj.second;
-        obj.second = nullptr;
-    }
-
-
-    if (idx != std::to_string (NONE_ID_SELECTED) && currentedge != nullptr)
-        mesh->AddEdge (currentedge);
-
-    INFOS << "build : " << mesh->GetNumberOfEdges () << " edges." << ENDLINE;
+    INFOS << "Build : " << mesh->GetNumberOfEdges () << " edges on mesh " << COLOR_BLUE << "\"" << mesh->GetName () << COLOR_DEFAULT << "\"." << ENDLINE;
 
     map.clear ();
 
@@ -234,9 +91,9 @@ void BuildEdgesWithHashMap (Mesh* mesh)
 
 void Print (SolitonHashMap* map, std::string name)
 {
+    VOID_USE(map); VOID_USE(name);
 
     HEADERFUN ("Print HashMap");
-    BEGIN << "display hash map" << ENDLINE;
 
     std::ofstream output (name);
 
@@ -245,15 +102,28 @@ void Print (SolitonHashMap* map, std::string name)
 
     for (auto obj : *map)
     {
-        output << "ID: " << obj.first << "         \tID': " << obj.second->id << "         \t idx-point " << std::flush;
-        for (Point* point : obj.second->listpoints)
+        Edge* edge = obj.second;
+
+        output << "\tID: " << obj.first << "        \t idx-point " << std::flush;
+
+        for (Point* point : *edge->GetPoints ())
             output << point->GetGlobalIndex () << ", " << std::flush;
-        output << "         \tGLOBALIDX-Cell : " << obj.second->cell->GetGlobalIndex () << "         \tGMSHTYPE-Cell : " << std::flush;
-        output << obj.second->gmshcelltype << '\t' << std::endl;
+
+        output << "         \tGLOBALIDX-Cell : " << std::flush;
+        for (Cell* cell : *edge->GetCellsList ())
+            output << cell->GetGlobalIndex () << ", " << std::flush;
+
+        output << "         \tGMSHTYPE-Cell : " << std::flush;
+        for (Cell* cell : *edge->GetCellsList ())
+            output << to_string(cell->GetTypeGMSH ()) << ", " << std::flush;
+
+        output << "         \tGMSHTYPE-EDGE : " << std::flush;
+        output << to_string(edge->GetTypeGMSH ()) << '\t' << std::endl;
+        output << "NEXT HASH VECTOR "<< SEPARATOR << std::endl;
 
     }
 
-    INFOS << "PRINT DONE in " << name << ENDLINE;
+    INFOS << "Print hash map in \"" << COLOR_BLUE << name << COLOR_DEFAULT << "\"" << ENDLINE;
 
     output.close ();
 

@@ -4,8 +4,12 @@
 #include <vector>
 #include <string>
 
-#include "../Cell/celltype.h"
-#include "tagphysical.h"
+#include "../Cell/cell.h"
+#include "../Edge/edge.h"
+#include "../Point/point.h"
+#include "../HetContainer/hetcontainer.h"
+
+#include <Enums/enums.h>
 #include <ProgDef/proddef.h>
 
 struct InputDatStruct;
@@ -26,36 +30,164 @@ public:
     Mesh ();
     ~Mesh ();
 
-    void            AddPoint (Point * p);
-    Point*          GetPoint (int i) const;
-    void            RemovePoint (int i);
+    SOLITON_INLINE
+    void AddPoint (Point * p)
+    {
+        m_points.push_back (p);
+        return;
+    }
 
-    void            AddCell (Cell* c);
-    Cell*           GetCell (int i) const;
-    void            RemoveCell (int i);
+    SOLITON_INLINE
+    Point* GetPoint (int i) const
+    {
+        return m_points.at (std::size_t (i));
+    }
 
-    void            AddEdge (Edge* c);
-    Edge*           GetEdge (int i) const;
-    void            RemoveEdge (int i);
+    SOLITON_INLINE
+    void RemovePoint (int i)
+    {
+        if (i >= 0 && i < int (m_points.size ()))
+        {
+            delete m_points.at (std::size_t (i));
+            m_points.erase (m_points.begin () + i);
+            m_pointsdata->Delete (i);
+        }
+        return;
+    }
 
-    PointsData*     GetPointsData () const;
-    CellsData*      GetCellsData () const;
-    EdgesData*      GetEdgesData () const;
+    SOLITON_INLINE
+    void AddCell (Cell* c)
+    {
+        m_cells.push_back (c);
+        return;
+    }
 
-    int             GetNumberOfPoints () const;
-    int             GetNumberOfCells () const;
-    int             GetNumberOfEdges () const;
+    SOLITON_INLINE
+    Cell*           GetCell (int i) const
+    {
+        return m_cells.at (std::size_t (i));
+    }
 
-    int             GetNumberOfInfosCells () const;
-    int             GetNumberOfInfosEdges () const;
+    SOLITON_INLINE
+    void RemoveCell (int i)
+    {
+        if (i >= 0 && i < int (m_cells.size ()))
+        {
+            delete m_cells.at (std::size_t (i));
+            m_cells.erase (m_cells.begin () + i);
+            m_cellsdata->Delete (i);
+        }
 
-    void            Print () const;
+        return;
+    }
 
-    void            SetName (std::string name);
-    std::string     GetName () const;
+    SOLITON_INLINE
+    void AddEdge (Edge* c)
+    {
+        m_edges.push_back (c);
+        return;
+    }
 
-    void            SetPrescribedSize(double h);
-    double          GetPrescribedSize ();
+    SOLITON_INLINE
+    Edge* GetEdge (int i) const
+    {
+        return m_edges.at (std::size_t (i));
+    }
+
+    SOLITON_INLINE
+    void RemoveEdge (int i)
+    {
+        if (i >= 0 && i < int (m_edges.size ()))
+        {
+            delete m_edges.at (std::size_t (i));
+            m_edges.erase (m_edges.begin () + i);
+            m_edgesdata->Delete (i);
+        }
+
+        return;
+    }
+
+    SOLITON_INLINE
+    PointsData* GetPointsData () const
+    {
+        return m_pointsdata;
+    }
+
+    SOLITON_INLINE
+    CellsData* GetCellsData () const
+    {
+        return m_cellsdata;
+    }
+
+    SOLITON_INLINE
+    EdgesData* GetEdgesData () const
+    {
+        return m_edgesdata;
+    }
+
+    SOLITON_INLINE
+    int GetNumberOfPoints () const
+    {
+        return int (m_points.size ());
+    }
+
+    SOLITON_INLINE
+    int GetNumberOfCells () const
+    {
+        return int (m_cells.size ());
+    }
+
+    SOLITON_INLINE
+    int GetNumberOfEdges () const
+    {
+        return int (m_edges.size ());
+    }
+
+    SOLITON_INLINE
+    int GetNumberOfInfosCells () const
+    {
+        int sum = 0;
+        for (std::size_t i = 0; i < m_cells.size (); ++i)
+            sum += m_cells.at (i)->GetNumberOfInfos ();
+        return sum;
+    }
+
+    SOLITON_INLINE
+    int GetNumberOfInfosEdges () const
+    {
+        int sum = 0;
+        for (std::size_t i = 0; i < m_edges.size (); ++i)
+            sum += m_edges.at (i)->GetNumberOfInfos ();
+        return sum;
+    }
+
+    void Print () const;
+
+    SOLITON_INLINE
+    void SetName (std::string name)
+    {
+        m_name = name;
+        return;
+    }
+
+    SOLITON_INLINE
+    std::string GetName () const
+    {
+        return m_name;
+    }
+
+    SOLITON_INLINE
+    void SetPrescribedSize (double h)
+    {
+        m_h = h;
+        return;
+    }
+
+    SOLITON_INLINE
+    double GetPrescribedSize ()
+    {
+        return m_h;
+    }
 
 private:
     PointsData*                     m_pointsdata;
@@ -70,8 +202,25 @@ private:
     double                          m_h;
 
 
-    int             CountCellType (VTK_CELL_TYPE type) const;
-    int             CountEdgeType (VTK_CELL_TYPE type) const;
+    SOLITON_INLINE
+    int CountCellType (VTK_CELL_TYPE type) const
+    {
+        int count = 0;
+        for (auto c : m_cells)
+            if (c->GetTypeVTK () == type)
+                count++;
+        return count;
+    }
+
+    SOLITON_INLINE
+    int CountEdgeType (VTK_CELL_TYPE type) const
+    {
+        int count = 0;
+        for (auto c : m_edges)
+            if (c->GetTypeVTK () == type)
+                count++;
+        return count;
+    }
 
 };
 
