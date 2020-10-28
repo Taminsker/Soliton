@@ -1,22 +1,8 @@
 #include <Soliton>
 #include "functions.h"
 
-#define NEW_ITEM_WITH_EMB(X)                                                    \
-    ItemSolver<ITEM_SOLVER_TYPE::X> ().SetTagToApply (static_cast<PHYS>(item.tagToApply))          \
-    .SetDerT (std::size_t(item.dert)).SetVariableOverTime (item.varTime)        \
-    .SetEmbMesh (store.listobjects.at (std::size_t(item.id_obj))).SetFunction (fun)
-
-#define NEW_ITEM_WITHOUT_EMB(X)                                                 \
-    ItemSolver<ITEM_SOLVER_TYPE::X> ().SetTagToApply (static_cast<PHYS>(item.tagToApply))          \
-    .SetDerT (std::size_t(item.dert)).SetVariableOverTime (item.varTime).SetFunction (fun)
-
-#define NEW_ITEM(X)\
-    (item.id_obj >= 0 ? NEW_ITEM_WITH_EMB(X) : NEW_ITEM_WITHOUT_EMB(X))
-
 int main(int argc, char *argv[])
 {
-    HEADERFUN("main");
-
     Eigen::setNbThreads(4);
     Eigen::initParallel();
 
@@ -42,7 +28,7 @@ int main(int argc, char *argv[])
 
     COUT << std::setw(13) << "hsize" << std::setw(23) << "l1-error" << std::setw(17) << "l2-error" << std::setw(25)<< "linf-error" << std::setw(25) << "rela-error (%)" << ENDLINE;
 
-    for (double hsz = 0.1; hsz > 3.9*1e-3; hsz-=1e-3)
+    for (double hsz = 0.1; hsz > 9.9*1e-3; hsz-=1e-3)
     {
         hpres.push_back (hsz);
         inputdatfile.hsize = hsz;
@@ -56,83 +42,132 @@ int main(int argc, char *argv[])
         Sto4Sol store;
         SolitonRoutines::Generation (&store, &inputdatfile);
 
+        SuperSolver solver (&store, inputdatfile.listTagsSolver);
 
-        // ********************************************************************* //
-        BEGIN << COLOR_YELLOW << "Solver" << ENDLINE;
-
-        UpgradableSolverBase* solver = NewUpgradableSolver (&store, inputdatfile.scheme);
-
-        for (std::size_t id = 0; id < inputdatfile.items.size (); ++id)
+        for (ItemSolverDatStruct itemdat : inputdatfile.items)
         {
-            auto item = inputdatfile.items.at (id);
+            SuperItem item (itemdat.type);
+            item.SetTag2Apply (itemdat.tagToApply);
+            item.SetDerT(static_cast<std::size_t>(itemdat.dert));
 
-            std::function<double (Point, double)> fun;
+            if (itemdat.id_obj > 0)
+                item.SetTargetMesh (&store.listobjects.at (static_cast<std::size_t> (itemdat.id_obj)));
 
-            if (item.fun == "fun_dirichlet")
-                fun = fun_dirichlet;
-            else if (item.fun == "fun_secondmember")
-                fun = fun_secondmember;
+            if (itemdat.fun == "fun_dirichlet")
+                item.SetFunction2Apply (fun_dirichlet);
+            else if (itemdat.fun == "fun_neumann")
+                item.SetFunction2Apply (fun_neumann);
+            else if (itemdat.fun == "fun_secondmember")
+                item.SetFunction2Apply (fun_secondmember);
+            else if (itemdat.fun == "fun_analytic")
+                item.SetFunction2Apply (fun_analytic);
             else
-                fun = fun_analytic;
+                item.SetFunction2Apply (NULL_FUNC_NAME);
 
-            switch (item.type)
-            {
-            case ITEM_SOLVER_TYPE::EMPTY:
-                *solver <<  NEW_ITEM(EMPTY);
-                continue;
-            case ITEM_SOLVER_TYPE::PHI_PHI:
-                *solver <<  NEW_ITEM(PHI_PHI);
-                continue;
-            case ITEM_SOLVER_TYPE::DAMPING_PHI_PHI:
-                *solver <<  NEW_ITEM(DAMPING_PHI_PHI);
-                continue;
-            case ITEM_SOLVER_TYPE::GRAD_GRAD:
-                *solver <<  NEW_ITEM(GRAD_GRAD);
-                continue;
-            case ITEM_SOLVER_TYPE::SECOND_MEMBER:
-                *solver <<  NEW_ITEM(SECOND_MEMBER);
-                continue;
-            case ITEM_SOLVER_TYPE::DIRICHLET_BOUNDARY:
-                *solver <<  NEW_ITEM(DIRICHLET_BOUNDARY);
-                continue;
-            case ITEM_SOLVER_TYPE::NEUMANN_BOUNDARY:
-                *solver <<  NEW_ITEM(NEUMANN_BOUNDARY);
-                continue;
-            case ITEM_SOLVER_TYPE::DIRICHLET_BOUNDARY_SBM:
-                *solver <<  NEW_ITEM(DIRICHLET_BOUNDARY_SBM);
-                continue;
-            case ITEM_SOLVER_TYPE::NEUMANN_BOUNDARY_SBM:
-                *solver <<  NEW_ITEM(NEUMANN_BOUNDARY_SBM);
-                continue;
-            }
+
+            solver.AddItem (item, static_cast<std::size_t> (itemdat.dert), itemdat.solver_tag);
         }
 
-        solver->SetCoeffPen (inputdatfile.penal);
-        solver->SetTime (0.);
-        solver->SetTimeStep (inputdatfile.dt);
-        solver->Configure ();
+        solver.SetScheme (inputdatfile.scheme);
+        solver.SetCoeffPen (inputdatfile.penal);
+        solver.SetTime (0.);
+        solver.SetTimeStep (inputdatfile.dt);
+        solver.SetCollectContribution (inputdatfile.colConcItem);
 
-        PlainVector* sol_num = solver->Compute ();
+        solver.SetViewOn ();
+        solver.SetForceComputeOn ();
+        solver.SetCollectContributionOff ();
 
-        std::vector<double> solstd = PlainVector2Vector (sol_num);
+        solver.Configure ();
 
-        store.mesh->GetPointsData ()->GetDoubleArrays ()->Add ("sol_num", solstd);
+        solver.SetViewOff ();
+        solver.SetForceComputeOff ();
+        solver.SetCollectContributionOff ();
 
-        PlainVector sol_ana;
-        FunToVec (&sol_ana, store.mesh, fun_analytic);
-        solstd = PlainVector2Vector (&sol_ana);
+        std::vector<PlainVector*> sols = solver.Compute ();
+        std::vector<INTER> list_tags_inter = solver.GetListOfInterTags ();
 
-        store.mesh->GetPointsData ()->GetDoubleArrays ()->Add ("sol_ana", solstd);
+        //    std::size_t numPoints = static_cast<std::size_t>(store.mesh->GetNumberOfPoints ());
+        //    std::size_t numCells = static_cast<std::size_t>(store.mesh->GetNumberOfCells ());
+        std::size_t numEdges = static_cast<std::size_t>(store.mesh->GetNumberOfEdges ());
 
-        PlainVector erroabs = GetErrorAbs (store.mesh, &sol_ana, sol_num);
-        solstd = PlainVector2Vector (&erroabs);
-        store.mesh->GetPointsData ()->GetDoubleArrays ()->Add ("err_abs", solstd);
+        HetInt::Array* tagSurEdge = store.mesh->GetEdgesData ()->GetIntArrays ()->Get (NAME_TAG_INTERSECTION);
 
-        err_l1.push_back (GetErrorl1 (store.mesh, &sol_ana, sol_num));
-        err_l2.push_back (GetErrorl2 (store.mesh, &sol_ana, sol_num));
-        err_linf.push_back (GetErrorlinf (store.mesh, &sol_ana, sol_num));
-        err_rela.push_back (GetErrorRela (store.mesh, &sol_ana, sol_num));
+        double error_l1 = 0.;
+        double error_l2 = 0.;
+        double error_rela = 0.;
+        double error_linf = 0.;
 
+        for (std::size_t idvec = 0; idvec < sols.size (); ++idvec)
+        {
+            STATUS << "postprocess on solver with tag " <<  COLOR_RED << to_string(list_tags_inter.at (idvec)) << ENDLINE;
+
+            PlainVector* solnum = sols.at (idvec);
+
+            PlainVector sol_ana;
+            FunToVec (&sol_ana, store.mesh, fun_analytic);
+
+            if (list_tags_inter.at (idvec) != INTER::DEFAULT)
+                for (std::size_t idEdge = 0; idEdge < numEdges; ++idEdge)
+                {
+                    if (tagSurEdge->vec.at (idEdge) == int(list_tags_inter.at (idvec)) ||
+                            tagSurEdge->vec.at (idEdge) == int(INTER::MIXED))
+                        continue;
+
+                    for (Point* pt : *store.mesh->GetEdge (int(idEdge))->GetPoints ())
+                    {
+                        bool pass = false;
+                        for (Cell* cell : pt->GetLinkedCell ())
+                        {
+                            if (cell->GetCat () == CAT_CELL_EDGE::CELL)
+                                continue;
+
+                            if (tagSurEdge->vec.at (static_cast<std::size_t> (cell->GetGlobalIndex ())) == int(INTER::MIXED))
+                            {
+                                pass = true;
+                                break;
+                            }
+                        }
+
+                        if (pass)
+                            continue;
+
+                        solnum->coeffRef (pt->GetGlobalIndex ()) = -10.;
+                        sol_ana.coeffRef (pt->GetGlobalIndex ()) = -10.;
+                    }
+                }
+
+
+            std::string tagsolver = "_" + to_string(list_tags_inter.at (idvec));
+
+            if (tagsolver ==  "_" + to_string(INTER::DEFAULT))
+                tagsolver = "";
+
+            std::vector<double> solstd = PlainVector2Vector (solnum);
+            store.mesh->GetPointsData ()->GetDoubleArrays ()->Add ("sol_num" + tagsolver, solstd);
+
+            solstd = PlainVector2Vector (&sol_ana);
+            store.mesh->GetPointsData ()->GetDoubleArrays ()->Add ("sol_ana" + tagsolver, solstd);
+
+            PlainVector erroabs = GetErrorAbs (store.mesh, &sol_ana, solnum);
+            solstd = PlainVector2Vector (&erroabs);
+            store.mesh->GetPointsData ()->GetDoubleArrays ()->Add ("err_abs" + tagsolver, solstd);
+
+    //        PlainVector errorelapercent = GetErrorRelaPercent (store.mesh, &sol_ana, solnum);
+    //        solstd = PlainVector2Vector (&errorelapercent);
+    //        store.mesh->GetPointsData ()->GetDoubleArrays ()->Add ("err_rela_percent" + tagsolver, solstd);
+
+            error_l1 = GetErrorl1     (store.mesh, &sol_ana, solnum);
+            error_l2 = GetErrorl2 (store.mesh, &sol_ana, solnum);
+            error_linf = GetErrorlinf (store.mesh, &sol_ana, solnum);
+            error_rela = GetErrorRela (store.mesh, &sol_ana, solnum);
+
+        }
+
+        err_l1.push_back    (error_l1);
+        err_l2.push_back    (error_l2);
+        err_linf.push_back  (error_linf);
+        err_rela.push_back  (error_rela);
 
         ENDFUN;
         // ********************************************************************* //

@@ -1,5 +1,7 @@
 
 #include <Solver/SuperSolver/SuperSolver/supersolver.h>
+#include <Solver/SuperSolver/SuperItem/superitem.h>
+
 #include <Solver/Method/method.h>
 
 template<>
@@ -11,8 +13,6 @@ void SuperSolver::InternalCompute<SCH_T::NO_TIME> ()
      * MAT_0*U = SECMEMBER*U
      */
 
-    this->Print ();
-
     std::vector<SparseMatrix> listMats;
     PlainVector sec;
 
@@ -23,62 +23,59 @@ void SuperSolver::InternalCompute<SCH_T::NO_TIME> ()
     PlainVector secMember = PlainVector::Zero (numPoints);
 
     matrix = listMats.at (0);
-    //    ERROR << "LISTITEM" << ENDLINE;
-    //    std::cout << matrix << std::endl;
     secMember = sec;
-    //        INFOS << sec.transpose ()<< ENDLINE;
 
-    /*******************************/
+//    /******************************/
 
-    //    auto matTemp = *m_items [0][0]->CastSparseMatrix ();
-    //    ERROR << SEPARATOR << "MATRIX LISTITEM MINUS GRAD" << SEPARATOR << ENDLINE;
-    //    std::cout << Eigen::MatrixXd(matrix - *m_items [0][0]->CastSparseMatrix ()) << ENDLINE;
-    //    ERROR << SEPARATOR << "NEW" << SEPARATOR << ENDLINE;
+//    auto matTemp = *m_list_items->at (0).at (0)->GetSparseMatrix ();
+//    //        ERROR << SEPARATOR << "MATRIX LISTITEM MINUS GRAD" << SEPARATOR << ENDLINE;
+//    //        std::cout << Eigen::MatrixXd(matrix - *m_list_items->at (0).at (0)->GetSparseMatrix ()) << ENDLINE;
+//    //        ERROR << SEPARATOR << "NEW" << SEPARATOR << ENDLINE;
 
-    //    matrix = *m_items [0][0]->CastSparseMatrix ();
-    //    secMember.setZero ();
-    //    secMember = *m_items [0][1]->CastPlainVector ();
+//    matrix = *m_list_items->at (0).at (0)->GetSparseMatrix ();
+//    secMember.setZero ();
+//    secMember = *m_list_items->at (0).at (1)->GetPlainVector ();
 
-    ////    INFOS << *m_items [0][1] << ENDLINE;
+//    //    INFOS << *m_items [0][1] << ENDLINE;
 
-    //    auto g = m_items.at (0).at (2)->m_fun;
+//    auto g = m_list_items->at (0).at (0)->GetFun ();
 
-    //    for(int i = 0; i < numPoints; ++i)
-    //    {
-    //        PHYS tag = PHYS(m_store->mesh->GetPointsData ()->GetIntArrays ()->Get (NAME_PHYS)->vec.at (std::size_t (i)));
+//    for(int i = 0; i < numPoints; ++i)
+//    {
+//        PHYS tag = PHYS(m_store->mesh->GetPointsData ()->GetIntArrays ()->Get (NAME_TAG_PHYSICAL)->vec.at (std::size_t (i)));
 
-    //        if (tag == PHYS::WALL || tag == PHYS::INLET || tag == PHYS::OUTLET)
-    //        {
-    //            matrix.row (i) *= 0.;
+//        if (tag == PHYS::WALL || tag == PHYS::INLET || tag == PHYS::OUTLET)
+//        {
+//            matrix.row (i) *= 0.;
 
-    //            auto temp = matrix.transpose (); // Pour pouvoir manipuler les colonnes de A
-    //            matrix = temp;
+//            auto temp = matrix.transpose (); // Pour pouvoir manipuler les colonnes de A
+//            matrix = temp;
 
-    //            secMember -= g(*m_store->mesh->GetPoint (i), m_time) * matrix.row (i).transpose ();
-    //            matrix.row (i) *= 0.;
-    //            matrix.coeffRef (i,i) = 1.;
-    //            secMember.coeffRef (i) = g(*m_store->mesh->GetPoint (i), m_time);
+//            secMember -= g(*m_store->mesh->GetPoint (i), m_time) * matrix.row (i).transpose ();
+//            matrix.row (i) *= 0.;
+//            matrix.coeffRef (i,i) = 1.;
+//            secMember.coeffRef (i) = g(*m_store->mesh->GetPoint (i), m_time);
 
-    //            temp = matrix.transpose ();
-    //            temp.pruned ();
-    //            matrix = temp;
-    //        }
-    //    }
+//            temp = matrix.transpose ();
+//            temp.pruned ();
+//            matrix = temp;
+//        }
+//    }
 
-    //    ERROR << "MATRIX AFTER OLD DIRICHLET" << ENDLINE;
-    //    std::ofstream outfile("txt_matrix.txt");
-    //    outfile << matrix << std::endl;
-    //    outfile.close ();
+//    //        ERROR << "MATRIX AFTER OLD DIRICHLET" << ENDLINE;
+//    //        std::ofstream outfile("txt_matrix.txt");
+//    //        outfile << matrix << std::endl;
+//    //        outfile.close ();
 
-    //    ERROR << secMember.transpose () << ENDLINE;
+//    //        ERROR << secMember.transpose () << ENDLINE;
 
 
-    //    /******************************/
+//    /*****************************/
 
     PlainVector solution;
     Solver::AutoDeduceBest (&matrix, &secMember, &solution);
 
-    return m_queue->New (solution);
+    return m_queues.at (0)->New (solution);
 }
 
 
@@ -87,8 +84,6 @@ template<>
 void
 SuperSolver::InternalCompute<SCH_T::EULER_EXPLICIT> ()
 {
-    this->Print ();
-
     std::vector<SparseMatrix> listMats;
     PlainVector sec;
 
@@ -113,7 +108,7 @@ SuperSolver::InternalCompute<SCH_T::EULER_EXPLICIT> ()
             if (idx.at (id) == 0)
                 matrix += coeffs.at (id) * listMats.at (idDer);
             else
-                sec += coeffs.at (id) * listMats.at (idDer) * *m_queue->GetNumber (idx.at (id));
+                sec += coeffs.at (id) * listMats.at (idDer) * *m_queues.at (0)->GetNumber (idx.at (id));
     }
 
     matrix += listMats.at (0);
@@ -122,7 +117,7 @@ SuperSolver::InternalCompute<SCH_T::EULER_EXPLICIT> ()
     PlainVector solution;
     Solver::AutoDeduceBest (&matrix, &secMember, &solution);
 
-    return m_queue->New (solution);
+    return m_queues.at (0)->New (solution);
 }
 
 template<>
@@ -136,8 +131,6 @@ SuperSolver::InternalCompute<SCH_T::EULER_IMPLICIT> ()
      * MAT_0*U = SECMEMBER*U
      */
 
-    this->Print ();
-
     std::vector<SparseMatrix> listMats;
     PlainVector sec;
 
@@ -153,7 +146,7 @@ SuperSolver::InternalCompute<SCH_T::EULER_IMPLICIT> ()
     PlainVector solution;
     Solver::AutoDeduceBest (&matrix, &secMember, &solution);
 
-    return m_queue->New (solution);
+    return m_queues.at (0)->New (solution);
 }
 
 template<>
@@ -167,8 +160,6 @@ SuperSolver::InternalCompute<SCH_T::TVD_RK_2> ()
      * MAT_0*U = SECMEMBER*U
      */
 
-    this->Print ();
-
     std::vector<SparseMatrix> listMats;
     PlainVector sec;
 
@@ -184,7 +175,8 @@ SuperSolver::InternalCompute<SCH_T::TVD_RK_2> ()
     PlainVector solution;
     Solver::AutoDeduceBest (&matrix, &secMember, &solution);
 
-    return m_queue->New (solution);
+    ENDFUN;
+    return m_queues.at (0)->New (solution);
 }
 
 
@@ -199,8 +191,6 @@ SuperSolver::InternalCompute<SCH_T::TVD_RK_4> ()
      * MAT_0*U = SECMEMBER*U
      */
 
-    this->Print ();
-
     std::vector<SparseMatrix> listMats;
     PlainVector sec;
 
@@ -216,42 +206,77 @@ SuperSolver::InternalCompute<SCH_T::TVD_RK_4> ()
     PlainVector solution;
     Solver::AutoDeduceBest (&matrix, &secMember, &solution);
 
-    return m_queue->New (solution);
+    return m_queues.at (0)->New (solution);
 }
 
 template<>
-[[deprecated("Not set...")]]
 void
 SuperSolver::InternalCompute<SCH_T::NEWMARK_SCHEME> ()
 {
     /**
-     * Dt_2*MAT_2*U + Dt_1*MAT_1*U + MAT_0*U = SECMEMBER*U
+     * Dt_2*Mat_2*U + Dt_1*Mat_1*U + Mat_0*U = SECMEMBER
      */
 
     /**
       * Newmark-beta method (based on df temporal)
-      * u'_{n+1} = u'_{n} + dt * u"_{alph}
+      *
+      * u'_{n+1} = u'_{n} + dt * u"_{alpha}
       **** u"_{alpha} = (1-alpha) * u"_{n} + alpha * u"_{n}
+      *
       * u_{n+1} = u_{n} + dt * u'_{n} + 0.5 * dt^2 * u"_{beta}
       **** u"_{beta} = (1-2*beta) * u"_{n} + 2 * beta * u"_{n+1}
       **/
 
-    this->Print ();
+    double alpha = 0.5;
+    double beta = 0.5;
+    INFOS << "Newmark scheme with alpha = " << alpha << " and beta = " << beta << ENDLINE;
 
+    // Build matrix and second member
     std::vector<SparseMatrix> listMats;
     PlainVector sec;
-
     this->ComputeSecMemberAndMats (&listMats, &sec);
 
+    // Init
     int numPoints = m_store->mesh->GetNumberOfPoints ();
     SparseMatrix matrix(numPoints, numPoints);
     PlainVector secMember = PlainVector::Zero (numPoints);
 
-    matrix += listMats.at (0);
-    secMember += sec;
+    PlainVector *u_0_n = m_queues.at (0)->GetNumber (0);
+    PlainVector *u_1_n = m_queues.at (1)->GetNumber (0);
+    PlainVector *u_2_n = m_queues.at (2)->GetNumber (0);
 
-    PlainVector solution;
-    Solver::AutoDeduceBest (&matrix, &secMember, &solution);
+    // ---------------------------------------------- //
+    // Solve u_2_np1
+    //
+    // Mat_2*U_2_np1 = SecMember - Mat_1 * U_1_n - Mat_0 * U_0_n
 
-    return m_queue->New (solution);
+    matrix = listMats.at (2);
+    secMember = sec - listMats.at (1) * *u_1_n - listMats.at (0) * *u_0_n;
+
+    PlainVector u_2_np1;
+    Solver::AutoDeduceBest (&matrix, &secMember, &u_2_np1);
+    m_queues.at (2)->New (u_2_np1);
+
+    // ---------------------------------------------- //
+    // Solve u_1_np1
+    //
+    // U_1_np1 = U_1_n + dt * U_2_alpha;
+    // with
+    // U_2_alpha = alpha * U_2_n * (1. - alpha) * U_2_np1;
+
+    PlainVector u_2_alpha = alpha * *u_2_n * (1. - alpha) * u_2_np1;
+    PlainVector u_1_np1 = *u_1_n + m_dt * u_2_alpha;
+    m_queues.at (1)->New (u_1_np1);
+
+    // ---------------------------------------------- //
+    // Solve u_0_np1
+    //
+    // U_1_np1 = U_0_n + dt * U_1_n + 0.5 * dt*dt * U_2_beta;
+    // with
+    // U_2_beta = 2. * beta * U_2_n * (1. - 2. * beta) * U_2_np1;
+
+    PlainVector u_2_beta = 2. * beta * *u_2_n * (1. - 2. * beta) * u_2_np1;
+    PlainVector u_0_np1 = *u_0_n + m_dt * *u_1_n + 0.5 * m_dt * m_dt * u_2_beta;
+
+    return m_queues.at (0)->New (u_0_np1);
 }

@@ -32,12 +32,12 @@ if (USE_VERBOSE)
   add_definitions(-DVERBOSE)
 endif()
 
-option(PRINT_HASHMAP "Write Hashmap in file (can take a long time)" OFF)
-message(STATUS "PRINT_HASHMAP : ${PRINT_HASHMAP}")
+#option(PRINT_HASHMAP "Write Hashmap in file (can take a long time)" OFF)
+#message(STATUS "PRINT_HASHMAP : ${PRINT_HASHMAP}")
 
-if (PRINT_HASHMAP)
-  add_definitions(-DPRINTHASHMAP)
-endif()
+#if (PRINT_HASHMAP)
+#  add_definitions(-DPRINTHASHMAP)
+#endif()
 
 set(RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/build)

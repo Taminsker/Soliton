@@ -5,8 +5,6 @@
 
 void WriteVTKWithCells (Mesh* mesh, std::string add2basename)
 {
-    HEADERFUN("WriteVTKWithCells");
-
     DataContainer<Point*>* pointsData = mesh->GetPointsData ();
     DataContainer<Cell*>* cellsData = mesh->GetCellsData ();
     std::string filename = "";
@@ -48,8 +46,7 @@ void WriteVTKWithCells (Mesh* mesh, std::string add2basename)
     outfile << std::endl;
 
 #ifdef VERBOSE
-    INFOS << "written : " << COLOR_YELLOW;
-    INFOS << "points ";
+    TREE_BRANCH << "physical : " << COLOR_YELLOW << "points" << ENDLINE;
 #endif
 
     outfile << "CELLS " << numcells << " " << numInfosCells << std::endl;
@@ -60,7 +57,7 @@ void WriteVTKWithCells (Mesh* mesh, std::string add2basename)
     outfile << std::endl;
 
 #ifdef VERBOSE
-    INFOS << "cells ";
+    TREE_BRANCH << "physical : " << COLOR_YELLOW << "cells" << ENDLINE;
 #endif
 
     outfile << "CELL_TYPES " << numcells << std::endl;
@@ -71,15 +68,11 @@ void WriteVTKWithCells (Mesh* mesh, std::string add2basename)
     outfile << std::endl;
 
 #ifdef VERBOSE
-    INFOS << "cells type " << ENDLINE;
+    TREE_BRANCH << "physical : " << COLOR_YELLOW << "cells type" << ENDLINE;
 #endif
 
     // POINTDATA
     outfile << "POINT_DATA " << numpoints << std::endl;
-
-#ifdef VERBOSE
-    INFOS << "point data : " << COLOR_YELLOW;
-#endif
 
     for (auto arr : *pointsData->GetIntArrays ()->GetAll ())
     {
@@ -87,8 +80,9 @@ void WriteVTKWithCells (Mesh* mesh, std::string add2basename)
         outfile << "LOOKUP_TABLE default" << std::endl;
         outfile << std::scientific << arr->vec << std::endl;
         outfile << std::endl;
+
 #ifdef VERBOSE
-        INFOS << arr->name << " ";
+        TREE_BRANCH << "point data [" << COLOR_RED << " int  " << COLOR_DEFAULT << "]: " << COLOR_YELLOW << arr->name << ENDLINE;
 #endif
     }
 
@@ -99,7 +93,7 @@ void WriteVTKWithCells (Mesh* mesh, std::string add2basename)
         outfile << std::scientific << arr->vec << std::endl;
         outfile << std::endl;
 #ifdef VERBOSE
-        INFOS << arr->name << " ";
+        TREE_BRANCH << "point data [" << COLOR_RED << " bool " << COLOR_DEFAULT << "]: " << COLOR_YELLOW << arr->name << ENDLINE;
 #endif
     }
 
@@ -110,7 +104,7 @@ void WriteVTKWithCells (Mesh* mesh, std::string add2basename)
         outfile << std::scientific << arr->vec << std::endl;
         outfile << std::endl;
 #ifdef VERBOSE
-        INFOS << arr->name << " ";
+        TREE_BRANCH << "point data [" << COLOR_RED << "double" << COLOR_DEFAULT << "]: " << COLOR_YELLOW << arr->name << ENDLINE;
 #endif
     }
 
@@ -120,19 +114,13 @@ void WriteVTKWithCells (Mesh* mesh, std::string add2basename)
         outfile << std::scientific << arr->vec << std::endl;
         outfile << std::endl;
 #ifdef VERBOSE
-        INFOS << arr->name << " ";
+        TREE_BRANCH << "point data [" << COLOR_RED << "Point*" << COLOR_DEFAULT << "]: " << COLOR_YELLOW << arr->name << ENDLINE;
 #endif
     }
-#ifdef VERBOSE
-    std::cout << ENDLINE;
-#endif
 
     // CELLDATA
     outfile << "CELL_DATA " << numcells << std::endl;
 
-#ifdef VERBOSE
-    INFOS << "cell data : " << COLOR_YELLOW;
-#endif
     for (auto arr : *cellsData->GetIntArrays ()->GetAll ())
     {
         outfile << "SCALARS " << arr->name << " int " << std::endl;
@@ -140,7 +128,7 @@ void WriteVTKWithCells (Mesh* mesh, std::string add2basename)
         outfile << std::scientific << arr->vec << std::endl;
         outfile << std::endl;
 #ifdef VERBOSE
-        INFOS << arr->name << " ";
+        TREE_BRANCH << "cell data  [" << COLOR_RED << " int  " << COLOR_DEFAULT << "]: " << COLOR_YELLOW << arr->name << ENDLINE;
 #endif
     }
 
@@ -151,7 +139,7 @@ void WriteVTKWithCells (Mesh* mesh, std::string add2basename)
         outfile << std::scientific << arr->vec << std::endl;
         outfile << std::endl;
 #ifdef VERBOSE
-        INFOS << arr->name << " ";
+        TREE_BRANCH << "cell data  [" << COLOR_RED << " bool " << COLOR_DEFAULT << "]: " << COLOR_YELLOW << arr->name << ENDLINE;
 #endif
     }
 
@@ -162,7 +150,7 @@ void WriteVTKWithCells (Mesh* mesh, std::string add2basename)
         outfile << std::scientific << arr->vec << std::endl;
         outfile << std::endl;
 #ifdef VERBOSE
-        INFOS << arr->name << " ";
+        TREE_BRANCH << "cell data  [" << COLOR_RED << "double" << COLOR_DEFAULT << "]: " << COLOR_YELLOW << arr->name << ENDLINE;
 #endif
     }
 
@@ -172,14 +160,13 @@ void WriteVTKWithCells (Mesh* mesh, std::string add2basename)
         outfile << std::scientific << arr->vec << std::endl;
         outfile << std::endl;
 #ifdef VERBOSE
-        INFOS << arr->name << " ";
+        TREE_BRANCH << "cell data  [" << COLOR_RED << "Point*" << COLOR_DEFAULT << "]: " << COLOR_YELLOW << arr->name << ENDLINE;
 #endif
     }
 
     outfile.close ();
 
 #ifdef VERBOSE
-    std::cout << ENDLINE;
     ENDFUN;
 #endif
 
@@ -188,8 +175,6 @@ void WriteVTKWithCells (Mesh* mesh, std::string add2basename)
 
 void WriteVTKWithEdges (Mesh* mesh, std::string add2basename)
 {
-    HEADERFUN("WriterVTK::WithEdges");
-
     DataContainer<Point *>* pointsData = mesh->GetPointsData ();
     DataContainer<Edge *>* edgesData = mesh->GetEdgesData ();
 
@@ -232,8 +217,7 @@ void WriteVTKWithEdges (Mesh* mesh, std::string add2basename)
     outfile << std::endl;
 
 #ifdef VERBOSE
-    INFOS << "written : " << COLOR_YELLOW;
-    INFOS << "points ";
+    TREE_BRANCH << "physical : " << COLOR_YELLOW << "points" << ENDLINE;
 #endif
 
     outfile << "CELLS " << numedges << " " << numInfosEdges << std::endl;
@@ -244,7 +228,7 @@ void WriteVTKWithEdges (Mesh* mesh, std::string add2basename)
     outfile << std::endl;
 
 #ifdef VERBOSE
-    INFOS << "edges ";
+    TREE_BRANCH << "physical : " << COLOR_YELLOW << "edges" << ENDLINE;
 #endif
 
     outfile << "CELL_TYPES " << numedges << std::endl;
@@ -255,15 +239,11 @@ void WriteVTKWithEdges (Mesh* mesh, std::string add2basename)
     outfile << std::endl;
 
 #ifdef VERBOSE
-    INFOS << "edges type " << ENDLINE;
+    TREE_BRANCH << "physical : " << COLOR_YELLOW << "edges type" << ENDLINE;
 #endif
 
     // POINTDATA
     outfile << "POINT_DATA " << numpoints << std::endl;
-
-#ifdef VERBOSE
-    INFOS << "point data : " << COLOR_YELLOW;
-#endif
 
     for (auto arr : *pointsData->GetIntArrays ()->GetAll ())
     {
@@ -272,7 +252,7 @@ void WriteVTKWithEdges (Mesh* mesh, std::string add2basename)
         outfile << arr->vec << std::endl;
         outfile << std::endl;
 #ifdef VERBOSE
-        INFOS << arr->name << " ";
+        TREE_BRANCH << "point data [" << COLOR_RED << " int  " << COLOR_DEFAULT << "]: " << COLOR_YELLOW << arr->name << ENDLINE;
 #endif
     }
 
@@ -283,7 +263,7 @@ void WriteVTKWithEdges (Mesh* mesh, std::string add2basename)
         outfile << arr->vec << std::endl;
         outfile << std::endl;
 #ifdef VERBOSE
-        INFOS << arr->name << " ";
+        TREE_BRANCH << "point data [" << COLOR_RED << " bool " << COLOR_DEFAULT << "]: " << COLOR_YELLOW << arr->name << ENDLINE;
 #endif
     }
 
@@ -294,7 +274,7 @@ void WriteVTKWithEdges (Mesh* mesh, std::string add2basename)
         outfile << arr->vec << std::endl;
         outfile << std::endl;
 #ifdef VERBOSE
-        INFOS << arr->name << " ";
+        TREE_BRANCH << "point data [" << COLOR_RED << "double" << COLOR_DEFAULT << "]: " << COLOR_YELLOW << arr->name << ENDLINE;
 #endif
     }
 
@@ -304,17 +284,12 @@ void WriteVTKWithEdges (Mesh* mesh, std::string add2basename)
         outfile << arr->vec << std::endl;
         outfile << std::endl;
 #ifdef VERBOSE
-        INFOS << arr->name << " ";
+        TREE_BRANCH << "point data [" << COLOR_RED << "Point*" << COLOR_DEFAULT << "]: " << COLOR_YELLOW << arr->name << ENDLINE;
 #endif
     }
-    std::cout << ENDLINE;
 
     // CELLDATA
     outfile << "CELL_DATA " << numedges << std::endl;
-
-#ifdef VERBOSE
-    INFOS << "edge data : " << COLOR_YELLOW;
-#endif
 
     for (auto arr : *edgesData->GetIntArrays ()->GetAll ())
     {
@@ -323,7 +298,7 @@ void WriteVTKWithEdges (Mesh* mesh, std::string add2basename)
         outfile << arr->vec << std::endl;
         outfile << std::endl;
 #ifdef VERBOSE
-        INFOS << arr->name << " ";
+        TREE_BRANCH << "edge data  [" << COLOR_RED << " int  " << COLOR_DEFAULT << "]: " << COLOR_YELLOW << arr->name << ENDLINE;
 #endif
     }
 
@@ -334,7 +309,7 @@ void WriteVTKWithEdges (Mesh* mesh, std::string add2basename)
         outfile << arr->vec << std::endl;
         outfile << std::endl;
 #ifdef VERBOSE
-        INFOS << arr->name << " ";
+        TREE_BRANCH << "edge data  [" << COLOR_RED << " bool " << COLOR_DEFAULT << "]: " << COLOR_YELLOW << arr->name << ENDLINE;
 #endif
     }
 
@@ -345,7 +320,7 @@ void WriteVTKWithEdges (Mesh* mesh, std::string add2basename)
         outfile << arr->vec << std::endl;
         outfile << std::endl;
 #ifdef VERBOSE
-        INFOS << arr->name << " ";
+        TREE_BRANCH << "edge data  [" << COLOR_RED << "double" << COLOR_DEFAULT << "]: " << COLOR_YELLOW << arr->name << ENDLINE;
 #endif
     }
 
@@ -355,12 +330,11 @@ void WriteVTKWithEdges (Mesh* mesh, std::string add2basename)
         outfile << arr->vec << std::endl;
         outfile << std::endl;
 #ifdef VERBOSE
-        INFOS << arr->name << " ";
+        TREE_BRANCH << "edge data  [" << COLOR_RED << "Point*" << COLOR_DEFAULT << "]: " << COLOR_YELLOW << arr->name << ENDLINE;
 #endif
     }
 
 #ifdef VERBOSE
-    std::cout << ENDLINE;
     ENDFUN;
 #endif
 

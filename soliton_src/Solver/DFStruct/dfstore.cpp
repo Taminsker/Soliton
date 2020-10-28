@@ -14,13 +14,13 @@ DFStore::DFIdxCoeff::DFIdxCoeff (const DFStore::DFIdxCoeff& tocopy) :
     coeffs (tocopy.coeffs)
 {}
 
-//DFStore::DFIdxCoeff& DFStore::DFIdxCoeff::operator=(const DFStore::DFIdxCoeff& tocopy)
-//{
-//    *idxs = *tocopy.idxs;
-//    *coeffs = *tocopy.coeffs;
+DFStore::DFIdxCoeff& DFStore::DFIdxCoeff::operator=(const DFStore::DFIdxCoeff& tocopy)
+{
+    idxs = tocopy.idxs;
+    coeffs = tocopy.coeffs;
 
-//    return *this;
-//}
+    return *this;
+}
 
 
 DFStore::DFOrders::DFOrders () :

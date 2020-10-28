@@ -37,7 +37,6 @@ Mesh::~Mesh ()
 
 void Mesh::Print () const
 {
-    HEADERFUN("Mesh::Print");
     BEGIN << "Mesh statistics." << ENDLINE;
 
     int count = 0;
@@ -70,7 +69,7 @@ void Mesh::Print () const
     }
 
     INFOS << SEPARATOR << ENDLINE;
-    HetInt::Array* tagvec = GetPointsData ()->GetIntArrays ()->Get (NAME_PHYS);
+    HetInt::Array* tagvec = GetPointsData ()->GetIntArrays ()->Get (NAME_TAG_PHYSICAL);
 
     if (tagvec != nullptr)
     {
@@ -91,7 +90,7 @@ void Mesh::Print () const
     }
 
 
-    tagvec = GetCellsData ()->GetIntArrays ()->Get (NAME_PHYS);
+    tagvec = GetCellsData ()->GetIntArrays ()->Get (NAME_TAG_PHYSICAL);
 
     if (tagvec != nullptr)
     {
@@ -111,7 +110,7 @@ void Mesh::Print () const
         INFOS << SEPARATOR << ENDLINE;
     }
 
-    tagvec = GetEdgesData ()->GetIntArrays ()->Get (NAME_PHYS);
+    tagvec = GetEdgesData ()->GetIntArrays ()->Get (NAME_TAG_PHYSICAL);
 
     if (tagvec != nullptr)
     {

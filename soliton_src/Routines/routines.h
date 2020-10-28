@@ -23,7 +23,8 @@ void ComputeDirichletSBM (Mesh* mesh, Mesh* object, std::vector<Triplet>* listTr
 
 void ComputeNeumannNoSBM (Mesh* mesh, std::vector<Triplet>* listTriplets, PlainVector* F, double (*f)(Point, double), PHYS tagToApply, double hPerp = 1., double t = 0);
 
-SuperSolverBase* NewSuperSolver(Sto4Sol *store, InputDatStruct *inputdatfile);
+
+void PostProcess (Sto4Sol *store, SuperSolver* solver, std::vector<PlainVector*>* sols, std::function<double(Point, double)> fun);
 
 }
 #endif // ROUTINES_H

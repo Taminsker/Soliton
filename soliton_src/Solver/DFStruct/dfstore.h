@@ -41,7 +41,7 @@ public:
         DFIdxCoeff ();
         ~DFIdxCoeff ();
         DFIdxCoeff (const DFIdxCoeff& tocopy);
-//        DFIdxCoeff& operator=(const DFIdxCoeff& tocopy);
+        DFIdxCoeff& operator=(const DFIdxCoeff& tocopy);
 
         std::vector<int> idxs;
         std::vector<double> coeffs;

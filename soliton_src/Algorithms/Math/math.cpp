@@ -14,7 +14,6 @@ Matrix3x3 RotateZMatrix (double angle)
 }
 //double Det (unstd::matrix<double>& mat)
 //{
-//    HEADERFUN("ComputeDet");
 
 //    std::size_t n = mat.size ();
 //    double det = 0;
@@ -94,7 +93,7 @@ std::vector<double> PlainVector2Vector (PlainVector* vec)
 }
 
 
-void FunToVec (PlainVector* out, Mesh * mesh, double (*f) (Point, double), double t)
+void FunToVec (PlainVector* out, Mesh * mesh, std::function<double(Point, double)> f, double t)
 {
     int n = mesh->GetNumberOfPoints ();
 

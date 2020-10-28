@@ -317,7 +317,6 @@ public:
 
     void Print (std::ostream& out = std::cout)
     {
-        HEADERFUN("DataContainer::Print");
         INFOS << "Type of Data : \t" << std::flush;
         if (std::is_same<T, Cell*>::value)
             std::cout << "Cell*" << ENDLINE;

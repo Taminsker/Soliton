@@ -10,7 +10,6 @@
 
 std::string GenerateWithGMSH (InputDatStruct* input)
 {
-    HEADERFUN("GenerateWithGMSH");
     BEGIN << "Generate a mesh with GMSH in msh file." << ENDLINE;
 
     int err = 0;
@@ -104,7 +103,6 @@ std::string GenerateWithGMSH (InputDatStruct* input)
 
 void ObjectGenerator (InputDatStruct* data, Sto4Sol* store)
 {
-    HEADERFUN("ObjectGenerator");
 
     if (store->mesh->GetNumberOfPoints () == 0)
     {
@@ -155,7 +153,6 @@ void ObjectGenerator (InputDatStruct* data, Sto4Sol* store)
 
 void AlgoGen1 (ObjectDatStruct* data, Mesh* object)
 {
-    HEADERFUN("AlgoGen1");
     BEGIN << "Generate the object with AlgoGen1 (circle radius) : " << COLOR_BLUE << object->GetName () << ENDLINE;
 
     if (data->radius <= 1e-6)
@@ -207,7 +204,6 @@ void AlgoGen1 (ObjectDatStruct* data, Mesh* object)
 
 void AlgoGen2 (ObjectDatStruct* data, Mesh* object)
 {
-    HEADERFUN("AlgoGen2");
     BEGIN << "Generate the object with AlgoGen2 (puzzle piece) : " << COLOR_BLUE << object->GetName () << ENDLINE;
 
     if (data->radius <= 1e-6)
@@ -266,7 +262,6 @@ void AlgoGen2 (ObjectDatStruct* data, Mesh* object)
 
 void AlgoGen3 (ObjectDatStruct* data, Mesh* object)
 {
-    HEADERFUN("AlgoGen2");
     BEGIN << "Generate the object with AlgoGen2 (puzzle piece) : " << COLOR_BLUE << object->GetName () << ENDLINE;
 
     if (data->radius <= 1e-6)

@@ -8,7 +8,7 @@ enum class INTER
     UNKNOWN = 0x0,
     IN      = 0x1,
     OUT     = 0x2,
-    MIXED   = 0x4,
+    MIXED   = 0x3,
     DEFAULT = UNKNOWN,
     FIRST   = UNKNOWN,
     LAST    = MIXED

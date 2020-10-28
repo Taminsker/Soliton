@@ -29,7 +29,6 @@ std::ostream& operator<< (std::ostream& out, INTER tag)
 
 void BuildDisplacementVectorsBounds2 (Mesh* mesh, Mesh* object)
 {
-    HEADERFUN("BuildDisplacementVectorsBounds");
     BEGIN << "Build displacement vector of boundaries : " << COLOR_BLUE << mesh->GetName () << " -> " << object->GetName () << ENDLINE;
 
     std::string namemesh = mesh->GetName ();
@@ -40,7 +39,7 @@ void BuildDisplacementVectorsBounds2 (Mesh* mesh, Mesh* object)
     int numEdgesMesh = mesh->GetNumberOfEdges ();
     int numCellsObject = object->GetNumberOfCells ();
 
-    auto tagEdgeSurrogateVec = mesh->GetEdgesData ()->GetIntArrays ()->Get (nameobject + NAME_TAG_SURROGATE);
+    auto tagEdgeSurrogateVec = mesh->GetEdgesData ()->GetIntArrays ()->Get (nameobject + NAME_TAG_INTERSECTION);
 
     if (tagEdgeSurrogateVec == nullptr)
     {
@@ -48,7 +47,7 @@ void BuildDisplacementVectorsBounds2 (Mesh* mesh, Mesh* object)
         return;
     }
 
-    auto tagCellVec = object->GetCellsData ()->GetIntArrays ()->Get (namemesh + NAME_INTER);
+    auto tagCellVec = object->GetCellsData ()->GetIntArrays ()->Get (namemesh + NAME_TAG_INTERSECTION);
 
     if (tagCellVec == nullptr)
     {
@@ -173,7 +172,6 @@ void BuildDisplacementVectorsBounds2 (Mesh* mesh, Mesh* object)
 
 void AddLevelSetBetween (Mesh* mesh, Mesh* object)
 {
-    HEADERFUN("AddLevelSetBetween");
 #ifdef VERBOSE
     BEGIN << "Add level set distance : on " << COLOR_BLUE << mesh->GetName () << COLOR_DEFAULT << REVERSE << " to " << COLOR_BLUE << object->GetName () << ENDLINE;
 #endif
@@ -256,7 +254,6 @@ void AddLevelSetBetween (Mesh* mesh, Mesh* object)
 
 void TagCellsFromLevelSet (Mesh* mesh, Mesh* object)
 {
-    HEADERFUN ("TagCellsFromLevelSet");
 
 #ifdef VERBOSE
     BEGIN << "tag cells from levelset entitled : " << COLOR_BLUE << object->GetName () + NAME_LEVELSET << ENDLINE;
@@ -270,7 +267,7 @@ void TagCellsFromLevelSet (Mesh* mesh, Mesh* object)
     int count_mixed = 0;
 
     HetDouble::Array* levelSetPoints = mesh->GetPointsData ()->GetDoubleArrays ()->Get (object->GetName () + NAME_LEVELSET);
-    //    HetInt::Array* tagintersection = mesh->GetCellsData ()->GetIntArrays ()->Get (object->GetName () + NAME_INTER);
+    //    HetInt::Array* tagintersection = mesh->GetCellsData ()->GetIntArrays ()->Get (object->GetName () + NAME_TAG_INTERSECTION);
 
     if (levelSetPoints == nullptr)
     {
@@ -326,7 +323,7 @@ void TagCellsFromLevelSet (Mesh* mesh, Mesh* object)
 
     }
 
-    mesh->GetCellsData ()->GetIntArrays ()->Add (object->GetName () + NAME_INTER, tagCellInOut);
+    mesh->GetCellsData ()->GetIntArrays ()->Add (object->GetName () + NAME_TAG_INTERSECTION, tagCellInOut);
 
 #ifdef VERBOSE
     ENDFUN;
@@ -337,10 +334,9 @@ void TagCellsFromLevelSet (Mesh* mesh, Mesh* object)
 
 void TagEdgesFromTagCells (Mesh* mesh, Mesh* object)
 {
-    HEADERFUN ("TagCellsFromLevelSet");
 
 #ifdef VERBOSE
-    BEGIN << "tag edges from levelset entitled : " << COLOR_BLUE << object->GetName () + NAME_INTER << ENDLINE;
+    BEGIN << "tag edges from levelset entitled : " << COLOR_BLUE << object->GetName () + NAME_TAG_INTERSECTION << ENDLINE;
 #endif
 
     int numEdgesMesh = mesh->GetNumberOfEdges ();
@@ -350,7 +346,7 @@ void TagEdgesFromTagCells (Mesh* mesh, Mesh* object)
     //    std::string nameobject = mesh->GetName ();
     int count_mixed = 0;
 
-    auto tagCellInOut = mesh->GetCellsData ()->GetIntArrays ()->Get (object->GetName () + NAME_INTER);
+    auto tagCellInOut = mesh->GetCellsData ()->GetIntArrays ()->Get (object->GetName () + NAME_TAG_INTERSECTION);
 
     if (tagCellInOut == nullptr)
     {
@@ -421,7 +417,7 @@ void TagEdgesFromTagCells (Mesh* mesh, Mesh* object)
             tagEdgeSurrogate.at (std::size_t (id)) = static_cast<int>(INTER::MIXED);
     }
 
-    mesh->GetEdgesData ()->GetIntArrays ()->Add (object->GetName () + NAME_TAG_SURROGATE, tagEdgeSurrogate);
+    mesh->GetEdgesData ()->GetIntArrays ()->Add (object->GetName () + NAME_TAG_INTERSECTION, tagEdgeSurrogate);
 
 #ifdef VERBOSE
     ENDFUN;
@@ -434,7 +430,6 @@ void TagEdgesFromTagCells (Mesh* mesh, Mesh* object)
 
 void BuildDisplacementVectorsBounds (Mesh* mesh, Mesh* object)
 {
-    HEADERFUN("BuildDisplacementVectorsBounds");
     BEGIN << "Build displacement vector of boundaries : " << COLOR_BLUE << mesh->GetName () << " -> " << object->GetName () << ENDLINE;
 
     std::string namemesh = mesh->GetName ();
@@ -446,7 +441,7 @@ void BuildDisplacementVectorsBounds (Mesh* mesh, Mesh* object)
     //    int numCellsObject = object->GetNumberOfCells ();
 
     // Tag Surrogate Edges Mesh (tagSEM)
-    HetContainer<int>::Array* tagSEM = mesh->GetEdgesData ()->GetIntArrays ()->Get (nameobject + NAME_TAG_SURROGATE);
+    HetContainer<int>::Array* tagSEM = mesh->GetEdgesData ()->GetIntArrays ()->Get (nameobject + NAME_TAG_INTERSECTION);
 
     if (tagSEM == nullptr)
     {
@@ -455,7 +450,7 @@ void BuildDisplacementVectorsBounds (Mesh* mesh, Mesh* object)
     }
 
     // Tag Intersection Cells Object (tagICO)
-    HetContainer<int>::Array* tagICO = object->GetCellsData ()->GetIntArrays ()->Get (namemesh + NAME_INTER);
+    HetContainer<int>::Array* tagICO = object->GetCellsData ()->GetIntArrays ()->Get (namemesh + NAME_TAG_INTERSECTION);
 
     if (tagICO == nullptr)
     {

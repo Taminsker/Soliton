@@ -10,8 +10,7 @@
 
 #include <ProgDef/proddef.h>
 #include <Enums/enums.h>
-#include <Solver/UpgradableSolver/ItemSolver/enum_item_solver_type.h>
-#include <Solver/UpgradableSolver/UpgradableSolverBase/scheme_temporal_solver.h>
+#include <Solver/SuperSolver/supersolver.h>
 
 class Mesh;
 class Point;
@@ -33,43 +32,47 @@ struct ObjectDatStruct
 
 struct ItemSolverDatStruct
 {
-    ITEM_T           type = ITEM_T::EMPTY;
-    PHYS     tagToApply = PHYS::NONE;
-    std::string      fun = "null_fun";
-    int              dert = 0;
-    int              id_obj = -1;
-    bool             varTime = false;
+    ITEM_T           type       = ITEM_T::EMPTY;
+    PHYS             tagToApply = PHYS::NONE;
+    std::string      fun        = "null_fun";
+    INTER            solver_tag = INTER::DEFAULT;
+    int              dert       = 0;
+    int              id_obj     = -1;
+    bool             varTime    = false;
 };
 
 struct InputDatStruct
 {
     // Mesh part
-    std::string     filename_msh = "";
-    double          grid_x_m = 0.;
-    double          grid_x_p = 0.;
-    double          grid_y_m = 0.;
-    double          grid_y_p = 0.;
-    double          hsize = 0.;
-    int             ele_type = 0;
-    int             ele_order = 1;
+    std::string     filename_msh    = "";
+    double          grid_x_m        = 0.;
+    double          grid_x_p        = 0.;
+    double          grid_y_m        = 0.;
+    double          grid_y_p        = 0.;
+    double          hsize           = 0.;
+    int             ele_type        = 0;
+    int             ele_order       = 1;
 
     // Objects
     std::vector <ObjectDatStruct> objects;
 
     // Solver part
-    double              dt = 0.;
-    bool                objectsAreFixed = true;
-    SCH_T               scheme = SCH_T::NO_TIME;
-    std::vector<INTER>  listTagsSolver = {};
+    double              dt                  = 0.;
+    bool                objectsAreFixed     = true;
+    SCH_T               scheme              = SCH_T::NO_TIME;
+    std::vector<INTER>  listTagsSolver      = {};
 
     std::vector <ItemSolverDatStruct> items;
 
     // Addons definitions
-    bool            damping = false;
-    double          zeta_0 = 1.0;
-    double          beta_0 = 0.0;
-    double          penal = 1E5;
+    bool            damping     = false;
+    double          zeta_0      = 1.0;
+    double          beta_0      = 0.0;
+    double          penal       = 1E5;
+    int             powpenalty  = 1;
     bool            colConcItem = false;
+    bool            synthetize  = true;
+    double          g_variable  = 9.81;
 
     // fun part
     std::function<double(Point, double)> fun_analytic;

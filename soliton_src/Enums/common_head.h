@@ -13,6 +13,4 @@ std::string to_string (const T& type);
 template <typename T, typename U>
 U Convert(const T& type);
 
-
-
 #endif // COMMON_HEAD_H

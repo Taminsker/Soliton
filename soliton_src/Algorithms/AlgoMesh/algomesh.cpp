@@ -5,8 +5,6 @@
 
 void Build_NtoN (Mesh* mesh)
 {
-    HEADERFUN("Build_NtoN");
-
     //    int numpoints = mesh->GetNumberOfTotalPoints ();
     int numcells = mesh->GetNumberOfCells ();
 
@@ -60,7 +58,6 @@ void Build_NtoN (Mesh* mesh)
 
 void ComputeNormalsOnEdges (Mesh* mesh)
 {
-    HEADERFUN("ComputeNormalsOnEdges");
 
 #ifdef VERBOSE
     BEGIN << "Compute normals on edges of the mesh : " << COLOR_BLUE << mesh->GetName () << ENDLINE;
@@ -143,8 +140,6 @@ void ComputeNormalsOnEdges (Mesh* mesh)
 
 void ComputeNormalsOnCells (Mesh* mesh)
 {
-    HEADERFUN("ComputeNormalsOnCells");
-
 #ifdef VERBOSE
     BEGIN << "Compute normals on cells of the mesh : " << COLOR_BLUE << mesh->GetName () << ENDLINE;
 #endif
@@ -219,7 +214,6 @@ void ComputeNormalsOnCells (Mesh* mesh)
 
 void ComputeNormalsOnPoints(Mesh* mesh)
 {
-    HEADERFUN("ComputeNormalsOnPoints");
 
 #ifdef VERBOSE
     BEGIN << "Compute normals on points of the mesh : " << COLOR_BLUE << mesh->GetName () << ENDLINE;
@@ -267,7 +261,6 @@ void ComputeNormalsOnPoints(Mesh* mesh)
 
 void MoveObject (Mesh* mesh, double radius, Point center)
 {
-    HEADERFUN ("MoveObject");
 #ifdef VERBOSE
     BEGIN << "Move object " << COLOR_BLUE << mesh->GetName () << ENDLINE;
 #endif
@@ -345,8 +338,6 @@ void MoveObject (Mesh* mesh, double radius, Point center)
 
 void ComputeTagPhysical (Mesh* mesh, InputDatStruct* struc)
 {
-    HEADERFUN ("ComputeTagPhysical");
-
     int numPoints = mesh->GetNumberOfPoints ();
     int numCells = mesh->GetNumberOfCells ();
     int numEdges = mesh->GetNumberOfEdges ();
@@ -378,12 +369,12 @@ void ComputeTagPhysical (Mesh* mesh, InputDatStruct* struc)
             *value = static_cast<int>(PHYS::DOMAIN);
     }
 
-    mesh->GetPointsData ()->GetIntArrays ()->Add (NAME_PHYS, tagpoints);
+    mesh->GetPointsData ()->GetIntArrays ()->Add (NAME_TAG_PHYSICAL, tagpoints);
 
     // CELLS
     std::vector<int> tagcells(std::size_t(numCells), static_cast<int>(PHYS::DOMAIN));
 
-    mesh->GetCellsData ()->GetIntArrays ()->Add (NAME_PHYS, tagcells);
+    mesh->GetCellsData ()->GetIntArrays ()->Add (NAME_TAG_PHYSICAL, tagcells);
 
     // EDGES
 
@@ -435,7 +426,7 @@ void ComputeTagPhysical (Mesh* mesh, InputDatStruct* struc)
         tagedges.at (std::size_t (i)) = static_cast<int>(tag);
     }
 
-    mesh->GetEdgesData ()->GetIntArrays ()->Add (NAME_PHYS, tagedges);
+    mesh->GetEdgesData ()->GetIntArrays ()->Add (NAME_TAG_PHYSICAL, tagedges);
 
     return;
 
@@ -501,7 +492,7 @@ void ComputeDampingArea (Mesh* mesh, PHYS tag, double h)
 double GetDampingCoeffFor (Point* atpoint, Mesh* mesh, PHYS tag, double h)
 {
     int numPoints = mesh->GetNumberOfPoints ();
-    HetInt::Array* tagphysical = mesh->GetPointsData ()->GetIntArrays ()->Get (NAME_PHYS);
+    HetInt::Array* tagphysical = mesh->GetPointsData ()->GetIntArrays ()->Get (NAME_TAG_PHYSICAL);
 
     double distmin = 1e6;
 

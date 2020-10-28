@@ -16,11 +16,13 @@
   **/
 
 #define NAME_TAG_DAMPING_AREA           std::string("damping_area")
-#define NAME_PHYS               std::string("physical")
-#define NAME_TAG_SURROGATE              std::string("_surrogate")
-#define NAME_INTER           std::string("_intersection")
+#define NAME_TAG_PHYSICAL               std::string("physical")
+#define NAME_TAG_INTERSECTION           std::string("_surrogate")
 #define NAME_DISPLACEMENT_VECTOR        std::string("_d")
 #define NAME_LEVELSET                   std::string("_LS")
+#define NAME_CONTRIBUTIONS_ON_CELLS     std::string("_cellsContrib")
+#define NAME_CONTRIBUTIONS_ON_EDGES     std::string("_edgesContrib")
+#define NAME_CONTRIBUTIONS_ON_POINTS     std::string("_pointsContrib")
 
 #define NAME_NORMAL_ON_CELLS            std::string("normal_on_cells")
 #define NAME_NORMAL_ON_POINTS           std::string("normal_on_points")
@@ -51,18 +53,18 @@
 #define MATH_PI 3.14159265358979323846264338328
 #define MATH_PI_2 1.57079632679489661923132169164
 
-#define COLOR_BLACK     "\033[1;30m"
-#define COLOR_RED       "\033[1;31m"
-#define COLOR_GREEN     "\033[1;32m"
-#define COLOR_YELLOW    "\033[1;33m"
-#define COLOR_BLUE      "\033[1;34m"
-#define COLOR_MAGENTA   "\033[1;35m"
-#define COLOR_WHITE     "\033[1;97m"
-#define COLOR_DEFAULT   "\033[1;0m"
+#define COLOR_BLACK     "\033[0;30m"
+#define COLOR_RED       "\033[0;31m"
+#define COLOR_GREEN     "\033[0;32m"
+#define COLOR_YELLOW    "\033[0;33m"
+#define COLOR_BLUE      "\033[0;34m"
+#define COLOR_MAGENTA   "\033[0;35m"
+#define COLOR_WHITE     "\033[0;97m"
+#define COLOR_DEFAULT   "\033[0;0m"
 
-#define BACK_MAGENTA    "\033[1;7m"
-#define UNDERLINE       "\033[1;4m"
-#define BLINK           "\033[1;5m"
+#define BACK_MAGENTA    "\033[0;7m"
+#define UNDERLINE       "\033[0;4m"
+#define BLINK           "\033[0;5m"
 #define REVERSE         "\033[1;7m"
 
 #define ENDLINE         COLOR_DEFAULT << std::endl
@@ -70,20 +72,16 @@
 #define SEPARATOR       "--------------------------"
 #define TREE_BRANCH     std::cout << "\u251C\u2500\u2500 "
 #define BEGIN           std::cout << REVERSE << "--> "
-#define ENDFUN          std::cout << std::endl
+#define ENDFUN          std::cout << ENDLINE
 #define COUT            std::cout
 
 #ifdef DEBUG
-    #define HEADERFUN(x) \
-    std::string __NAMEFUN__ = x
-
-    #define STATUS          std::cout                   << "(" << __NAMEFUN__ << ")\t" << " STATUS : "
-    #define INFOS           std::cout                   << "(" << __NAMEFUN__ << ")\t" << "*  "
-    #define ERROR           std::cerr << COLOR_RED      << "(" << __NAMEFUN__ << ")\t" << " ERROR : "
-    #define WARNING         std::cout << COLOR_YELLOW   << "(" << __NAMEFUN__ << ")\t" << " WARNING : "
+    #define STATUS          std::cout                   << "(" << __FUNCTION__ << ")\t" << " STATUS : "
+    #define INFOS           std::cout                   << "(" << __FUNCTION__ << ")\t" << "*  "
+    #define ERROR           std::cerr << COLOR_RED      << "(" << __FUNCTION__ << ")\t" << " ERROR : "
+    #define WARNING         std::cout << COLOR_YELLOW   << "(" << __FUNCTION__ << ")\t" << " WARNING : "
     #define BLINKRETURN     BLINK << " RETURN "
 #else
-    #define HEADERFUN(x)    (void)#x
     #define STATUS          std::cout                   << "STATUS : "
     #define INFOS           std::cout                   << " * "
     #define ERROR           std::cerr << COLOR_RED      << "ERROR : "
@@ -91,7 +89,4 @@
     #define BLINKRETURN     ""
 #endif
 
-#define CLASS_NAME(X)   \
-private:                \
-    typedef X ClassName
 #endif // PRODDEF_H

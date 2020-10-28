@@ -7,10 +7,8 @@
 #include <Solver/FEStruct/festruct.h>
 #include <Solver/QuadStruct/quadstruct.h>
 
-#ifndef NULL_FUNC_NAME
 #define NULL_FUNC_NAME soliton_null_fun
 double NULL_FUNC_NAME (Point a, double b);
-#endif
 
 class SuperSolver;
 class SuperItem;
@@ -102,36 +100,12 @@ public:
         m_sec->setZero (numPoints);
 
         for (Duo duo : *listDuos)
-            m_sec->coeffRef (static_cast<int> (listDuos->front ().row ())) += duo.value ();
+            m_sec->coeffRef (duo.idx ()) += duo.value ();
 
         return;
     }
 
-    void Compute()
-    {
-        switch (m_type)
-        {
-        case ITEM_T::EMPTY:
-            return this->InternalCompute<ITEM_T::EMPTY> ();
-        case ITEM_T::PHI_PHI:
-            return this->InternalCompute<ITEM_T::PHI_PHI> ();
-        case ITEM_T::DAMPING_PHI_PHI:
-            return this->InternalCompute<ITEM_T::DAMPING_PHI_PHI> ();
-        case ITEM_T::GRAD_GRAD:
-            return this->InternalCompute<ITEM_T::GRAD_GRAD> ();
-        case ITEM_T::SECOND_MEMBER:
-            return this->InternalCompute<ITEM_T::SECOND_MEMBER> ();
-        case ITEM_T::DIRICHLET_BOUNDARY:
-            return this->InternalCompute<ITEM_T::DIRICHLET_BOUNDARY> ();
-        case ITEM_T::NEUMANN_BOUNDARY:
-            return this->InternalCompute<ITEM_T::NEUMANN_BOUNDARY> ();
-        case ITEM_T::DIRICHLET_BOUNDARY_SBM:
-            return this->InternalCompute<ITEM_T::DIRICHLET_BOUNDARY_SBM> ();
-        case ITEM_T::NEUMANN_BOUNDARY_SBM:
-            return this->InternalCompute<ITEM_T::NEUMANN_BOUNDARY_SBM> ();
-        }
-        return;
-    }
+    void Compute ();
 
     SOLITON_INLINE
     ITEM_T GetTypeOfItem() const
@@ -188,6 +162,12 @@ public:
     }
 
     SOLITON_INLINE
+    int GetPowPen ()
+    {
+        return *m_powpen;
+    }
+
+    SOLITON_INLINE
     void
     SetTargetMesh (Mesh **target)
     {
@@ -199,7 +179,47 @@ public:
     Mesh*
     GetTargetMesh ()
     {
-        return *m_target;
+        if (m_target != nullptr)
+            return *m_target;
+        return nullptr;
+    }
+
+    SOLITON_INLINE
+    SuperSolver*
+    GetSolver ()
+    {
+        return m_solver;
+    }
+
+    SOLITON_INLINE
+    std::vector<int>* GetApplicationCell ()
+    {
+        return m_appCells;
+    }
+
+    SOLITON_INLINE
+    std::vector<int>* GetApplicationEdge ()
+    {
+        return m_appEdges;
+    }
+
+    SOLITON_INLINE
+    std::vector<int>* GetApplicationPoint ()
+    {
+        return m_appPoints;
+    }
+
+    SOLITON_INLINE
+    std::string GetWholeName () const
+    {
+        return m_name;
+    }
+
+    SOLITON_INLINE
+    void SetAdditionalName (std::string name)
+    {
+        m_name = to_string(m_type) + name;
+        return;
     }
 
     friend std::ostream& operator<< (std::ostream& out, const SuperItem& item);
@@ -213,21 +233,6 @@ private:
     void InternalCompute ()
     {}
 
-#define EXPLICIT_INST(X) \
-    template<> void InternalCompute<ITEM_T::X> ()
-
-    EXPLICIT_INST(EMPTY);
-    EXPLICIT_INST(PHI_PHI);
-    EXPLICIT_INST(DAMPING_PHI_PHI);
-    EXPLICIT_INST(GRAD_GRAD);
-    EXPLICIT_INST(SECOND_MEMBER);
-    EXPLICIT_INST(DIRICHLET_BOUNDARY);
-    EXPLICIT_INST(NEUMANN_BOUNDARY);
-    EXPLICIT_INST(DIRICHLET_BOUNDARY_SBM);
-    EXPLICIT_INST(NEUMANN_BOUNDARY_SBM);
-
-    #undef EXPLICIT_INST
-
 protected:
     const ITEM_T                            m_type;
     Mesh                                    **m_mesh;
@@ -235,13 +240,59 @@ protected:
     SuperSolver                             *m_solver;
     SparseMatrix                            *m_mat;
     PlainVector                             *m_sec;
-    std::vector<int>                        *m_appCells, *m_appEdges;
+    std::vector<int>                        *m_appCells, *m_appEdges, *m_appPoints;
 
+//    std::size_t                             m_id_item;
+    std::string                             m_name;
     PHYS                                    m_tag2Apply;
     bool                                    m_var0vrT, *m_collect, *m_view, *m_force_compute;
     double                                  *m_coeffpen, *m_time;
+    int                                     *m_powpen;
     std::size_t                             m_derT;
     std::function<double(Point, double)>    m_fun;
 };
 
+#define EXPLICIT_INST(X) \
+    template<> void SuperItem::InternalCompute<ITEM_T::X> ()
+
+EXPLICIT_INST(EMPTY);
+EXPLICIT_INST(PHI_PHI);
+EXPLICIT_INST(DAMPING_PHI_PHI);
+EXPLICIT_INST(GRAD_GRAD);
+EXPLICIT_INST(SECOND_MEMBER);
+EXPLICIT_INST(DIRICHLET_BOUNDARY);
+EXPLICIT_INST(NEUMANN_BOUNDARY);
+EXPLICIT_INST(DIRICHLET_BOUNDARY_SBM);
+EXPLICIT_INST(NEUMANN_BOUNDARY_SBM);
+
+#undef EXPLICIT_INST
+
+SOLITON_INLINE
+void SuperItem::Compute()
+{
+    switch (m_type)
+    {
+    case ITEM_T::EMPTY:
+        return this->InternalCompute<ITEM_T::EMPTY> ();
+    case ITEM_T::PHI_PHI:
+        return this->InternalCompute<ITEM_T::PHI_PHI> ();
+    case ITEM_T::DAMPING_PHI_PHI:
+        return this->InternalCompute<ITEM_T::DAMPING_PHI_PHI> ();
+    case ITEM_T::GRAD_GRAD:
+        return this->InternalCompute<ITEM_T::GRAD_GRAD> ();
+    case ITEM_T::SECOND_MEMBER:
+        return this->InternalCompute<ITEM_T::SECOND_MEMBER> ();
+    case ITEM_T::DIRICHLET_BOUNDARY:
+        return this->InternalCompute<ITEM_T::DIRICHLET_BOUNDARY> ();
+    case ITEM_T::NEUMANN_BOUNDARY:
+        return this->InternalCompute<ITEM_T::NEUMANN_BOUNDARY> ();
+    case ITEM_T::DIRICHLET_BOUNDARY_SBM:
+        return this->InternalCompute<ITEM_T::DIRICHLET_BOUNDARY_SBM> ();
+    case ITEM_T::NEUMANN_BOUNDARY_SBM:
+        return this->InternalCompute<ITEM_T::NEUMANN_BOUNDARY_SBM> ();
+    }
+
+    ERROR << "Type incorrect ??" << ENDLINE;
+    return;
+}
 #endif // SUPERITEM_H

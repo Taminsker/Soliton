@@ -14,7 +14,6 @@
 
 void ParseInputDatFile (InputDatStruct* out, std::string filename)
 {
-    HEADERFUN("ParseInputDatFile");
     BEGIN << "Parse the input dat file." << ENDLINE;
 
     std::ifstream infile (filename);
@@ -72,8 +71,8 @@ void ParseInputDatFile (InputDatStruct* out, std::string filename)
                     out->zeta_0 = stod(value);
                 else if (field == "beta_0")
                     out->beta_0 = stod(value);
-                else if (field == "penal")
-                    out->penal = stod(value);
+                else if (field == "g")
+                    out->g_variable = stod(value);
                 else if (field == "colContItem")
                     out->colConcItem = CastToBool (&value);
                 else
@@ -179,16 +178,18 @@ void ParseInputDatFile (InputDatStruct* out, std::string filename)
 
                             if (field == "type")
                                 item.type = from_string<ITEM_T> (value);
-                            else if (field == "tagToApply")
+                            else if (field == "application_tag")
                                 item.tagToApply = from_string<PHYS>(value);
                             else if (field == "function")
                                 item.fun = value;
-                            else if (field == "derivate_id")
+                            else if (field == "derivate_temporal_order")
                                 item.dert = stoi(value);
-                            else if (field == "id_obj")
+                            else if (field == "id_target_mesh")
                                 item.id_obj = stoi(value);
-                            else if (field == "varOverT")
+                            else if (field == "variable_over_time")
                                 item.varTime = CastToBool (&value);
+                            else if (field == "parent_solver_tag")
+                                item.solver_tag = from_string<INTER>(value);
                             else
                                 ERRORPARAMS
                         }
@@ -236,8 +237,14 @@ void ParseInputDatFile (InputDatStruct* out, std::string filename)
                                 out->objectsAreFixed = CastToBool (&value);
                             else if (field == "time_scheme")
                                 out->scheme = from_string<SCH_T>(value);
-                            else if (field == "specialize")
+                            else if (field == "add_solver_on_tag")
                                 out->listTagsSolver.push_back (from_string<INTER>(value));
+                            else if (field == "coeff_penalization")
+                                out->penal = stod(value);
+                            else if (field == "power_penalization")
+                                out->powpenalty = stoi(value);
+                            else if (field == "synthetize")
+                                out->synthetize = CastToBool (&value);
                             else
                                 ERRORPARAMS
                         }
@@ -259,7 +266,6 @@ void ParseInputDatFile (InputDatStruct* out, std::string filename)
 
 void ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
 {
-    HEADERFUN("ParseMSH");
     BEGIN << "Parse the msh file." << ENDLINE;
 
     if (mesh == nullptr)
@@ -531,8 +537,6 @@ void ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
 
 void Print (InputDatStruct* input)
 {
-    HEADERFUN("Print");
-
     INFOS << "dt       = " << input->dt << ENDLINE;
     INFOS << "zeta_0   = " << input->zeta_0<< ENDLINE;
     INFOS << "beta_0   = " << input->beta_0<< ENDLINE;
@@ -545,6 +549,15 @@ void Print (InputDatStruct* input)
     INFOS << "hsize    = " << input->hsize << ENDLINE;
     INFOS << "eltype   = " << input->ele_type << ENDLINE;
     INFOS << "elorder  = " << input->ele_order << ENDLINE;
+
+    INFOS << "obj      = " << input->objectsAreFixed << ENDLINE;
+    INFOS << "scheme   = " << to_string(input->scheme) << ENDLINE;
+    INFOS << "list tags= " << input->listTagsSolver << ENDLINE;
+
+    INFOS << "penalization_coeff  = " << input->penal << ENDLINE;
+    INFOS << "penalization_power  = " << input->powpenalty << ENDLINE;
+    INFOS << "colConcItem         = " << input->colConcItem << ENDLINE;
+    INFOS << "synthetize          = " << input->synthetize << ENDLINE;
 
 
     for (std::size_t i = 0; i < input->objects.size (); ++i)
@@ -566,12 +579,13 @@ void Print (InputDatStruct* input)
         auto obj = input->items.at (i);
         INFOS << SEPARATOR << ENDLINE;
         INFOS << "item" << ENDLINE;
-        INFOS << "\ttype     = " << to_string(obj.type) << ENDLINE;
-        INFOS << "\ttag      = " << to_string(obj.tagToApply) << ENDLINE;
-        INFOS << "\tfun      = " << obj.fun << ENDLINE;
-        INFOS << "\tder      = " << obj.dert << ENDLINE;
-        INFOS << "\tid_obj   = " << obj.id_obj << ENDLINE;
-        INFOS << "\tvartime  = " << obj.varTime << ENDLINE;
+        INFOS << "\ttype       = " << to_string(obj.type) << ENDLINE;
+        INFOS << "\ttag        = " << to_string(obj.tagToApply) << ENDLINE;
+        INFOS << "\tfun        = " << obj.fun << ENDLINE;
+        INFOS << "\tder        = " << obj.dert << ENDLINE;
+        INFOS << "\tid_obj     = " << obj.id_obj << ENDLINE;
+        INFOS << "\tvartime    = " << obj.varTime << ENDLINE;
+        INFOS << "\tsolver tag = " << obj.solver_tag << ENDLINE;
     }
 
     ENDFUN;

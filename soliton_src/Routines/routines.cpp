@@ -82,6 +82,21 @@ void SolitonRoutines::Generation (Sto4Sol* store, InputDatStruct* inputdatfile)
     ENDFUN;
 #endif
 
+    // Definitions
+    std::size_t numCells = static_cast<std::size_t>(store->mesh->GetNumberOfCells ());
+    std::size_t numEdges = static_cast<std::size_t>(store->mesh->GetNumberOfEdges ());
+    std::size_t numPoints = static_cast<std::size_t>(store->mesh->GetNumberOfPoints ());
+
+    // Tags definitions
+    std::vector<int> interTagsCells, interTagsEdges, interTagsPoints;
+    interTagsCells.resize   (numCells, int(INTER::DEFAULT));
+    interTagsEdges.resize   (numEdges, int(INTER::DEFAULT));
+    interTagsPoints.resize  (numPoints, int(INTER::DEFAULT));
+
+    std::vector<Point*> displacementVector (numPoints);
+    for (std::size_t i = 0; i < numPoints; ++i)
+        displacementVector.at (i) = new Point ();
+
     for (std::size_t objectId = 0; objectId < store->listobjects.size (); ++objectId)
     {
         Mesh* object = store->listobjects.at (objectId);
@@ -108,7 +123,32 @@ void SolitonRoutines::Generation (Sto4Sol* store, InputDatStruct* inputdatfile)
 #endif
         // Displacement vector
         BuildDisplacementVectorsBounds (store->mesh, object);
+
+        // Reduce tags
+        HetInt::Array* currentTagsInterCells = store->mesh->GetCellsData ()->GetIntArrays ()->Get (object->GetName () + NAME_TAG_INTERSECTION);
+        HetInt::Array* currentTagsInterEdges = store->mesh->GetEdgesData ()->GetIntArrays ()->Get (object->GetName () + NAME_TAG_INTERSECTION);
+        HetPointptr::Array* currentDisplacementPoints = store->mesh->GetPointsData ()->GetVecArrays ()->Get (object->GetName () + NAME_DISPLACEMENT_VECTOR);
+
+        for (std::size_t i = 0; i < numCells; ++i)
+            interTagsCells.at (i) |= currentTagsInterCells->vec.at (i);
+
+        for (std::size_t i = 0; i < numEdges; ++i)
+            interTagsEdges.at (i) |= currentTagsInterEdges->vec.at (i);
+
+        for (std::size_t i = 0; i < numPoints; ++i)
+            *displacementVector.at (i) += *currentDisplacementPoints->vec.at (i);
+
     }
+
+    for (int &value : interTagsCells)
+        if (value == int(INTER::MIXED))
+            value = int(INTER::IN);
+
+    store->mesh->GetCellsData ()->GetIntArrays ()->Add (NAME_TAG_INTERSECTION, interTagsCells);
+    store->mesh->GetEdgesData ()->GetIntArrays ()->Add (NAME_TAG_INTERSECTION, interTagsEdges);
+    //    store->mesh->GetPointsData ()->GetIntArrays ()->Add (NAME_TAG_INTERSECTION, interTagsPoints);
+    store->mesh->GetPointsData ()->GetVecArrays ()->Add (NAME_DISPLACEMENT_VECTOR, displacementVector);
+
 #ifdef VERBOSE
     store->mesh->Print();
 #endif
@@ -236,11 +276,11 @@ void SolitonRoutines::ComputeNeumannNoSBM (Mesh* mesh, std::vector<Triplet>* lis
     INFOS << "Impose Neumann : tag " << to_string(tagToApply) << ENDLINE;
     int numCells = mesh->GetNumberOfCells ();
 
-    auto tagedgevec = mesh->GetEdgesData ()->GetIntArrays ()->Get (NAME_PHYS);
+    auto tagedgevec = mesh->GetEdgesData ()->GetIntArrays ()->Get (NAME_TAG_PHYSICAL);
 
     if (tagedgevec == nullptr)
     {
-        ERROR << "no array with the name : " << NAME_PHYS << "." << BLINKRETURN << ENDLINE;
+        ERROR << "no array with the name : " << NAME_TAG_PHYSICAL << "." << BLINKRETURN << ENDLINE;
         return;
     }
 
@@ -386,11 +426,11 @@ void SolitonRoutines::ComputeDirichletNoSBM (Mesh* mesh, std::vector<Triplet>* l
     INFOS << "Impose Dirichlet : tag " << to_string(tagToApply) << ", penal. coeff. = " << alpha << ENDLINE;
     int numCells = mesh->GetNumberOfCells ();
 
-    auto tagedgevec = mesh->GetEdgesData ()->GetIntArrays ()->Get (NAME_PHYS);
+    auto tagedgevec = mesh->GetEdgesData ()->GetIntArrays ()->Get (NAME_TAG_PHYSICAL);
 
     if (tagedgevec == nullptr)
     {
-        ERROR << "no array with the name : " << NAME_PHYS << "." << BLINKRETURN << ENDLINE;
+        ERROR << "no array with the name : " << NAME_TAG_PHYSICAL << "." << BLINKRETURN << ENDLINE;
         return;
     }
 
@@ -540,14 +580,14 @@ void SolitonRoutines::ComputeDirichletNoSBM (Mesh* mesh, std::vector<Triplet>* l
 
 //    double alpha = 20 / std::abs(hsz);
 
-//    INFOS << "Impose Dirichlet : name of vector of tag surrogate " << object->GetName ()+  NAME_TAG_SURROGATE << ", penal. coeff. = " << alpha << ENDLINE;
+//    INFOS << "Impose Dirichlet : name of vector of tag surrogate " << object->GetName ()+  NAME_TAG_INTERSECTION << ", penal. coeff. = " << alpha << ENDLINE;
 //    int numCells = mesh->GetNumberOfCells ();
 
-//    HetInt::Array* tagedgevec = mesh->GetEdgesData ()->GetIntArrays ()->Get (object->GetName ()+  NAME_TAG_SURROGATE);
+//    HetInt::Array* tagedgevec = mesh->GetEdgesData ()->GetIntArrays ()->Get (object->GetName ()+  NAME_TAG_INTERSECTION);
 
 //    if (tagedgevec == nullptr)
 //    {
-//        ERROR << "no array with the name : " << object->GetName ()+  NAME_TAG_SURROGATE << "." << BLINKRETURN << ENDLINE;
+//        ERROR << "no array with the name : " << object->GetName ()+  NAME_TAG_INTERSECTION << "." << BLINKRETURN << ENDLINE;
 //        return;
 //    }
 
@@ -693,41 +733,81 @@ void SolitonRoutines::ComputeDirichletNoSBM (Mesh* mesh, std::vector<Triplet>* l
 //    return;
 //}
 
-SuperSolverBase* SolitonRoutines::NewSuperSolver(Sto4Sol *store, InputDatStruct *inputdatfile)
+void SolitonRoutines::PostProcess (Sto4Sol *store, SuperSolver* solver, std::vector<PlainVector*>* sols, std::function<double(Point, double)> fun)
 {
-    auto tags = inputdatfile->listTagsSolver;
+    std::vector<INTER> list_tags_inter = solver->GetListOfInterTags ();
 
-    bool f_i = false;
-    bool f_o = false;
-    bool f_m = false;
+    //    std::size_t numPoints = static_cast<std::size_t>(store->mesh->GetNumberOfPoints ());
+    //    std::size_t numCells = static_cast<std::size_t>(store->mesh->GetNumberOfCells ());
+    std::size_t numEdges = static_cast<std::size_t>(store->mesh->GetNumberOfEdges ());
 
-    for (INTER tag : tags)
-        switch (tag)
-        {
-        case INTER::UNKNOWN:
-            f_i = true;
-            f_o = true;
-            break;
-        case INTER::IN:
-            f_i = true;
-            break;
-        case INTER::OUT:
-            f_o = true;
-            break;
-        case INTER::MIXED:
-            f_m = true;
-            break;
-        }
+    HetInt::Array* tagSurEdge = store->mesh->GetEdgesData ()->GetIntArrays ()->Get (NAME_TAG_INTERSECTION);
 
-    if (f_i && !f_o && !f_m)
-        return new SuperSolver<INTER::IN> (store, inputdatfile);
-        //        out = new  (store);
-    else if (!f_i && f_o && !f_m)
-        return new SuperSolver<INTER::OUT> (store, inputdatfile);
-    else if (f_i && !f_o && f_m)
-        return new SuperSolver<INTER::IN, INTER::MIXED> (store, inputdatfile);
-    else if (!f_i && f_o && f_m)
-        return new SuperSolver<INTER::OUT, INTER::MIXED> (store, inputdatfile);
-    else
-        return new SuperSolver<INTER::IN, INTER::OUT> (store, inputdatfile);
+    for (std::size_t idvec = 0; idvec < sols->size (); ++idvec)
+    {
+        STATUS << "postprocess on solver with tag " <<  COLOR_RED << to_string(list_tags_inter.at (idvec)) << ENDLINE;
+
+        PlainVector* solnum = sols->at (idvec);
+
+        PlainVector sol_ana;
+        FunToVec (&sol_ana, store->mesh, fun);
+
+        if (list_tags_inter.at (idvec) != INTER::DEFAULT)
+            for (std::size_t idEdge = 0; idEdge < numEdges; ++idEdge)
+            {
+                if (tagSurEdge->vec.at (idEdge) == int(list_tags_inter.at (idvec)) ||
+                        tagSurEdge->vec.at (idEdge) == int(INTER::MIXED))
+                    continue;
+
+                for (Point* pt : *store->mesh->GetEdge (int(idEdge))->GetPoints ())
+                {
+                    bool pass = false;
+                    for (Cell* cell : pt->GetLinkedCell ())
+                    {
+                        if (cell->GetCat () == CAT_CELL_EDGE::CELL)
+                            continue;
+
+                        if (tagSurEdge->vec.at (static_cast<std::size_t> (cell->GetGlobalIndex ())) == int(INTER::MIXED))
+                        {
+                            pass = true;
+                            break;
+                        }
+                    }
+
+                    if (pass)
+                        continue;
+
+                    solnum->coeffRef (pt->GetGlobalIndex ()) = -10.;
+                    sol_ana.coeffRef (pt->GetGlobalIndex ()) = -10.;
+                }
+            }
+
+
+        std::string tagsolver = "_" + to_string(list_tags_inter.at (idvec));
+
+        if (tagsolver ==  "_" + to_string(INTER::DEFAULT))
+            tagsolver = "";
+
+        std::vector<double> solstd = PlainVector2Vector (solnum);
+        store->mesh->GetPointsData ()->GetDoubleArrays ()->Add ("sol_num" + tagsolver, solstd);
+
+        solstd = PlainVector2Vector (&sol_ana);
+        store->mesh->GetPointsData ()->GetDoubleArrays ()->Add ("sol_ana" + tagsolver, solstd);
+
+        PlainVector erroabs = GetErrorAbs (store->mesh, &sol_ana, solnum);
+        solstd = PlainVector2Vector (&erroabs);
+        store->mesh->GetPointsData ()->GetDoubleArrays ()->Add ("err_abs" + tagsolver, solstd);
+
+//        PlainVector errorelapercent = GetErrorRelaPercent (store->mesh, &sol_ana, solnum);
+//        solstd = PlainVector2Vector (&errorelapercent);
+//        store->mesh->GetPointsData ()->GetDoubleArrays ()->Add ("err_rela_percent" + tagsolver, solstd);
+
+        GetErrorl1 (store->mesh, &sol_ana, solnum);
+        GetErrorl2 (store->mesh, &sol_ana, solnum);
+        GetErrorlinf (store->mesh, &sol_ana, solnum);
+        GetErrorRela (store->mesh, &sol_ana, solnum);
+
+        ENDFUN;
+    }
 }
+
