@@ -74,7 +74,7 @@ add_subdirectory (${SOLITON_DIR})
 option(USE_UNIT_TEST "Build unit tests " ON)
 if (USE_UNIT_TEST)
     message ("-- Build unit tests")
-    set(SOLITON_TEST_UNIT_DIR ${CMAKE_SOURCE_DIR}/unittests)
+    set(SOLITON_TEST_UNIT_DIR ${CMAKE_SOURCE_DIR}/unit_tests)
     add_subdirectory (${SOLITON_TEST_UNIT_DIR})
 endif()
 
