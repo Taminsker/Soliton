@@ -5,11 +5,11 @@
 
 @ ---------------------------------------------------------------------------- @
 @ Resolution mesh
-@
-@ If the field "file_msh" is configured then it covers all other definitions
 @ ---------------------------------------------------------------------------- @
 
+@ #1
 @ file_msh        = ../data/mesh.msh @ filename of msh file : path from executable
+@ #2
 grid_x_m        = 0.0 @ x minus
 grid_x_p        = 1.0 @ x sup
 grid_y_m        = 0.0 @ y minus
@@ -17,6 +17,25 @@ grid_y_p        = 1.0 @ y sup
 hsize           = 0.01 @ Prescribed space step
 ele_type        = 0 @ 0 : P-Lagrange / 1 : Q-Lagrange
 ele_order       = 1 @ Element order : 1 / 2 / 3 ...
+
+@ ---------------------------------------------------------------------------- @
+@ Solver Part
+@ ---------------------------------------------------------------------------- @
+
+dt                  = 1.0 @ time step indicator
+object_policy       = free @ free or fixed
+coeff_penalization  = 50 @ coeff penalization
+power_penalization  = 2 @ h^?
+
+@ ---------------------------------------------------------------------------- @
+@ Add-ons definitions
+@ ---------------------------------------------------------------------------- @
+
+damping     = false @ Compute damping area : true or false
+colContItem = false @ Collect Item's Contribution : true or false
+zeta_0      = 1.0 @ free surface coor z
+beta_0      = 0.0 @ bed coor z
+g           = 9.81
 
 @ ---------------------------------------------------------------------------- @
 @ Objects
@@ -39,7 +58,9 @@ ele_order       = 1 @ Element order : 1 / 2 / 3 ...
 @ ---------------------------------------------------------------------------- @
 
 $BEGIN_OBJECT
+@ #1
 @     file_msh  = ../data/flotteur_type_1.msh @ filename of msh file : path from executable
+@ #2
     algo_gen  = 1 @ type of algorithm generator
     nbpts     = 300 @ number of points
 
@@ -50,121 +71,4 @@ $BEGIN_OBJECT
     z_center  = 0.0 @ z center (double)
     radius    = 0.2 @ radius-indicator (double)
 $END_OBJECT
-
-
-@ ---------------------------------------------------------------------------- @
-@ Solver
-@ Item's definition is delimited by $BEGIN_ITEM_SOLVER and $END_ITEM_SOLVER
-@ You can add as many items as you want.
-@
-@ Already defined items :
-@   - GRAD_GRAD
-@   - PHI_PHI
-@   - DAMPING_PHI_PHI
-@   - SECOND_MEMBER
-@   - DIRICHLET_BOUNDARY
-@   - DIRICHLET_BOUNDARY_SBM
-@   - NEUMANN_BOUNDARY
-@   - NEUMANN_BOUNDARY_SBM
-@
-@ Already defined type of solver :
-@   - NO_TIME
-@   - NEWMARK_SCHEME
-@
-@   Example of item
-@ @ $BEGIN_ITEM_SOLVER
-@ @  type                       =
-@ @  application_tag            =
-@ @  derivate_temporal_order    =
-@ @  variable_over_time         =
-@ @  id_target_mesh             =
-@ @  parent_solver_tag          =
-@ @  function                   =
-@ @  variable                   =
-@ @ $END_ITEM_SOLVER
-@ ---------------------------------------------------------------------------- @
-
-$BEGIN_SOLVER
-    dt                  = 1.0 @ time step indicator
-    object_policy       = free @ free or fixed
-    time_scheme         = NO_TIME @ temporal scheme
-    add_solver_on_tag   = IN
-    add_solver_on_tag   += OUT
-    coeff_penalization  = 50 @ coeff penalization
-    power_penalization  = 2 @ h^?
-    synthetize          = true @ synthetize all results in same vectors;
-$END_SOLVER
-
-$BEGIN_ITEM_SOLVER
-    type                    = GRAD_GRAD
-    application_tag         = DOMAIN
-    derivate_temporal_order = 0
-    variable_over_time      = false
-    parent_solver_tag       = DEFAULT
-    function                = fun_dirichlet
-    variable                = 1.0
-$END_ITEM_SOLVER
-
-$BEGIN_ITEM_SOLVER
-    type                    = SECOND_MEMBER
-    application_tag         = DOMAIN
-    derivate_temporal_order = 0
-    variable_over_time      = false
-    parent_solver_tag       = DEFAULT
-    function                = fun_secondmember
-$END_ITEM_SOLVER
-
-$BEGIN_ITEM_SOLVER
-    type                    = DIRICHLET_BOUNDARY
-    application_tag         = INLET
-    derivate_temporal_order = 0
-    variable_over_time      = false
-    parent_solver_tag       = DEFAULT
-    function                = fun_dirichlet
-$END_ITEM_SOLVER
-
-$BEGIN_ITEM_SOLVER
-    type                    = DIRICHLET_BOUNDARY
-    application_tag         = OUTLET
-    derivate_temporal_order = 0
-    variable_over_time      = false
-    parent_solver_tag       = DEFAULT
-    function                = fun_dirichlet
-$END_ITEM_SOLVER
-
-$BEGIN_ITEM_SOLVER
-    type                    = DIRICHLET_BOUNDARY
-    application_tag         = WALL
-    derivate_temporal_order = 0
-    variable_over_time      = false
-    parent_solver_tag       = DEFAULT
-    function                = fun_dirichlet
-$END_ITEM_SOLVER
-
-$BEGIN_ITEM_SOLVER
-    type                    = DIRICHLET_BOUNDARY_SBM
-    application_tag         = DEFAULT
-    derivate_temporal_order = 0
-    variable_over_time      = false
-    id_target_mesh          = 0
-    parent_solver_tag       = DEFAULT
-    function                = fun_dirichlet
-$END_ITEM_SOLVER
-
-@ ---------------------------------------------------------------------------- @
-@ Add-ons definitions
-@
-@ Currently supported :
-@   - damping
-@   - zeta_0
-@   - beta_0
-@   - g
-@ ---------------------------------------------------------------------------- @
-
-damping     = false @ Compute damping area : true or false
-colContItem = false @ Collect Item's Contribution : true or false
-
-zeta_0      = 1.0 @ free surface coor z
-beta_0      = 0.0 @ bed coor z
-g           = 9.81
 

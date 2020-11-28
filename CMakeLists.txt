@@ -4,7 +4,7 @@ project(Soliton)
 include(FindPkgConfig)
 
 
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -ansi -Wwrite-strings -Wuninitialized -Wunused-result -Wunreachable-code -Wmissing-braces -Wmissing-field-initializers -ftrack-macro-expansion=0 -fno-diagnostics-show-caret -m64 -O3 -g -std=c++14" )
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -ansi -Wwrite-strings -Wuninitialized -Wunused-result -Wunreachable-code -Wmissing-braces -Wmissing-field-initializers -ftrack-macro-expansion=0 -fno-diagnostics-show-caret -m64 -O3 -g -pg -std=c++14" )
 
 message(STATUS "COMPILE OPTIONS : ${CMAKE_CXX_FLAGS}\n")
 
@@ -67,20 +67,18 @@ else()
 endif()
 
 # Shared library Soliton
-set(SOLITON_DIR ${CMAKE_SOURCE_DIR}/soliton_src)
+set(SOLITON_DIR ${CMAKE_SOURCE_DIR}/src)
 add_subdirectory (${SOLITON_DIR})
 
 # Unit tests
 option(USE_UNIT_TEST "Build unit tests " ON)
 if (USE_UNIT_TEST)
     message ("-- Build unit tests")
-    set(SOLITON_TEST_UNIT_DIR ${CMAKE_SOURCE_DIR}/soliton_test_unit)
+    set(SOLITON_TEST_UNIT_DIR ${CMAKE_SOURCE_DIR}/unittests)
     add_subdirectory (${SOLITON_TEST_UNIT_DIR})
 endif()
 
 
-# Executable
-add_subdirectory (${CMAKE_SOURCE_DIR}/genexe_src)
-add_subdirectory (${CMAKE_SOURCE_DIR}/meshconvergence_src)
-
+# Executables
+add_subdirectory (${CMAKE_SOURCE_DIR}/execsrc)
 
