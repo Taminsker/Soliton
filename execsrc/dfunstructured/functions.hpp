@@ -1,7 +1,7 @@
-#ifndef EXECSRC_CONV4MESH_FUNCTIONS_HPP
-#define EXECSRC_CONV4MESH_FUNCTIONS_HPP
+#ifndef EXECSRC_DFUNSTRUCTURED_FUNCTIONS_HPP
+#define EXECSRC_DFUNSTRUCTURED_FUNCTIONS_HPP
 
-#include <Soliton> 
+#include <Soliton>
 
 class FunAnalytic : public SolitonFunctor
 {
@@ -40,4 +40,4 @@ extern FunNeumann      fun_neumann;
 extern FunDirichlet    fun_dirichlet;
 extern FunSecondMember fun_secondmember;
 
-#endif /* EXECSRC_CONV4MESH_FUNCTIONS_HPP */
+#endif /* EXECSRC_DFUNSTRUCTURED_FUNCTIONS_HPP */

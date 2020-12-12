@@ -1,9 +1,9 @@
-#ifndef SRC_PROGDEF_PRODDEF_HPP
-#define SRC_PROGDEF_PRODDEF_HPP
+#ifndef SRC_SOLITONHEADER_HPP
+#define SRC_SOLITONHEADER_HPP
 
-#include <Eigen/Dense>
-#include <Eigen/Sparse>
-#include <cstddef>
+// #include <Eigen/Dense>
+// #include <Eigen/Sparse>
+// #include <cstddef>
 
 /**
  * PROG DEF
@@ -13,20 +13,11 @@
 #define SOLITON_DEVICE_FUNC  SOLITON_INLINE __attribute__ ((flatten)) __attribute__ ((always_inline))
 #define SOLITON_RESERVE_NAME MACSOLRES_
 
-// Math def
+
+typedef int           error_t;
 typedef unsigned long ul_t;
 typedef double        real_t;
 
-namespace unstd
-{
-template <typename T>
-using matrix = std::vector<std::vector<T>>;
-}
-
-typedef Eigen::SparseMatrix<real_t, Eigen::RowMajor> SparseMatrix;
-typedef Eigen::Matrix<real_t, Eigen::Dynamic, 1>     DenseVector;
-typedef Eigen::Matrix<real_t, 3, 3>                  Matrix3x3;
-typedef Eigen::Triplet<real_t>                       Triplet;
 
 /**
  * NAMES DEFINITIONS
@@ -100,4 +91,4 @@ typedef Eigen::Triplet<real_t>                       Triplet;
 #define BLINKRETURN ""
 #endif
 
-#endif /* SRC_PROGDEF_PRODDEF_HPP */
+#endif /* SRC_SOLITONHEADER_HPP */

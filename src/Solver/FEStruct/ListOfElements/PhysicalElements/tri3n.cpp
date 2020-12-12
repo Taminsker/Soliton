@@ -1,14 +1,15 @@
-#include <Solver/FEStruct/ListOfElements/PhysicalElements/physicalelements.h>
+#include "physicalelements.hpp"
 
 /** @brief Constructor of FEPhysicalElement : triangle, 3 points.
  * @relates Tri3N
  */
-template<>
-void Tri3N::Build ()
+template <>
+void
+Tri3N::Build ()
 {
     m_type_physical = PHYSICAL_CELL_TYPE::TRIANGLE;
-    m_type_vtk = VTK_CELL_TYPE::VTK_TRIANGLE;
-    m_volref = 0.5;
+    m_type_vtk      = VTK_CELL_TYPE::VTK_TRIANGLE;
+    m_volref        = 0.5;
 
     // Points
     AddPointDefinition (0., 0., 0.);

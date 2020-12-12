@@ -1,12 +1,12 @@
-#ifndef CELL_H
-#define CELL_H
+#ifndef SRC_CORE_CELL_CELL_HPP
+#define SRC_CORE_CELL_CELL_HPP
 
 #include <fstream>
-#include <vector>
 #include <initializer_list>
+#include <vector>
 
-#include <ProgDef/proddef.h>
-#include <Enums/enums.h>
+#include "../../Enums/enums.hpp"
+#include "../../solitonheader.hpp"
 
 class Point;
 class Edge;
@@ -17,125 +17,139 @@ class Cell
 {
 public:
     Cell ();
-    Cell (const Cell& c);
+    Cell (const Cell & c);
     ~Cell ();
 
-    Cell&          operator= (std::initializer_list<Point *> ilist);
+    Cell & operator= (std::initializer_list<Point *> ilist);
 
-    Cell*          AddPoint (Point * p, bool link = true);
-    Cell*          AddPoints (std::vector<Point*> plist);
-    Cell*          RemovePoint (Point * p);
-    Cell*          AddEdge (Edge* e);
-    Cell*          RemoveEdge (Edge* e);
-
+    Cell * AddPoint (Point * p, bool link = true);
+    Cell * AddPoints (std::vector<Point *> plist);
+    Cell * RemovePoint (Point * p);
+    Cell * AddEdge (Edge * e);
+    Cell * RemoveEdge (Edge * e);
 
     SOLITON_INLINE
-    Cell* SetGlobalIndex (int index)
+    Cell *
+    SetGlobalIndex (int index)
     {
         m_globalIndex = index;
         return this;
     }
 
     SOLITON_INLINE
-    int GetGlobalIndex () const
+    int
+    GetGlobalIndex () const
     {
         return m_globalIndex;
     }
 
     SOLITON_INLINE
-    void SetTag (CELLTAG tag)
+    void
+    SetTag (CELLTAG tag)
     {
         m_celltag = tag;
         return;
     }
 
     SOLITON_INLINE
-    CELLTAG GetTag () const
+    CELLTAG
+    GetTag () const
     {
         return m_celltag;
     }
 
     SOLITON_INLINE
-    void SetType (GMSH_CELL_TYPE type)
+    void
+    SetType (GMSH_CELL_TYPE type)
     {
         m_celltype = type;
         return;
     }
 
     SOLITON_INLINE
-    GMSH_CELL_TYPE GetTypeGMSH () const
+    GMSH_CELL_TYPE
+    GetTypeGMSH () const
     {
         return m_celltype;
     }
 
     SOLITON_INLINE
-    VTK_CELL_TYPE GetTypeVTK () const
+    VTK_CELL_TYPE
+    GetTypeVTK () const
     {
         return Convert<GMSH_CELL_TYPE, VTK_CELL_TYPE> (m_celltype);
     }
 
     SOLITON_INLINE
-    int GetNumberOfInfos () const
+    int
+    GetNumberOfInfos () const
     {
-        return 1 + int (m_points.size ()); // +1 pour le label de comptage de labels
+        return 1 + int (m_points.size ());  // +1 pour le label de comptage de labels
     }
 
     SOLITON_INLINE
-    std::vector <Point *>* GetPoints ()
+    std::vector<Point *> *
+    GetPoints ()
     {
         return &m_points;
     }
 
     SOLITON_INLINE
-    int GetNumberOfPoints () const
+    int
+    GetNumberOfPoints () const
     {
-        return static_cast<int>(m_points.size ());
+        return static_cast<int> (m_points.size ());
     }
 
     SOLITON_INLINE
-    std::vector <Edge *>* GetEdges ()
+    std::vector<Edge *> *
+    GetEdges ()
     {
         return &m_edges;
     }
 
     SOLITON_INLINE
-    int GetNumberOfEdges () const
+    int
+    GetNumberOfEdges () const
     {
-        return static_cast<int>(m_edges.size ());
+        return static_cast<int> (m_edges.size ());
     }
 
     SOLITON_INLINE
-    CAT_CELL_EDGE GetCat ()
+    CAT_CELL_EDGE
+    GetCat ()
     {
         return m_cat_cell;
     }
 
     SOLITON_INLINE
-    Point* GetCentroid ()
+    Point *
+    GetCentroid ()
     {
         return m_centroid;
     }
 
     SOLITON_INLINE
-    void ForceUpdateCentroid ()
+    void
+    ForceUpdateCentroid ()
     {
         return UpdateCentroid ();
     }
 
-    friend std::ostream&  operator<< (std::ostream &out, const Cell &c);
-protected:
-    int           m_globalIndex;
-    CAT_CELL_EDGE      m_cat_cell = CAT_CELL_EDGE::CELL;
-    CELLTAG         m_celltag;
-    GMSH_CELL_TYPE     m_celltype;
-    Point*         m_centroid;
-    std::vector <Point*>  m_points;
-    std::vector <Edge*>   m_edges;
+    friend std::ostream & operator<< (std::ostream & out, const Cell & c);
 
-    void          UpdateCentroid ();
+protected:
+    int                  m_globalIndex;
+    CAT_CELL_EDGE        m_cat_cell = CAT_CELL_EDGE::CELL;
+    CELLTAG              m_celltag;
+    GMSH_CELL_TYPE       m_celltype;
+    Point *              m_centroid;
+    std::vector<Point *> m_points;
+    std::vector<Edge *>  m_edges;
+
+    void UpdateCentroid ();
 };
 
-std::ostream& operator<< (std::ostream &out, const Cell &c);
+std::ostream & operator<< (std::ostream & out, const Cell & c);
 
-
-#endif // CELL_H
+#endif /* SRC_CORE_CELL_CELL_HPP */

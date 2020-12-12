@@ -1,40 +1,41 @@
-#include "tags_enums.h"
-#include "../def_macros.h"
+#include "tags_enums.hpp"
 
-FROM_STRING_SPECIALIZATION(PHYS)
+#include "../def_macros.hpp"
+
+FROM_STRING_SPECIALIZATION (PHYS)
 {
-    SIMPLE_IF(WALL);
-    ELSEIF(INLET);
-    ELSEIF(OUTLET);
-    ELSEIF(DOMAIN);
-    ELSEIF(DEFAULT);
-    ELSE(NONE);
+    SIMPLE_IF (WALL);
+    ELSEIF (INLET);
+    ELSEIF (OUTLET);
+    ELSEIF (DOMAIN);
+    ELSEIF (DEFAULT);
+    ELSE (NONE);
 }
 
-TO_STRING_SPECIALIZATION(PHYS)
+TO_STRING_SPECIALIZATION (PHYS)
 {
-    CASE(WALL);
-    CASE(INLET);
-    CASE(OUTLET);
-    CASE(DOMAIN);
-    END_CASE_DEFAULT(NONE);
+    CASE (WALL);
+    CASE (INLET);
+    CASE (OUTLET);
+    CASE (DOMAIN);
+    END_CASE_DEFAULT (NONE);
 }
 
-TO_STRING_SPECIALIZATION(INTER)
+TO_STRING_SPECIALIZATION (INTER)
 {
-    CASE(IN);
-    CASE(OUT);
-    CASE(MIXED);
-    END_CASE_DEFAULT(UNKNOW);
+    CASE (IN);
+    CASE (OUT);
+    CASE (MIXED);
+    END_CASE_DEFAULT (UNKNOW);
 }
 
-FROM_STRING_SPECIALIZATION(INTER)
+FROM_STRING_SPECIALIZATION (INTER)
 {
-    SIMPLE_IF(IN);
-    ELSEIF(OUT);
-    ELSEIF(MIXED);
-    ELSEIF(DEFAULT);
-    ELSE(UNKNOWN);
+    SIMPLE_IF (IN);
+    ELSEIF (OUT);
+    ELSEIF (MIXED);
+    ELSEIF (DEFAULT);
+    ELSE (UNKNOWN);
 }
 
-#include "../undef_macros.h"
+#include "../undef_macros.hpp"

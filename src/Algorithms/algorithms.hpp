@@ -1,10 +1,10 @@
-#ifndef ALGORITHMS_H
-#define ALGORITHMS_H
+#ifndef SRC_ALGORITHMS_ALGORITHMS_HPP
+#define SRC_ALGORITHMS_ALGORITHMS_HPP
 
-#include "Algo4SBM/algo4sbm.h"
-#include "MeshGenerator/meshgenerator.h"
-#include "AlgoMesh/algomesh.h"
-#include "Hash4Edges/hash4edges.h"
-#include "Math/math.h"
+#include "Algo4SBM/algo4sbm.hpp"
+#include "AlgoMesh/algomesh.hpp"
+#include "Hash4Edges/hash4edges.hpp"
+#include "Math/math.hpp"
+#include "MeshGenerator/meshgenerator.hpp"
 
-#endif // ALGORITHMS_H
+#endif /* SRC_ALGORITHMS_ALGORITHMS_HPP */

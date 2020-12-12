@@ -1,6 +1,6 @@
-#ifndef QUADSTRUCT_H
-#define QUADSTRUCT_H
+#ifndef SRC_SOLVER_QUADSTRUCT_QUADSTRUCT_HPP
+#define SRC_SOLVER_QUADSTRUCT_QUADSTRUCT_HPP
 
-#include "quadstore.h"
+#include "quadstore.hpp"
 
-#endif // QUADSTRUCT_H
+#endif /* SRC_SOLVER_QUADSTRUCT_QUADSTRUCT_HPP */

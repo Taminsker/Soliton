@@ -1,17 +1,17 @@
-#ifndef TAGS_ENUMS_H
-#define TAGS_ENUMS_H
+#ifndef SRC_ENUMS_ENUMS4TAGS_TAGS_ENUMS_HPP
+#define SRC_ENUMS_ENUMS4TAGS_TAGS_ENUMS_HPP
 
-#include "../common_head.h"
+#include "../common_head.hpp"
 
-enum class INTER
+enum class INTER : ul_t
 {
     UNKNOWN = 0x0,
-    IN   = 0x1,
-    OUT   = 0x2,
-    MIXED  = 0x3,
+    IN      = 0x1,
+    OUT     = 0x2,
+    MIXED   = 0x3,
     DEFAULT = UNKNOWN,
-    FIRST  = UNKNOWN,
-    LAST  = MIXED
+    FIRST   = UNKNOWN,
+    LAST    = MIXED
 };
 
 /*
@@ -35,28 +35,28 @@ enum class INTER
  * LAST = DOMAIN
  */
 
-enum class PHYS
+enum class PHYS : ul_t
 {
-    NONE  = 0x0,
-    WALL  = 0x1,
-    INLET  = 0x2,
-    OUTLET = 0x4,
-    DOMAIN = 0x8,
+    NONE    = 0x0,
+    WALL    = 0x1,
+    INLET   = 0x2,
+    OUTLET  = 0x4,
+    DOMAIN  = 0x8,
     DEFAULT = NONE,
-    FIRST  = NONE,
-    LAST  = DOMAIN
+    FIRST   = NONE,
+    LAST    = DOMAIN
 };
 
-template<>
-PHYS from_string (const std::string& s);
+template <>
+PHYS from_string (const std::string & s);
 
-template<>
-std::string to_string(const PHYS& type);
+template <>
+std::string to_string (const PHYS & type);
 
-template<>
-INTER from_string (const std::string& s);
+template <>
+INTER from_string (const std::string & s);
 
-template<>
-std::string to_string(const INTER& type);
+template <>
+std::string to_string (const INTER & type);
 
-#endif // TAGS_ENUMS_H
+#endif /* SRC_ENUMS_ENUMS4TAGS_TAGS_ENUMS_HPP */

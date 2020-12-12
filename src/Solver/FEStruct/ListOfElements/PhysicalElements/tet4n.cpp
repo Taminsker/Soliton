@@ -1,14 +1,15 @@
-#include <Solver/FEStruct/ListOfElements/PhysicalElements/physicalelements.h>
+#include "physicalelements.hpp"
 
 /** @brief Constructor of FEPhysicalElement : tetrahedron, 4 point.
  * @relates Tet4N
  */
-template<>
-void Tet4N::Build ()
+template <>
+void
+Tet4N::Build ()
 {
     m_type_physical = PHYSICAL_CELL_TYPE::TETRAHEDRON;
-    m_type_vtk = VTK_CELL_TYPE::VTK_TETRA;
-    m_volref = 1. / 3.;
+    m_type_vtk      = VTK_CELL_TYPE::VTK_TETRA;
+    m_volref        = 1. / 3.;
 
     // Points
     AddPointDefinition (0., 0., 0.);

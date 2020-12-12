@@ -1,10 +1,10 @@
-#ifndef DFSTORE_H
-#define DFSTORE_H
+#ifndef SRC_SOLVER_DFSTRUCT_DFSTORE_HPP
+#define SRC_SOLVER_DFSTRUCT_DFSTORE_HPP
 
-#include <ProgDef/proddef.h>
-
-#include <vector>
 #include <algorithm>
+#include <vector>
+
+#include "../../solitonheader.hpp"
 
 typedef enum
 {
@@ -36,20 +36,21 @@ typedef enum
 
 class DFStore
 {
-
 public:
-    class DFIdxCoeff {
+    class DFIdxCoeff
+    {
     public:
         DFIdxCoeff ();
         ~DFIdxCoeff ();
-        DFIdxCoeff (const DFIdxCoeff& tocopy);
-        DFIdxCoeff& operator=(const DFIdxCoeff& tocopy);
+        DFIdxCoeff (const DFIdxCoeff & tocopy);
+        DFIdxCoeff & operator= (const DFIdxCoeff & tocopy);
 
-        std::vector<int> idxs;
+        std::vector<int>    idxs;
         std::vector<real_t> coeffs;
     };
 
-    class DFOrders {
+    class DFOrders
+    {
     public:
         DFOrders ();
         ~DFOrders ();
@@ -64,7 +65,8 @@ public:
         DFIdxCoeff Order8;
     };
 
-    class DerivativeStruct {
+    class DerivativeStruct
+    {
     public:
         DerivativeStruct ();
         ~DerivativeStruct ();
@@ -74,19 +76,17 @@ public:
         DFOrders Forward;
     };
 
-    DFStore();
+    DFStore ();
     ~DFStore ();
 
-    void Get(int der, DF_ORDER_NAMES order, std::vector<int>* idxs, std::vector<real_t>* coeffs);
+    void Get (int der, DF_ORDER_NAMES order, std::vector<int> * idxs, std::vector<real_t> * coeffs);
 
 private:
-    DFStore (const DFStore&) = delete;
-    DFStore& operator=(const DFStore&) = delete;
+    DFStore (const DFStore &) = delete;
+    DFStore & operator= (const DFStore &) = delete;
 
     DerivativeStruct Derivative_1;
     DerivativeStruct Derivative_2;
-
-
 };
 
-#endif // DFSTORE_H
+#endif /* SRC_SOLVER_DFSTRUCT_DFSTORE_HPP */

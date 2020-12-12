@@ -1,7 +1,7 @@
-#ifndef SUPERFE_H
-#define SUPERFE_H
+#ifndef SRC_SOLVER_SOLITONFE_SOLITONFE_HPP
+#define SRC_SOLVER_SOLITONFE_SOLITONFE_HPP
 
-#include "SolitonFEItem/solitonfeitem.h"
-#include "SolitonFEContainer/solitonfecontainer.h"
+#include "SolitonFEContainer/solitonfecontainer.hpp"
+#include "SolitonFEItem/solitonfeitem.hpp"
 
-#endif // SUPERFE_H
+#endif /* SRC_SOLVER_SOLITONFE_SOLITONFE_HPP */

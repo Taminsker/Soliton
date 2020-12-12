@@ -1,10 +1,10 @@
-#ifndef CORE_H
-#define CORE_H
+#ifndef SRC_CORE_CORE_HPP
+#define SRC_CORE_CORE_HPP
 
-#include "Mesh/mesh.h"
-#include "Cell/cell.h"
-#include "Edge/edge.h"
-#include "Point/point.h"
-#include "HetContainer/hetcontainer.h"
+#include "Cell/cell.hpp"
+#include "Edge/edge.hpp"
+#include "HetContainer/hetcontainer.hpp"
+#include "Mesh/mesh.hpp"
+#include "Point/point.hpp"
 
-#endif // CORE_H
+#endif /* SRC_CORE_CORE_HPP */

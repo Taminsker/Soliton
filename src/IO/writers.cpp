@@ -1,26 +1,28 @@
+#include "writers.hpp"
+
 #include <fstream>
 
-#include <Core/core.h>
-#include "writers.h"
+#include "../Core/core.hpp"
 
-void WriteVTKWithCells (Mesh* mesh, std::string add2basename, bool view)
+void
+WriteVTKWithCells (Mesh * mesh, std::string add2basename, bool view)
 {
-    DataContainer<Point*>* pointsData = mesh->GetPointsData ();
-    DataContainer<Cell*>* cellsData = mesh->GetCellsData ();
-    std::string filename = "";
+    DataContainer<Point *> * pointsData = mesh->GetPointsData ();
+    DataContainer<Cell *> *  cellsData  = mesh->GetCellsData ();
+    std::string              filename   = "";
 
     if (add2basename == "")
-        filename = mesh->GetName ()+"_w_cells.vtk";
+        filename = mesh->GetName () + "_w_cells.vtk";
     else
-        filename = mesh->GetName ()+"_w_cells_" + add2basename + ".vtk";
+        filename = mesh->GetName () + "_w_cells_" + add2basename + ".vtk";
 
     if (view)
         BEGIN << "Write the vtk file with cells p.o.v : " << COLOR_BLUE << filename << ENDLINE;
 
     std::ofstream outfile (filename);
-    int numpoints = mesh->GetNumberOfPoints ();
-    int numcells = mesh->GetNumberOfCells ();
-    int numInfosCells = mesh->GetNumberOfInfosCells ();
+    int           numpoints     = mesh->GetNumberOfPoints ();
+    int           numcells      = mesh->GetNumberOfCells ();
+    int           numInfosCells = mesh->GetNumberOfInfosCells ();
 
     if (!outfile.is_open ())
     {
@@ -68,7 +70,7 @@ void WriteVTKWithCells (Mesh* mesh, std::string add2basename, bool view)
 
     // CELLSTYPE
     for (int i = 0; i < numcells; ++i)
-        outfile << static_cast<int>(mesh->GetCell (i)->GetTypeVTK ()) << std::endl;
+        outfile << static_cast<int> (mesh->GetCell (i)->GetTypeVTK ()) << std::endl;
     outfile << std::endl;
 
 #ifdef VERBOSE
@@ -116,7 +118,7 @@ void WriteVTKWithCells (Mesh* mesh, std::string add2basename, bool view)
 #endif
     }
 
-    for (auto arr : *pointsData->GetAll<Point*> ()->All ())
+    for (auto arr : *pointsData->GetAll<Point *> ()->All ())
     {
         outfile << "VECTORS " << arr->name << " double " << std::endl;
         outfile << std::scientific << arr->vec << std::endl;
@@ -166,7 +168,7 @@ void WriteVTKWithCells (Mesh* mesh, std::string add2basename, bool view)
 #endif
     }
 
-    for (auto arr : *cellsData->GetAll<Point*> ()->All ())
+    for (auto arr : *cellsData->GetAll<Point *> ()->All ())
     {
         outfile << "VECTORS " << arr->name << " double " << std::endl;
         outfile << std::scientific << arr->vec << std::endl;
@@ -187,25 +189,26 @@ void WriteVTKWithCells (Mesh* mesh, std::string add2basename, bool view)
     return;
 }
 
-void WriteVTKWithEdges (Mesh* mesh, std::string add2basename, bool view)
+void
+WriteVTKWithEdges (Mesh * mesh, std::string add2basename, bool view)
 {
-    DataContainer<Point *>* pointsData = mesh->GetPointsData ();
-    DataContainer<Edge *>* edgesData = mesh->GetEdgesData ();
+    DataContainer<Point *> * pointsData = mesh->GetPointsData ();
+    DataContainer<Edge *> *  edgesData  = mesh->GetEdgesData ();
 
     std::string filename = "";
 
     if (add2basename == "")
-        filename = mesh->GetName ()+"_w_edges.vtk";
+        filename = mesh->GetName () + "_w_edges.vtk";
     else
-        filename = mesh->GetName ()+"_w_edges_" + add2basename + ".vtk";
+        filename = mesh->GetName () + "_w_edges_" + add2basename + ".vtk";
 
     if (view)
         BEGIN << "Write the vtk file with edges p.o.v : " << COLOR_BLUE << filename << ENDLINE;
 
     std::ofstream outfile (filename);
-    int numpoints = mesh->GetNumberOfPoints ();
-    int numedges = mesh->GetNumberOfEdges ();
-    int numInfosEdges = mesh->GetNumberOfInfosEdges ();
+    int           numpoints     = mesh->GetNumberOfPoints ();
+    int           numedges      = mesh->GetNumberOfEdges ();
+    int           numInfosEdges = mesh->GetNumberOfInfosEdges ();
 
     if (!outfile.is_open ())
     {
@@ -253,7 +256,7 @@ void WriteVTKWithEdges (Mesh* mesh, std::string add2basename, bool view)
 
     // CELLSTYPE
     for (int i = 0; i < numedges; ++i)
-        outfile << static_cast<int>(mesh->GetEdge (i)->GetTypeVTK ()) << std::endl;
+        outfile << static_cast<int> (mesh->GetEdge (i)->GetTypeVTK ()) << std::endl;
     outfile << std::endl;
 
 #ifdef VERBOSE
@@ -300,7 +303,7 @@ void WriteVTKWithEdges (Mesh* mesh, std::string add2basename, bool view)
 #endif
     }
 
-    for (auto arr : *pointsData->GetAll<Point*> ()->All ())
+    for (auto arr : *pointsData->GetAll<Point *> ()->All ())
     {
         outfile << "VECTORS " << arr->name << " double " << std::endl;
         outfile << arr->vec << std::endl;
@@ -350,7 +353,7 @@ void WriteVTKWithEdges (Mesh* mesh, std::string add2basename, bool view)
 #endif
     }
 
-    for (auto arr : *edgesData->GetAll<Point*> ()->All ())
+    for (auto arr : *edgesData->GetAll<Point *> ()->All ())
     {
         outfile << "VECTORS " << arr->name << " double " << std::endl;
         outfile << arr->vec << std::endl;

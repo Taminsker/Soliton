@@ -1,20 +1,16 @@
-#include "mesh.h"
-#include "../Cell/cell.h"
-#include "../Edge/edge.h"
-#include "../Point/point.h"
-#include "../HetContainer/hetcontainer.h"
+#include "mesh.hpp"
 
-#include <ProgDef/proddef.h>
-#include <Enums/enums.h>
-#include <IO/parsers.h>
+#include "../../IO/parsers.hpp"
+#include "../../solitonheader.hpp"
+#include "../HetContainer/hetcontainer.hpp"
 
-Mesh::Mesh () :
-    m_pointsdata (new PointsData (&m_points)),
-    m_cellsdata (new CellsData (&m_cells)),
-    m_edgesdata (new EdgesData (&m_edges)),
-    m_name ("no-name-selected"),
-    m_h (1.)
-{}
+Mesh::Mesh () : m_pointsdata (new PointsData (&m_points)),
+                m_cellsdata (new CellsData (&m_cells)),
+                m_edgesdata (new EdgesData (&m_edges)),
+                m_name ("no-name-selected"),
+                m_h (1.)
+{
+}
 
 Mesh::~Mesh ()
 {
@@ -25,7 +21,7 @@ Mesh::~Mesh ()
     for (auto c : m_cells)
         delete c;
 
-    m_cells.clear();
+    m_cells.clear ();
     m_points.clear ();
     m_edges.clear ();
 
@@ -34,8 +30,8 @@ Mesh::~Mesh ()
     delete m_pointsdata;
 }
 
-
-void Mesh::Print () const
+void
+Mesh::Print () const
 {
     BEGIN << "Mesh statistics." << ENDLINE;
 
@@ -51,44 +47,43 @@ void Mesh::Print () const
     INFOS << SEPARATOR << ENDLINE;
     INFOS << COLOR_BLUE << "CELLS TYPE :" << ENDLINE;
 
-    for (VTK_CELL_TYPE type : EnumClass<VTK_CELL_TYPE>())
+    for (VTK_CELL_TYPE type : EnumClass<VTK_CELL_TYPE> ())
     {
         count = CountCellType (type);
         if (count > 0)
-            INFOS << "Number of " << to_string(type) << " : \t" << count << ENDLINE;
+            INFOS << "Number of " << to_string (type) << " : \t" << count << ENDLINE;
     }
 
     INFOS << SEPARATOR << ENDLINE;
     INFOS << COLOR_BLUE << "EDGES TYPE :" << ENDLINE;
 
-    for (VTK_CELL_TYPE type : EnumClass<VTK_CELL_TYPE>())
+    for (VTK_CELL_TYPE type : EnumClass<VTK_CELL_TYPE> ())
     {
         count = CountEdgeType (type);
         if (count > 0)
-            INFOS << "Number of " << to_string(type) << " : \t" << count << ENDLINE;
+            INFOS << "Number of " << to_string (type) << " : \t" << count << ENDLINE;
     }
 
     INFOS << SEPARATOR << ENDLINE;
-    HetContainer<int>::Array* tagvec = GetPointsData ()->Get<int> (NAME_TAG_PHYSICAL);
+    HetContainer<int>::Array * tagvec = GetPointsData ()->Get<int> (NAME_TAG_PHYSICAL);
 
     if (tagvec != nullptr)
     {
         INFOS << COLOR_BLUE << "POINTS TAG :" << ENDLINE;
 
-        for (PHYS tag : EnumClass<PHYS>())
+        for (PHYS tag : EnumClass<PHYS> ())
         {
             count = 0;
             for (auto tagid : tagvec->vec)
-                if (static_cast<PHYS>(tagid) == tag)
+                if (static_cast<PHYS> (tagid) == tag)
                     count++;
 
             if (count > 0)
-                INFOS << "Number of tag " << to_string(tag) << " : \t" << count << ENDLINE;
+                INFOS << "Number of tag " << to_string (tag) << " : \t" << count << ENDLINE;
         }
 
         INFOS << SEPARATOR << ENDLINE;
     }
-
 
     tagvec = GetCellsData ()->Get<int> (NAME_TAG_PHYSICAL);
 
@@ -96,15 +91,15 @@ void Mesh::Print () const
     {
         INFOS << COLOR_BLUE << "CELLS TAG :" << ENDLINE;
 
-        for (PHYS tag : EnumClass<PHYS>())
+        for (PHYS tag : EnumClass<PHYS> ())
         {
             count = 0;
             for (auto tagid : tagvec->vec)
-                if (static_cast<PHYS>(tagid) == tag)
+                if (static_cast<PHYS> (tagid) == tag)
                     count++;
 
             if (count > 0)
-                INFOS << "Number of tag " << to_string(tag) << " : \t" << count << ENDLINE;
+                INFOS << "Number of tag " << to_string (tag) << " : \t" << count << ENDLINE;
         }
 
         INFOS << SEPARATOR << ENDLINE;
@@ -116,15 +111,15 @@ void Mesh::Print () const
     {
         INFOS << COLOR_BLUE << "EDGES TAG :" << ENDLINE;
 
-        for (PHYS tag : EnumClass<PHYS>())
+        for (PHYS tag : EnumClass<PHYS> ())
         {
             count = 0;
             for (auto tagid : tagvec->vec)
-                if (static_cast<PHYS>(tagid) == tag)
+                if (static_cast<PHYS> (tagid) == tag)
                     count++;
 
             if (count > 0)
-                INFOS << "Number of tag " << to_string(tag) << " : \t" << count << ENDLINE;
+                INFOS << "Number of tag " << to_string (tag) << " : \t" << count << ENDLINE;
         }
 
         INFOS << SEPARATOR << ENDLINE;

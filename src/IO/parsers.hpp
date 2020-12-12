@@ -1,8 +1,5 @@
-#ifndef PARSERS_H
-#define PARSERS_H
-
-#include <Enums/enums.h>
-#include <ProgDef/proddef.h>
+#ifndef SRC_IO_PARSERS_HPP
+#define SRC_IO_PARSERS_HPP
 
 #include <fstream>
 #include <functional>
@@ -10,6 +7,9 @@
 #include <sstream>
 #include <string>
 #include <vector>
+
+#include "../Enums/enums.hpp"
+#include "../solitonheader.hpp"
 
 class Mesh;
 class Point;
@@ -75,4 +75,4 @@ RemoveBlankSpace (std::string * s, std::vector<std::string> * out);
 
 bool
 CastToBool (std::string * s);
-#endif  // PARSERS_H
+#endif /* SRC_IO_PARSERS_HPP */

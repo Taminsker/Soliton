@@ -1,7 +1,7 @@
-#ifndef IO_H
-#define IO_H
+#ifndef SRC_IO_IO_HPP
+#define SRC_IO_IO_HPP
 
-#include "parsers.h"
-#include "writers.h"
+#include "parsers.hpp"
+#include "writers.hpp"
 
-#endif // IO_H
+#endif /* SRC_IO_IO_HPP */

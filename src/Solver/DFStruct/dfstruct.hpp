@@ -1,7 +1,7 @@
-#ifndef DFSTRUCT_H
-#define DFSTRUCT_H
+#ifndef SRC_SOLVER_DFSTRUCT_DFSTRUCT_HPP
+#define SRC_SOLVER_DFSTRUCT_DFSTRUCT_HPP
 
-#include <Solver/DFStruct/dfstore.h>
-#include <Solver/DFStruct/tooldfstruct.h>
+#include "dfstore.hpp"
+#include "tooldfstruct.hpp"
 
-#endif // DFSTRUCT_H
+#endif /* SRC_SOLVER_DFSTRUCT_DFSTRUCT_HPP */

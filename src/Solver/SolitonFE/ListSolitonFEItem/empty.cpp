@@ -1,12 +1,12 @@
-#include <Solver/SolitonFE/SolitonFEItem/solitonfeitem.h>
-#include <Solver/SolitonFE/SolitonFEContainer/solitonfecontainer.h>
-#include <Solver/FEStruct/festruct.h>
-#include <Solver/QuadStruct/quadstruct.h>
-#include <Algorithms/algorithms.h>
+#include "../../../Algorithms/algorithms.hpp"
+#include "../../FEStruct/festruct.hpp"
+#include "../../QuadStruct/quadstruct.hpp"
+#include "../SolitonFEContainer/solitonfecontainer.hpp"
+#include "../SolitonFEItem/solitonfeitem.hpp"
 
-template<>
+template <>
 void
-SolitonFEItem<ITEM_T::EMPTY>::Compute (real_t)
+    SolitonFEItem<ITEM_T::EMPTY>::Compute (real_t)
 {
     return;
 }

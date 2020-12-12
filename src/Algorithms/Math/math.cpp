@@ -1,12 +1,12 @@
 #include "math.h"
 
-#include <Core/core.h>
-#include <Solver/SolitonFunctor/solitonfunctor.h>
+#include "../../Core/core.hpp"
+#include "../../Solver/SolitonFunctor/solitonfunctor.hpp"
 
-Matrix3x3_eig RotateZMatrix (real_t angle)
+Matrix3x3
+RotateZMatrix (real_t angle)
 {
-
-    Matrix3x3_eig out;
+    Matrix3x3 out;
     out.setZero ();
     out.row (0) << std::cos (angle), -std::sin (angle), 0.;
     out.row (1) << std::sin (angle), std::cos (angle), 0.;
@@ -72,7 +72,6 @@ Matrix3x3_eig RotateZMatrix (real_t angle)
 //  return out;
 //}
 
-
 //void Math::TransposeInPlace (unstd::matrix<real_t>* mat)
 //{
 //  ul_t n = mat->size ();
@@ -88,13 +87,14 @@ Matrix3x3_eig RotateZMatrix (real_t angle)
 //  return;
 //}
 
-std::vector<real_t> PlainVector2Vector (PlainVector_eig *vec)
+std::vector<real_t>
+PlainVector2Vector (DenseVector * vec)
 {
-    return std::vector<real_t>(vec->data(), vec->data() + vec->rows() * vec->cols());
+    return std::vector<real_t> (vec->data (), vec->data () + vec->rows () * vec->cols ());
 }
 
-
-void FunToVec (PlainVector_eig *out, Mesh * mesh, std::function<real_t(Point, real_t)> f, real_t t)
+void
+FunToVec (DenseVector * out, Mesh * mesh, std::function<real_t (Point, real_t)> f, real_t t)
 {
     int n = mesh->GetNumberOfPoints ();
 
@@ -102,12 +102,13 @@ void FunToVec (PlainVector_eig *out, Mesh * mesh, std::function<real_t(Point, re
     out->setZero ();
 
     for (int i = 0; i < n; i++)
-        out->coeffRef (i) = f(*mesh->GetPoint (i), t);
+        out->coeffRef (i) = f (*mesh->GetPoint (i), t);
 
     return;
 }
 
-void FunToVec (PlainVector_eig *out, Mesh * mesh, SolitonFunctor* f, real_t t)
+void
+FunToVec (DenseVector * out, Mesh * mesh, SolitonFunctor * f, real_t t)
 {
     int n = mesh->GetNumberOfPoints ();
 
@@ -120,7 +121,8 @@ void FunToVec (PlainVector_eig *out, Mesh * mesh, SolitonFunctor* f, real_t t)
     return;
 }
 
-void FunToVec (PlainVector_eig* out, Mesh * mesh, real_t value)
+void
+FunToVec (DenseVector * out, Mesh * mesh, real_t value)
 {
     out->setConstant (mesh->GetNumberOfPoints (), value);
     return;

@@ -1,14 +1,15 @@
-#include <Solver/FEStruct/ListOfElements/PhysicalElements/physicalelements.h>
+#include "physicalelements.hpp"
 
 /** @brief Constructor of FEPhysicalElement : quadrangle, 4 point.
  * @relates Quad4N
  */
-template<>
-void Quad4N::Build ()
+template <>
+void
+Quad4N::Build ()
 {
     m_type_physical = PHYSICAL_CELL_TYPE::QUADRANGLE;
-    m_type_vtk = VTK_CELL_TYPE::VTK_QUAD;
-    m_volref = 4;
+    m_type_vtk      = VTK_CELL_TYPE::VTK_QUAD;
+    m_volref        = 4;
 
     // Points
     AddPointDefinition (-1., -1., 0.);
@@ -24,4 +25,3 @@ void Quad4N::Build ()
 
     return;
 }
-

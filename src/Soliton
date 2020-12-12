@@ -1,11 +1,11 @@
-#ifndef WAVER_H
-#define WAVER_H
+#ifndef SRC_SOLITON_HPP
+#define SRC_SOLITON_HPP
 
-#include "Algorithms/algorithms.h"
-#include "Core/core.h"
-#include <Enums/enums.h>
-#include "IO/io.h"
-#include "Solver/solver.h"
-#include "Routines/routines.h"
+#include "Algorithms/algorithms.hpp"
+#include "Core/core.hpp"
+#include "Enums/enums.hpp"
+#include "IO/io.hpp"
+#include "Solver/solver.hpp"
+#include "Routines/routines.hpp"
 
-#endif // WAVER_H
+#endif /* SRC_SOLITON_HPP */

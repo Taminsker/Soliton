@@ -1,8 +1,7 @@
-#ifndef FEHERMITE_H
-#define FEHERMITE_H
+#ifndef SRC_SOLVER_FESTRUCT_LISTOFELEMENTS_FEHERMITE_FEHERMITE_HPP
+#define SRC_SOLVER_FESTRUCT_LISTOFELEMENTS_FEHERMITE_FEHERMITE_HPP
 
-#include <Solver/FEStruct/ListOfElements/PhysicalElements/physicalelements.h>
-
+#include "../PhysicalElements/physicalelements.hpp"
 
 template <PHYSICAL_CELL_TYPE t_name, int t_npts, int t_nddl>
 class FEHermite : public FEPhysicalElement<t_name, t_npts>
@@ -12,16 +11,15 @@ public:
     ~FEHermite () override;
 
 private:
-    FEHermite (const FEHermite&) = delete;
-    FEHermite& operator= (const FEHermite&) = delete;
+    FEHermite (const FEHermite &) = delete;
+    FEHermite & operator= (const FEHermite &) = delete;
 };
 
 template <PHYSICAL_CELL_TYPE t_name, int t_npts, int t_nddl>
-FEHermite<t_name, t_npts, t_nddl>::FEHermite () :
-    FEPhysicalElement<t_name, t_npts> ()
+FEHermite<t_name, t_npts, t_nddl>::FEHermite () : FEPhysicalElement<t_name, t_npts> ()
 {
-    this->order = 0;
-    this->dim = 0;
+    this->order            = 0;
+    this->dim              = 0;
     this->namePhysicalBase = "Emp";
 }
 
@@ -30,4 +28,4 @@ FEHermite<t_name, t_npts, t_nddl>::~FEHermite ()
 {
 }
 
-#endif // FEHERMITE_H
+#endif /* SRC_SOLVER_FESTRUCT_LISTOFELEMENTS_FEHERMITE_FEHERMITE_HPP */

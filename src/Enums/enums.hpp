@@ -1,13 +1,11 @@
-#ifndef ENUMS_H
-#define ENUMS_H
+#ifndef SRC_ENUMS_ENUMS_HPP
+#define SRC_ENUMS_ENUMS_HPP
 
-#include "enumclass.h"
+#include "Enums4Cells//cells_enums.hpp"
+#include "Enums4FEStore/festore_enums.hpp"
+#include "Enums4SuperSolver/supersolver_enums.hpp"
+#include "Enums4Tags/tags_enums.hpp"
+#include "common_head.hpp"
+#include "enumclass.hpp"
 
-#include "common_head.h"
-#include "Enums4Cells//cells_enums.h"
-#include "Enums4FEStore/festore_enums.h"
-#include "Enums4SuperSolver/supersolver_enums.h"
-#include "Enums4Tags/tags_enums.h"
-
-
-#endif // ENUMS_H
+#endif /* SRC_ENUMS_ENUMS_HPP */

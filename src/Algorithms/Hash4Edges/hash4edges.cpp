@@ -1,55 +1,56 @@
-#include "hash4edges.h"
-
-#include <Core/core.h>
-#include <Solver/FEStruct/festruct.h>
-#include <fstream>
+#include "hash4edges.hpp"
 
 #include <algorithm>
+#include <fstream>
 
+#include "../../Core/core.hpp"
+#include "../../Enums/enums.hpp"
+#include "../../Solver/FEStruct/festruct.hpp"
 
-std::string HashFunction (std::vector<int>* idx)
+std::string
+HashFunction (std::vector<int> * idx)
 {
     std::string out = "";
 
     std::sort (idx->begin (), idx->end ());
 
     for (ul_t id = 0; id < idx->size (); ++id)
-        out += std::to_string (idx->at(id))+",";
+        out += std::to_string (idx->at (id)) + ",";
 
     return out;
 }
 
-void BuildEdgesWithHashMap (Mesh* mesh)
+void
+BuildEdgesWithHashMap (Mesh * mesh)
 {
     BEGIN << "Build edges with a hash map on the mesh : " << COLOR_BLUE << mesh->GetName () << ENDLINE;
 
     SolitonHashMap map;
-    FEStore store;
-    int numCells = mesh->GetNumberOfCells ();
-    int globalIdx = 0;
+    FEStore        store;
+    int            numCells  = mesh->GetNumberOfCells ();
+    int            globalIdx = 0;
 
     for (int cellId = 0; cellId < numCells; ++cellId)
     {
-        Cell* cell = mesh->GetCell (cellId);
-        FEBase* febase = store.GetElementFor (cell);
+        Cell *   cell   = mesh->GetCell (cellId);
+        FEBase * febase = store.GetElementFor (cell);
 
         //    ERROR << "Cell id : " << cellId << ENDLINE;
 
         for (ul_t edgeId = 0; edgeId < febase->GetNumberOfEdges (); ++edgeId)
         {
-            Edge* edge = febase->GetEdge (edgeId);
+            Edge * edge = febase->GetEdge (edgeId);
 
             //      ERROR << " edge id-loc : " << edgeId << " with " << edge->GetNumberOfPoints () << " pts" << ENDLINE;
 
-
-            std::vector<int>  idxPoints = {};
-            std::vector<Point*> listPoints = {};
+            std::vector<int>     idxPoints  = {};
+            std::vector<Point *> listPoints = {};
 
             for (int ptLocId = 0; ptLocId < edge->GetNumberOfPoints (); ++ptLocId)
             {
-                Point* ptOnEdge = edge->GetPoints ()->at (static_cast<ul_t>(ptLocId));
+                Point * ptOnEdge = edge->GetPoints ()->at (static_cast<ul_t> (ptLocId));
                 //        Point* ptOnFebase = febase->GetPoint (static_cast<ul_t>(ptLocId));
-                Point* ptOnCell = cell->GetPoints ()->at (static_cast<ul_t>(ptOnEdge->GetGlobalIndex ()));
+                Point * ptOnCell = cell->GetPoints ()->at (static_cast<ul_t> (ptOnEdge->GetGlobalIndex ()));
 
                 //        ERROR << "   febase : ptOnEdge : " << ptOnEdge->GetGlobalIndex () << ENDLINE;
                 //        ERROR << "   febase : ptGlob : " << ptOnFebase->GetGlobalIndex () << ENDLINE;
@@ -68,7 +69,7 @@ void BuildEdgesWithHashMap (Mesh* mesh)
                 list->second->AddCell (cell);
             else
             {
-                Edge* newEdge = new Edge();
+                Edge * newEdge = new Edge ();
                 newEdge->AddPoints (listPoints);
                 newEdge->SetTag (edge->GetTag ());
                 newEdge->SetType (edge->GetTypeGMSH ());
@@ -84,7 +85,7 @@ void BuildEdgesWithHashMap (Mesh* mesh)
     }
 
 #ifdef PRINTHASHMAP
-    Print(&map, "hashmap_"+mesh->GetName()+".txt");
+    Print (&map, "hashmap_" + mesh->GetName () + ".txt");
 #endif
 
 #ifdef VERBOSE
@@ -92,9 +93,9 @@ void BuildEdgesWithHashMap (Mesh* mesh)
 #endif
 
     int globalIdEdge = 0;
-    for (std::pair<std::string, Edge*> obj : map)
+    for (std::pair<std::string, Edge *> obj : map)
     {
-        Edge* edge = obj.second;
+        Edge * edge = obj.second;
         edge->SetGlobalIndex (globalIdEdge);
         mesh->AddEdge (edge);
 
@@ -110,7 +111,8 @@ void BuildEdgesWithHashMap (Mesh* mesh)
     return;
 }
 
-void Print (SolitonHashMap* map, std::string name)
+void
+Print (SolitonHashMap * map, std::string name)
 {
     std::ofstream output (name);
 
@@ -119,26 +121,24 @@ void Print (SolitonHashMap* map, std::string name)
 
     for (auto obj : *map)
     {
-        Edge* edge = obj.second;
+        Edge * edge = obj.second;
 
-        for (Cell* cell : *edge->GetCellsList ())
+        for (Cell * cell : *edge->GetCellsList ())
         {
             output << "\tkey: " << obj.first << "edge id : " << edge->GetGlobalIndex () << "    \t idx-pts " << std::flush;
 
-            for (Point* point : *edge->GetPoints ())
+            for (Point * point : *edge->GetPoints ())
                 output << point->GetGlobalIndex () << ", " << std::flush;
 
             output << "     \tGMSHTYPE-EDGE : " << std::flush;
-            output << to_string(edge->GetTypeGMSH ()) << '\t' << std::flush;
+            output << to_string (edge->GetTypeGMSH ()) << '\t' << std::flush;
 
             output << "     \tGLOBALIDX-Cell : " << std::flush;
             output << cell->GetGlobalIndex () << " " << std::flush;
             output << "     \tGMSHTYPE-Cell : " << std::flush;
-            output << to_string(cell->GetTypeGMSH ()) << " " << std::endl;
-
+            output << to_string (cell->GetTypeGMSH ()) << " " << std::endl;
         }
-        output << "NEXT HASH VECTOR "<< SEPARATOR << std::endl;
-
+        output << "NEXT HASH VECTOR " << SEPARATOR << std::endl;
     }
 
     INFOS << "Print hash map in \"" << COLOR_BLUE << name << COLOR_DEFAULT << "\"" << ENDLINE;

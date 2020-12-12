@@ -1,14 +1,12 @@
-#ifndef SOLVER_H
-#define SOLVER_H
+#ifndef SRC_SOLVER_SOLVER_HPP
+#define SRC_SOLVER_SOLVER_HPP
 
-#include "MeshStorage/meshstorage.h"
-#include "FEStruct/festruct.h"
-#include "DFStruct/dfstruct.h"
-#include "QuadStruct/quadstruct.h"
-#include "Method/method.h"
+#include "DFStruct/dfstruct.hpp"
+#include "FEStruct/festruct.hpp"
+#include "MeshStorage/meshstorage.hpp"
+#include "Method/method.hpp"
+#include "QuadStruct/quadstruct.hpp"
+#include "SolitonFE/solitonfe.hpp"
+#include "SolitonFunctor/solitonfunctor.hpp"
 
-#include "SolitonFunctor/solitonfunctor.h"
-#include "SolitonFE/solitonfe.h"
-#include "SolitonFunctor/solitonfunctor.h"
-
-#endif // SOLVER_H
+#endif /* SRC_SOLVER_SOLVER_HPP */

@@ -1,39 +1,41 @@
-#include "parsers.h"
+#include "parsers.hpp"
 
-#include <Algorithms/algorithms.h>
-#include <Core/core.h>
-#include <Solver/solver.h>
+#include "../Algorithms/algorithms.hpp"
+#include "../Core/core.hpp"
+#include "../Solver/solver.hpp"
 
-#define ERRORPARAMS \
-{\
-    ERROR << "unknown parameter " << field << " = " << value << ENDLINE;\
-    errs++;\
-    count--;\
-    continue;\
+#define ERRORPARAMS                                                          \
+    {                                                                        \
+        ERROR << "unknown parameter " << field << " = " << value << ENDLINE; \
+        errs++;                                                              \
+        count--;                                                             \
+        continue;                                                            \
     }
 
-void ParseInputDatFile (InputDatStruct* out, std::string filename)
+void
+ParseInputDatFile (InputDatStruct * out, std::string filename)
 {
     BEGIN << "Parse the input dat file." << ENDLINE;
 
-    std::ifstream infile (filename);
-    std::string line, field, value;
-    std::vector <std::string> spl;
-    unsigned int errs = 0;
-    unsigned int count = 0;
+    std::ifstream            infile (filename);
+    std::string              line, field, value;
+    std::vector<std::string> spl;
+    unsigned int             errs  = 0;
+    unsigned int             count = 0;
 
     if (!infile.is_open ())
     {
         ERROR << "the file " << filename << " can not be open." << BLINKRETURN << ENDLINE;
         return;
-    } else
+    }
+    else
     {
         STATUS << "the file " << COLOR_BLUE << filename << COLOR_DEFAULT << " is open." << ENDLINE;
     }
 
     //  out->filename_msh = filename;
 
-    while (std::getline(infile, line))
+    while (std::getline (infile, line))
     {
         if (line.front () != '@' && line.size () != 0)
         {
@@ -46,56 +48,56 @@ void ParseInputDatFile (InputDatStruct* out, std::string filename)
             {
                 count++;
 
-                field = spl.at(0);
+                field = spl.at (0);
                 value = spl.at (2);
 
                 if (field == "file_msh")
                     out->filename_msh = value;
                 else if (field == "grid_x_m")
-                    out->grid_x_m = stod(value);
+                    out->grid_x_m = stod (value);
                 else if (field == "grid_x_p")
-                    out->grid_x_p = stod(value);
+                    out->grid_x_p = stod (value);
                 else if (field == "grid_y_m")
-                    out->grid_y_m = stod(value);
+                    out->grid_y_m = stod (value);
                 else if (field == "grid_y_p")
-                    out->grid_y_p = stod(value);
+                    out->grid_y_p = stod (value);
                 else if (field == "hsize")
-                    out->hsize = stod(value);
+                    out->hsize = stod (value);
                 else if (field == "ele_type")
-                    out->ele_type = stoi(value);
+                    out->ele_type = stoi (value);
                 else if (field == "ele_order")
-                    out->ele_order = stoi(value);
+                    out->ele_order = stoi (value);
                 else if (field == "damping")
                     out->damping = CastToBool (&value);
                 else if (field == "zeta_0")
-                    out->zeta_0 = stod(value);
+                    out->zeta_0 = stod (value);
                 else if (field == "beta_0")
-                    out->beta_0 = stod(value);
+                    out->beta_0 = stod (value);
                 else if (field == "g")
-                    out->g_variable = stod(value);
+                    out->g_variable = stod (value);
                 else if (field == "colContItem")
                     out->colConcItem = CastToBool (&value);
                 else if (field == "dt")
-                    out->dt = stod(value);
+                    out->dt = stod (value);
                 else if (field == "object_policy")
                     out->objectsAreFixed = CastToBool (&value);
                 else if (field == "coeff_penalization")
-                    out->penal = stod(value);
+                    out->penal = stod (value);
                 else if (field == "power_penalization")
-                    out->powpenalty = stoi(value);
+                    out->powpenalty = stoi (value);
                 else if (field == "synthetize")
                     out->synthetize = CastToBool (&value);
                 else
                     ERRORPARAMS
             }
 
-            field = spl.at(0);
+            field = spl.at (0);
 
             if (field == "$BEGIN_OBJECT")
             {
                 ObjectDatStruct obs;
 
-                while (std::getline(infile, line))
+                while (std::getline (infile, line))
                 {
                     if (line.empty ())
                         continue;
@@ -105,7 +107,7 @@ void ParseInputDatFile (InputDatStruct* out, std::string filename)
                     if (spl.size () == 0)
                         continue;
 
-                    if (spl[0] == "$END_OBJECT")
+                    if (spl [0] == "$END_OBJECT")
                         break;
 
                     if (infile.eof ())
@@ -122,27 +124,27 @@ void ParseInputDatFile (InputDatStruct* out, std::string filename)
                         {
                             count++;
 
-                            field = spl.at(0);
+                            field = spl.at (0);
                             value = spl.at (2);
 
                             if (field == "file_msh")
                                 obs.filename_msh = value;
                             else if (field == "algo_gen")
-                                obs.algo_gen = static_cast<unsigned int>(stod(value));
+                                obs.algo_gen = static_cast<unsigned int> (stod (value));
                             else if (field == "nbpts")
-                                obs.nbpts = stoi(value);
+                                obs.nbpts = stoi (value);
                             else if (field == "rinp")
                                 obs.rinp = CastToBool (&value);
                             else if (field == "x_center")
-                                obs.x_center = stod(value);
+                                obs.x_center = stod (value);
                             else if (field == "y_center")
-                                obs.y_center = stod(value);
+                                obs.y_center = stod (value);
                             else if (field == "z_center")
-                                obs.z_center = stod(value);
+                                obs.z_center = stod (value);
                             else if (field == "basename")
                                 obs.basename = value;
                             else if (field == "radius")
-                                obs.radius = stod(value);
+                                obs.radius = stod (value);
                             else
                                 ERRORPARAMS
                         }
@@ -164,7 +166,8 @@ void ParseInputDatFile (InputDatStruct* out, std::string filename)
     return;
 }
 
-void ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
+void
+ParseMSH (Mesh * mesh, std::string filename, bool keep_original)
 {
     BEGIN << "Parse the msh file." << ENDLINE;
 
@@ -174,29 +177,30 @@ void ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
         return;
     }
 
-    std::ifstream infile (filename);
-    std::string line;
-    std::string delimeter = "\"";
-    std::vector <std::string> sv;
-    int numpoints = 0;
-    int numcells = 0;
-    int err = 0;
-    int count = 0;
-    int depth_tag = 0;
+    std::ifstream            infile (filename);
+    std::string              line;
+    std::string              delimeter = "\"";
+    std::vector<std::string> sv;
+    int                      numpoints = 0;
+    int                      numcells  = 0;
+    int                      err       = 0;
+    int                      count     = 0;
+    int                      depth_tag = 0;
 
     // OPEN
     if (!infile.is_open ())
     {
         ERROR << "the file " << filename << " can not be open." << BLINKRETURN << ENDLINE;
         return;
-    } else
+    }
+    else
     {
         STATUS << "the file " << filename << " is " << COLOR_BLUE << "open." << ENDLINE;
     }
 
     // MESH FORMAT
 
-    std::getline(infile, line);
+    std::getline (infile, line);
     while (line != "$MeshFormat")
     {
         if (infile.eof ())
@@ -205,13 +209,13 @@ void ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
             return;
         }
 
-        std::getline(infile, line);
+        std::getline (infile, line);
     }
 
 #ifdef DEBUG
     STATUS << "$MeshFormat detected." << ENDLINE;
 #endif
-    std::getline(infile, line);
+    std::getline (infile, line);
     RemoveBlankSpace (&line, &sv);
 
     if (sv.at (0) != "2.2")
@@ -229,17 +233,17 @@ void ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
             return;
         }
 
-        std::getline(infile, line);
+        std::getline (infile, line);
     }
 
 #ifdef DEBUG
     STATUS << "$Nodes detected." << ENDLINE;
 #endif
 
-    std::getline(infile, line);
+    std::getline (infile, line);
     RemoveBlankSpace (&line, &sv);
 
-    numpoints = stoi(sv.at (0));
+    numpoints = stoi (sv.at (0));
 
     count = 0;
     while (count < 10 * numpoints)
@@ -250,7 +254,7 @@ void ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
             return;
         }
 
-        std::getline(infile, line);
+        std::getline (infile, line);
         RemoveBlankSpace (&line, &sv);
 
         if (line == "$EndNodes")
@@ -263,9 +267,9 @@ void ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
         }
 
         auto P = new Point ();
-        P->x = stod (sv.at (1));
-        P->y = stod (sv.at (2));
-        P->z = stod (sv.at (3));
+        P->x   = stod (sv.at (1));
+        P->y   = stod (sv.at (2));
+        P->z   = stod (sv.at (3));
         P->SetGlobalIndex (count);
 
         mesh->AddPoint (P);
@@ -293,17 +297,17 @@ void ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
             ERROR << "the $Elements field does not seem to be present" << BLINKRETURN << ENDLINE;
             return;
         }
-        std::getline(infile, line);
+        std::getline (infile, line);
     }
 
 #ifdef DEBUG
     STATUS << "$Elements detected." << ENDLINE;
 #endif
 
-    std::getline(infile, line);
+    std::getline (infile, line);
     RemoveBlankSpace (&line, &sv);
 
-    numcells = stoi(sv.at (0));
+    numcells = stoi (sv.at (0));
 
     count = 0;
     while (count < 10 * numcells)
@@ -314,7 +318,7 @@ void ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
             return;
         }
 
-        std::getline(infile, line);
+        std::getline (infile, line);
         RemoveBlankSpace (&line, &sv);
 
         if (line == "$EndElements")
@@ -332,8 +336,8 @@ void ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
 
         depth_tag = 3 + stoi (sv.at (2));
 
-        for (ul_t i = ul_t(depth_tag); i < sv.size (); ++i)
-            C->AddPoint (mesh->GetPoint (stoi(sv.at (i)) - 1));
+        for (ul_t i = ul_t (depth_tag); i < sv.size (); ++i)
+            C->AddPoint (mesh->GetPoint (stoi (sv.at (i)) - 1));
 
         mesh->AddCell (C);
 
@@ -355,7 +359,7 @@ void ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
 
     if (!keep_original)
     {
-        err = system( ("rm " + filename).c_str ());
+        err = system (("rm " + filename).c_str ());
 
         if (err != 0)
             ERROR << "can not delete the msh file..." << ENDLINE;
@@ -370,12 +374,12 @@ void ParseMSH (Mesh* mesh, std::string filename, bool keep_original)
     return;
 }
 
-
-void Print (InputDatStruct* input)
+void
+Print (InputDatStruct * input)
 {
     INFOS << "dt    = " << input->dt << ENDLINE;
-    INFOS << "zeta_0  = " << input->zeta_0<< ENDLINE;
-    INFOS << "beta_0  = " << input->beta_0<< ENDLINE;
+    INFOS << "zeta_0  = " << input->zeta_0 << ENDLINE;
+    INFOS << "beta_0  = " << input->beta_0 << ENDLINE;
 
     INFOS << "file   = " << input->filename_msh << ENDLINE;
     INFOS << "xm    = " << input->grid_x_m << ENDLINE;
@@ -392,7 +396,6 @@ void Print (InputDatStruct* input)
     INFOS << "penalization_power = " << input->powpenalty << ENDLINE;
     INFOS << "colConcItem     = " << input->colConcItem << ENDLINE;
     INFOS << "synthetize     = " << input->synthetize << ENDLINE;
-
 
     for (ul_t i = 0; i < input->objects.size (); ++i)
     {
@@ -413,14 +416,16 @@ void Print (InputDatStruct* input)
     return;
 }
 
-void split (std::string* s, std::string* delimiter, std::vector<std::string>* out)
+void
+split (std::string * s, std::string * delimiter, std::vector<std::string> * out)
 {
-    ul_t pos_start = 0, pos_end, delim_len = delimiter->length();
+    ul_t        pos_start = 0, pos_end, delim_len = delimiter->length ();
     std::string token;
     out->clear ();
 
-    while ((pos_end = s->find (*delimiter, pos_start)) != std::string::npos) {
-        token = s->substr (pos_start, pos_end - pos_start);
+    while ((pos_end = s->find (*delimiter, pos_start)) != std::string::npos)
+    {
+        token     = s->substr (pos_start, pos_end - pos_start);
         pos_start = pos_end + delim_len;
         out->push_back (token);
     }
@@ -429,15 +434,17 @@ void split (std::string* s, std::string* delimiter, std::vector<std::string>* ou
     return;
 }
 
-void RemoveBlankSpace (std::string* s, std::vector<std::string>* out)
+void
+RemoveBlankSpace (std::string * s, std::vector<std::string> * out)
 {
-    std::istringstream iss(*s);
-    *out = {std::istream_iterator<std::string>{iss},      std::istream_iterator<std::string>{}};
+    std::istringstream iss (*s);
+    *out = {std::istream_iterator<std::string>{iss}, std::istream_iterator<std::string>{}};
 
     return;
 }
 
-bool CastToBool(std::string *s)
+bool
+CastToBool (std::string * s)
 {
     return (*s == "true" ? true : false);
 }

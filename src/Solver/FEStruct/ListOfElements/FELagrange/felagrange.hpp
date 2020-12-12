@@ -1,10 +1,10 @@
-/** @file felagrange.h */
+/** @file felagrange.hpp */
 
-#ifndef FELAGRANGE_H
-#define FELAGRANGE_H
+#ifndef SRC_SOLVER_FESTRUCT_LISTOFELEMENTS_FELAGRANGE_FELAGRANGE_HPP
+#define SRC_SOLVER_FESTRUCT_LISTOFELEMENTS_FELAGRANGE_FELAGRANGE_HPP
 
-#include <Enums/enums.h>
-#include <Solver/FEStruct/ListOfElements/PhysicalElements/physicalelements.h>
+#include "../../../../Enums/enums.hpp"
+#include "../PhysicalElements/physicalelements.hpp"
 
 /** @class FELagrange
  * \brief Defines a class for stuff.
@@ -26,50 +26,50 @@ public:
 
     /** @brief Generic local computation of the transposed inverse Jacobian matrix and of the determinant of the transformation from the reference element to the physical element.
    */
-    void LocalCompute (Point* atpoint, FELocalInfos* obj) override;
+    void LocalCompute (Point * atpoint, FELocalInfos * obj) override;
 
     /** @brief Transformation between the reference element and the physical element FELagrange<_name, _npts, _nddl>
    */
-    Point TransformRefToEle (Point *p) override;
+    Point TransformRefToEle (Point * p) override;
 
     /** @brief Transformation between the physical element and the reference element FELagrange<_name, _npts, _nddl>
    */
-    Point TransformEleToRef (Point* p) override;
+    Point TransformEleToRef (Point * p) override;
 
 protected:
     void Build ();
 
 private:
-    FELagrange (const FELagrange&) = delete;
-    FELagrange& operator= (const FELagrange&) = delete;
+    FELagrange (const FELagrange &) = delete;
+    FELagrange & operator= (const FELagrange &) = delete;
 };
 
-
 template <PHYSICAL_CELL_TYPE t_name, int t_npts, int t_nddl>
-FELagrange<t_name, t_npts, t_nddl>::FELagrange () :
-    FEPhysicalElement<t_name, t_npts> ()
+FELagrange<t_name, t_npts, t_nddl>::FELagrange () : FEPhysicalElement<t_name, t_npts> ()
 {
     Build ();
 }
 
 template <PHYSICAL_CELL_TYPE t_name, int t_npts, int t_nddl>
-Point FELagrange<t_name, t_npts, t_nddl>::TransformRefToEle (Point* p)
+Point
+FELagrange<t_name, t_npts, t_nddl>::TransformRefToEle (Point * p)
 {
     Point out = {0., 0., 0.};
 
-    if (this->m_target->GetPoints()->size() != this->m_coor.size())
+    if (this->m_target->GetPoints ()->size () != this->m_coor.size ())
     {
-        ERROR << to_string(this->m_type_vtk) << " : Wrong Cell in 'TransformRefToEle' (target : " << this->m_target->GetPoints()->size() << " FeObject : " << this->m_coor.size() << " )" << ENDLINE;
+        ERROR << to_string (this->m_type_vtk) << " : Wrong Cell in 'TransformRefToEle' (target : " << this->m_target->GetPoints ()->size () << " FeObject : " << this->m_coor.size () << " )" << ENDLINE;
         return out;
     }
 
-    for (ul_t i = 0; i < this->m_coor.size(); ++i)
-        out = out + this->m_phi[i](p) * *this->m_target->GetPoints ()->at (i);
+    for (ul_t i = 0; i < this->m_coor.size (); ++i)
+        out = out + this->m_phi [i](p) * *this->m_target->GetPoints ()->at (i);
     return out;
 }
 
 template <PHYSICAL_CELL_TYPE t_name, int t_npts, int t_nddl>
-Point FELagrange<t_name, t_npts, t_nddl>::TransformEleToRef (Point *p)
+Point
+FELagrange<t_name, t_npts, t_nddl>::TransformEleToRef (Point * p)
 {
     // We try to solve F(t) = T(t) - p = 0
     // with jac_{F}(t) = Jac_{T}(t)
@@ -77,23 +77,23 @@ Point FELagrange<t_name, t_npts, t_nddl>::TransformEleToRef (Point *p)
     // Newton method
     // X_{n+1} = X_{n} - JacInvT(X_{n}) * F(X_N)
 
-    real_t eps = 1e-10;
-    real_t err = 100.;
-    int maxiter = 100;
-    int it = 0;
+    real_t eps     = 1e-10;
+    real_t err     = 100.;
+    int    maxiter = 100;
+    int    it      = 0;
 
-    Point x_n = *this->m_coor[0];
-    Point x_np1 = x_n + Point(1., 1., 1.);
-    Matrix3x3_eig Jac, JacInvT;
-    Point F;
+    Point     x_n   = *this->m_coor [0];
+    Point     x_np1 = x_n + Point (1., 1., 1.);
+    Matrix3x3 Jac, JacInvT;
+    Point     F;
 
     for (it = 0; it < maxiter; ++it)
     {
         // Jacobian matrix
         Jac.setZero ();
-        for (ul_t i = 0; i < this->m_coor.size(); ++i)
+        for (ul_t i = 0; i < this->m_coor.size (); ++i)
         {
-            Jac += OuterProduct (*this->m_target->GetPoints ()->at (i), this->m_grad_phi[i](&x_n));
+            Jac += OuterProduct (*this->m_target->GetPoints ()->at (i), this->m_grad_phi [i](&x_n));
         }
 
         // Jacobian inverse transpose
@@ -114,30 +114,31 @@ Point FELagrange<t_name, t_npts, t_nddl>::TransformEleToRef (Point *p)
 }
 
 template <PHYSICAL_CELL_TYPE t_name, int t_npts, int t_nddl>
-void FELagrange<t_name, t_npts, t_nddl>::LocalCompute (Point* atpoint, FELocalInfos* obj)
+void
+FELagrange<t_name, t_npts, t_nddl>::LocalCompute (Point * atpoint, FELocalInfos * obj)
 {
     // Init
     obj->JacInvT.setZero ();
     obj->detJac = 0.0;
 
-    if (this->m_target->GetPoints()->size() != this->m_coor.size())
+    if (this->m_target->GetPoints ()->size () != this->m_coor.size ())
     {
-        ERROR << to_string(this->m_type_vtk) << " : internal error in local compute (target : " << this->m_target->GetPoints()->size() << " FeObject : " << this->m_coor.size() << " )" << ENDLINE;
+        ERROR << to_string (this->m_type_vtk) << " : internal error in local compute (target : " << this->m_target->GetPoints ()->size () << " FeObject : " << this->m_coor.size () << " )" << ENDLINE;
         return;
     }
 
     // Jacobian matrix
     obj->Jac.setZero ();
-    for (ul_t i = 0; i < this->m_coor.size(); ++i)
+    for (ul_t i = 0; i < this->m_coor.size (); ++i)
     {
-        obj->Jac += OuterProduct (*this->m_target->GetPoints ()->at (i), this->m_grad_phi [i] (atpoint));
+        obj->Jac += OuterProduct (*this->m_target->GetPoints ()->at (i), this->m_grad_phi [i](atpoint));
     }
 
     // Jacobian inverse transpose
     obj->JacInvT = obj->Jac.completeOrthogonalDecomposition ().pseudoInverse ().transpose ();
 
     // Det of jacobian matrix
-    Eigen::JacobiSVD<Matrix3x3_eig> svd(obj->Jac);
+    Eigen::JacobiSVD<Matrix3x3> svd (obj->Jac);
     obj->detJac = 1.;
     for (int i = 0; i < 3; ++i)
     {
@@ -148,22 +149,22 @@ void FELagrange<t_name, t_npts, t_nddl>::LocalCompute (Point* atpoint, FELocalIn
     obj->detJac = std::abs (obj->detJac);
 
     // Normal vectors on edges
-    obj->normalEdge_ref = {0., 0., 0.};
+    obj->normalEdge_ref  = {0., 0., 0.};
     obj->tangentEdge_ref = {0., 0., 0.};
 
-    for (ul_t idedge = 0; idedge < this->m_edges.size(); idedge++)
+    for (ul_t idedge = 0; idedge < this->m_edges.size (); idedge++)
     {
-        Edge* e = this->m_edges [idedge];
+        Edge * e        = this->m_edges [idedge];
         real_t prod_phi = 1.;
 
-        for (Point* p : *e->GetPoints ())
-            prod_phi *= this->m_phi [static_cast<ul_t>(p->GetGlobalIndex ())] (atpoint);
+        for (Point * p : *e->GetPoints ())
+            prod_phi *= this->m_phi [static_cast<ul_t> (p->GetGlobalIndex ())](atpoint);
 
-        obj->normalEdge_ref += std::abs(prod_phi) * *this->m_edges_normals [idedge];
-        obj->tangentEdge_ref += std::abs(prod_phi) * *this->m_edges_tangents [idedge];
+        obj->normalEdge_ref += std::abs (prod_phi) * *this->m_edges_normals [idedge];
+        obj->tangentEdge_ref += std::abs (prod_phi) * *this->m_edges_tangents [idedge];
     }
 
-    obj->Jac_cmp = obj->Jac;
+    obj->Jac_cmp     = obj->Jac;
     obj->JacInvT_cmp = obj->JacInvT;
 
     for (int i = 0; i < 3; i++)
@@ -197,7 +198,7 @@ void FELagrange<t_name, t_npts, t_nddl>::LocalCompute (Point* atpoint, FELocalIn
  * \implements FELagrange
  * \implements Emp0N
  */
-typedef FELagrange<PHYSICAL_CELL_TYPE::EMPTY, 0, 0>    Emp0N0DDL;
+typedef FELagrange<PHYSICAL_CELL_TYPE::EMPTY, 0, 0> Emp0N0DDL;
 
 /**
  * \brief Ver1N1DDL Lagrange Element
@@ -205,7 +206,7 @@ typedef FELagrange<PHYSICAL_CELL_TYPE::EMPTY, 0, 0>    Emp0N0DDL;
  * \implements FELagrange
  * \implements Ver1N
  */
-typedef FELagrange<PHYSICAL_CELL_TYPE::VERTEX, 1, 1>    Ver1N1DDL;
+typedef FELagrange<PHYSICAL_CELL_TYPE::VERTEX, 1, 1> Ver1N1DDL;
 
 /**
  * \brief Lin2N2DDL Lagrange Element
@@ -213,7 +214,7 @@ typedef FELagrange<PHYSICAL_CELL_TYPE::VERTEX, 1, 1>    Ver1N1DDL;
  * \implements FELagrange
  * \implements Lin2N
  */
-typedef FELagrange<PHYSICAL_CELL_TYPE::LINE, 2, 2>     Lin2N2DDL;
+typedef FELagrange<PHYSICAL_CELL_TYPE::LINE, 2, 2> Lin2N2DDL;
 
 /**
  * \brief Lin3N3DDL Lagrange Element
@@ -221,7 +222,7 @@ typedef FELagrange<PHYSICAL_CELL_TYPE::LINE, 2, 2>     Lin2N2DDL;
  * \implements FELagrange
  * \implements Lin3N
  */
-typedef FELagrange<PHYSICAL_CELL_TYPE::LINE, 3, 3>     Lin3N3DDL;
+typedef FELagrange<PHYSICAL_CELL_TYPE::LINE, 3, 3> Lin3N3DDL;
 
 /**
  * \brief Tri3N3DDL Lagrange Element
@@ -229,7 +230,7 @@ typedef FELagrange<PHYSICAL_CELL_TYPE::LINE, 3, 3>     Lin3N3DDL;
  * \implements FELagrange
  * \implements Tri3N
  */
-typedef FELagrange<PHYSICAL_CELL_TYPE::TRIANGLE, 3, 3>   Tri3N3DDL;
+typedef FELagrange<PHYSICAL_CELL_TYPE::TRIANGLE, 3, 3> Tri3N3DDL;
 
 /**
  * \brief Tri6N6DDL Lagrange Element
@@ -237,7 +238,7 @@ typedef FELagrange<PHYSICAL_CELL_TYPE::TRIANGLE, 3, 3>   Tri3N3DDL;
  * \implements FELagrange
  * \implements Tri6N
  */
-typedef FELagrange<PHYSICAL_CELL_TYPE::TRIANGLE, 6, 6>   Tri6N6DDL;
+typedef FELagrange<PHYSICAL_CELL_TYPE::TRIANGLE, 6, 6> Tri6N6DDL;
 
 /**
  * \brief Quad4N4DDL Lagrange Element
@@ -245,7 +246,7 @@ typedef FELagrange<PHYSICAL_CELL_TYPE::TRIANGLE, 6, 6>   Tri6N6DDL;
  * \implements FELagrange
  * \implements Quad4N
  */
-typedef FELagrange<PHYSICAL_CELL_TYPE::QUADRANGLE, 4, 4>  Quad4N4DDL;
+typedef FELagrange<PHYSICAL_CELL_TYPE::QUADRANGLE, 4, 4> Quad4N4DDL;
 
 /**
  * \brief Quad8N8DDL Lagrange Element
@@ -253,7 +254,7 @@ typedef FELagrange<PHYSICAL_CELL_TYPE::QUADRANGLE, 4, 4>  Quad4N4DDL;
  * \implements FELagrange
  * \implements Quad8N
  */
-typedef FELagrange<PHYSICAL_CELL_TYPE::QUADRANGLE, 8, 8>  Quad8N8DDL;
+typedef FELagrange<PHYSICAL_CELL_TYPE::QUADRANGLE, 8, 8> Quad8N8DDL;
 
 /**
  * \brief Quad9N9DDL Lagrange Element
@@ -261,7 +262,7 @@ typedef FELagrange<PHYSICAL_CELL_TYPE::QUADRANGLE, 8, 8>  Quad8N8DDL;
  * \implements FELagrange
  * \implements Quad9N
  */
-typedef FELagrange<PHYSICAL_CELL_TYPE::QUADRANGLE, 9, 9>  Quad9N9DDL;
+typedef FELagrange<PHYSICAL_CELL_TYPE::QUADRANGLE, 9, 9> Quad9N9DDL;
 
 /**
  * \brief Tet4N4DDL Lagrange Element
@@ -272,4 +273,4 @@ typedef FELagrange<PHYSICAL_CELL_TYPE::QUADRANGLE, 9, 9>  Quad9N9DDL;
 typedef FELagrange<PHYSICAL_CELL_TYPE::TETRAHEDRON, 4, 4> Tet4N4DDL;
 //}
 
-#endif // FELAGRANGE_H
+#endif /* SRC_SOLVER_FESTRUCT_LISTOFELEMENTS_FELAGRANGE_FELAGRANGE_HPP */

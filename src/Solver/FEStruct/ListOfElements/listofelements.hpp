@@ -1,8 +1,8 @@
-#ifndef LISTOFELEMENTS_H
-#define LISTOFELEMENTS_H
+#ifndef SRC_SOLVER_FESTRUCT_LISTOFELEMENTS_LISTOFELEMENTS_HPP
+#define SRC_SOLVER_FESTRUCT_LISTOFELEMENTS_LISTOFELEMENTS_HPP
 
-#include <Solver/FEStruct/ListOfElements/PhysicalElements/physicalelements.h>
-#include <Solver/FEStruct/ListOfElements/FELagrange/felagrange.h>
-#include <Solver/FEStruct/ListOfElements/FEHermite/fehermite.h>
+#include "FEHermite/fehermite.hpp"
+#include "FELagrange/felagrange.hpp"
+#include "PhysicalElements/physicalelements.hpp"
 
-#endif // LISTOFELEMENTS_H
+#endif /* SRC_SOLVER_FESTRUCT_LISTOFELEMENTS_LISTOFELEMENTS_HPP */

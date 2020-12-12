@@ -1,27 +1,22 @@
-#ifndef SBM_H
-#define SBM_H
+#ifndef SRC_ALGORITHMS_ALGO4SBM_ALGO4SBM_HPP
+#define SRC_ALGORITHMS_ALGO4SBM_ALGO4SBM_HPP
 
-#include <ProgDef/proddef.h>
-#include <IO/parsers.h>
-#include <Enums/enums.h>
+#include "../../solitonheader.hpp"
 
-std::string ToString (INTER tag);
-std::ostream& operator<< (std::ostream& out, INTER tag);
-
+enum class INTER : ul_t;
 class Mesh;
 class Point;
 
-void AddLevelSetBetween (Mesh* mesh, Mesh* object);
+void AddLevelSetBetween (Mesh * mesh, Mesh * object);
 
-void TagCellsFromLevelSet (Mesh* mesh, Mesh* object);
+void TagCellsFromLevelSet (Mesh * mesh, Mesh * object);
 
-void TagEdgesFromTagCells (Mesh* mesh, Mesh* object);
+void TagEdgesFromTagCells (Mesh * mesh, Mesh * object);
 
+[[deprecated ("Use BuildDisplacementVectorsBounds() instead.")]] void BuildDisplacementVectorsBounds2 (Mesh * mesh, Mesh * object);
 
-[[deprecated("Use BuildDisplacementVectorsBounds() instead.")]]
-void BuildDisplacementVectorsBounds2 (Mesh* mesh, Mesh* object);
-void BuildDisplacementVectorsBounds (Mesh* mesh, Mesh* object);
+void BuildDisplacementVectorsBounds (Mesh * mesh, Mesh * object);
 
-int GetDisplacementVectorAtPoint (Point* atpoint, Mesh* targetToMap, Point* d);
+int GetDisplacementVectorAtPoint (Point * atpoint, Mesh * targetToMap, Point * d);
 
-#endif // SBM_H
+#endif /* SRC_ALGORITHMS_ALGO4SBM_ALGO4SBM_HPP */

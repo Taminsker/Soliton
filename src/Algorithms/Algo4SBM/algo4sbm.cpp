@@ -1,32 +1,8 @@
-#include <Algorithms/Algo4SBM/algo4sbm.h>
-#include <Core/core.h>
-#include <IO/io.h>
-#include <Solver/solver.h>
+#include "algo4sbm.hpp"
 
-std::string
-ToString (INTER tag)
-{
-    switch (tag)
-    {
-        case INTER::UNKNOWN:
-            return "UNKNOWN";
-        case INTER::IN:
-            return "IN";
-        case INTER::OUT:
-            return "OUT";
-        case INTER::MIXED:
-            return "MIXED";
-    }
-
-    return "UNKNOWN";
-}
-
-std::ostream &
-operator<< (std::ostream & out, INTER tag)
-{
-    out << ToString (tag);
-    return out;
-}
+#include "../../Core/core.hpp"
+#include "../../Enums/Enums4Tags/tags_enums.hpp"  // tag INTER
+#include "../../Solver/FEStruct/festruct.hpp"
 
 void
 BuildDisplacementVectorsBounds2 (Mesh * mesh, Mesh * object)

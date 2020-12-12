@@ -1,33 +1,35 @@
-#ifndef ENUMCLASS_H
-#define ENUMCLASS_H
-
+#ifndef SRC_ENUMS_ENUMCLASS_HPP
+#define SRC_ENUMS_ENUMCLASS_HPP
 
 /**
  * from https://stackoverflow.com/a/8498694
  */
-template<typename T>
+template <typename T>
 class EnumClass
 {
 public:
     class Iterator
     {
     public:
-        Iterator (int value) :
-            m_value( value )
-        {}
-
-        T operator*() const
+        Iterator (int value) : m_value (value)
         {
-            return static_cast<T>(m_value);
         }
 
-        void operator++()
+        T
+        operator* () const
+        {
+            return static_cast<T> (m_value);
+        }
+
+        void
+        operator++ ()
         {
             ++m_value;
             return;
         }
 
-        bool operator!=(Iterator it)
+        bool
+        operator!= (Iterator it)
         {
             return m_value != it.m_value;
         }
@@ -35,19 +37,18 @@ public:
     private:
         int m_value;
     };
-
 };
 
 template <typename T>
-typename EnumClass <T>::Iterator begin (EnumClass<T>)
+typename EnumClass<T>::Iterator begin (EnumClass<T>)
 {
-    return typename EnumClass <T>::Iterator (static_cast<int>(T::FIRST));
+    return typename EnumClass<T>::Iterator (static_cast<int> (T::FIRST));
 }
 
 template <typename T>
-typename EnumClass <T>::Iterator end (EnumClass<T>)
+typename EnumClass<T>::Iterator end (EnumClass<T>)
 {
-    return typename EnumClass <T>::Iterator (static_cast<int>(T::LAST) + 1);
+    return typename EnumClass<T>::Iterator (static_cast<int> (T::LAST) + 1);
 }
 
-#endif // ENUMCLASS_H
+#endif /* SRC_ENUMS_ENUMCLASS_HPP */

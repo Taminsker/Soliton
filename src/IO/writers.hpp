@@ -1,13 +1,13 @@
-#ifndef WRITERS_H
-#define WRITERS_H
+#ifndef SRC_IO_WRITERS_HPP
+#define SRC_IO_WRITERS_HPP
 
 #include <string>
-#include <ProgDef/proddef.h>
+
+#include "../solitonheader.hpp"
 
 class Mesh;
 
-void WriteVTKWithEdges (Mesh* mesh, std::string add2basename = "", bool view = true);
-void WriteVTKWithCells (Mesh* mesh, std::string add2basename = "", bool view = true);
+void WriteVTKWithEdges (Mesh * mesh, std::string add2basename = "", bool view = true);
+void WriteVTKWithCells (Mesh * mesh, std::string add2basename = "", bool view = true);
 
-
-#endif // WRITERS_H
+#endif /* SRC_IO_WRITERS_HPP */

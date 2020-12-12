@@ -1,4 +1,4 @@
-#include "routines.h"
+#include "routines.hpp"
 
 void
 SolitonRoutines::PrintMacros ()
@@ -159,7 +159,7 @@ SolitonRoutines::Generation (MeshStorage * store, InputDatStruct * inputdatfile)
 }
 
 void
-SolitonRoutines::ComputeGradGrad (Mesh * mesh, std::vector<Triplet_eig> * listTriplets)
+SolitonRoutines::ComputeGradGrad (Mesh * mesh, std::vector<Triplet> * listTriplets)
 {
     // * <grad(phi_i), grad(phi_j)>
     FEStore   festore;
@@ -216,7 +216,7 @@ SolitonRoutines::ComputeGradGrad (Mesh * mesh, std::vector<Triplet_eig> * listTr
 }
 
 void
-SolitonRoutines::ComputeSecondMember (Mesh * mesh, PlainVector_eig * vec, real_t (*f) (Point, real_t))
+SolitonRoutines::ComputeSecondMember (Mesh * mesh, DenseVector * vec, real_t (*f) (Point, real_t))
 {
     // * <f, phi_j>
 
@@ -263,7 +263,7 @@ SolitonRoutines::ComputeSecondMember (Mesh * mesh, PlainVector_eig * vec, real_t
 }
 
 void
-SolitonRoutines::ComputeNeumannNoSBM (Mesh * mesh, std::vector<Triplet_eig> * listTriplets, PlainVector_eig * F, real_t (*f) (Point, real_t), PHYS tagToApply, real_t, real_t t)
+SolitonRoutines::ComputeNeumannNoSBM (Mesh * mesh, std::vector<Triplet> * listTriplets, DenseVector * F, real_t (*f) (Point, real_t), PHYS tagToApply, real_t, real_t t)
 {
     // * +<phi_j, grad(u).n - t_n>
 
@@ -342,11 +342,11 @@ SolitonRoutines::ComputeNeumannNoSBM (Mesh * mesh, std::vector<Triplet_eig> * li
                     FEBase *                FEElement4Edge = festore.GetElementFor (edgeOnCellRef);
                     QuadStore::QuadObject * quad4Edge      = quadstore.Get (FEElement4Edge);
 
-                    real_t        coeff1, coeff2;
-                    Point         v1, v2;
-                    real_t        value1, value2;
-                    real_t        pdetJac;
-                    Matrix3x3_eig pJacInvT;
+                    real_t    coeff1, coeff2;
+                    Point     v1, v2;
+                    real_t    value1, value2;
+                    real_t    pdetJac;
+                    Matrix3x3 pJacInvT;
 
                     coeff1 = 0.;
                     coeff2 = 0.;
@@ -395,7 +395,7 @@ SolitonRoutines::ComputeNeumannNoSBM (Mesh * mesh, std::vector<Triplet_eig> * li
 }
 
 void
-SolitonRoutines::ComputeDirichletNoSBM (Mesh * mesh, std::vector<Triplet_eig> * listTriplets, PlainVector_eig * F, real_t (*f) (Point, real_t), PHYS tagToApply, real_t hsz, real_t t)
+SolitonRoutines::ComputeDirichletNoSBM (Mesh * mesh, std::vector<Triplet> * listTriplets, DenseVector * F, real_t (*f) (Point, real_t), PHYS tagToApply, real_t hsz, real_t t)
 {
     // * -<phi_j, grad(u).n>
     // * - <grad(phi_j).n, u - u_D>
@@ -413,7 +413,7 @@ SolitonRoutines::ComputeDirichletNoSBM (Mesh * mesh, std::vector<Triplet_eig> * 
     QuadStore quadstore;
 
     real_t max_aij = listTriplets->front ().value ();
-    for (Triplet_eig triplet : *listTriplets)
+    for (Triplet triplet : *listTriplets)
         max_aij = std::max (max_aij, triplet.value ());
 
     real_t alpha = 20 / std::abs (hsz);
@@ -472,12 +472,12 @@ SolitonRoutines::ComputeDirichletNoSBM (Mesh * mesh, std::vector<Triplet_eig> * 
                     FEBase *                FEElement4Edge = festore.GetElementFor (edgeOnCellRef);
                     QuadStore::QuadObject * quad4Edge      = quadstore.Get (FEElement4Edge);
 
-                    real_t        coeff1, coeff2, ck;
-                    Point         v1, v2;
-                    Matrix3x3_eig pJacInvT;
-                    real_t        phi_i_eval, phi_j_eval;
-                    Point         grad_phi_i_eval, grad_phi_j_eval, normal_eval;
-                    real_t        u_D;
+                    real_t    coeff1, coeff2, ck;
+                    Point     v1, v2;
+                    Matrix3x3 pJacInvT;
+                    real_t    phi_i_eval, phi_j_eval;
+                    Point     grad_phi_i_eval, grad_phi_j_eval, normal_eval;
+                    real_t    u_D;
 
                     coeff1          = 0.;
                     coeff2          = 0.;
@@ -562,7 +562,7 @@ SolitonRoutines::ComputeDirichletNoSBM (Mesh * mesh, std::vector<Triplet_eig> * 
 // QuadStore quadstore;
 
 // real_t max_aij = listTriplets->front ().value ();
-// for (Triplet_eig triplet : *listTriplets)
+// for (Triplet triplet : *listTriplets)
 //  max_aij = std::max (max_aij, triplet.value ());
 
 // real_t alpha = 20 / std::abs(hsz);
@@ -717,7 +717,7 @@ SolitonRoutines::ComputeDirichletNoSBM (Mesh * mesh, std::vector<Triplet_eig> * 
 //}
 
 void
-SolitonRoutines::PostProcess (MeshStorage * store, std::vector<SolitonFEContainer *> * containers, std::vector<PlainVector_eig *> * sols, std::function<real_t (Point, real_t)> fun)
+SolitonRoutines::PostProcess (MeshStorage * store, std::vector<SolitonFEContainer *> * containers, std::vector<DenseVector *> * sols, std::function<real_t (Point, real_t)> fun)
 {
     std::vector<INTER> list_tags_inter = {};
     for (SolitonFEContainer * cont : *containers)
@@ -733,9 +733,9 @@ SolitonRoutines::PostProcess (MeshStorage * store, std::vector<SolitonFEContaine
     {
         STATUS << "postprocess on solver with tag " << COLOR_RED << to_string (list_tags_inter.at (idvec)) << ENDLINE;
 
-        PlainVector_eig * solnum = sols->at (idvec);
+        DenseVector * solnum = sols->at (idvec);
 
-        PlainVector_eig sol_ana;
+        DenseVector sol_ana;
         FunToVec (&sol_ana, store->GetMainMesh (), fun);
 
         if (list_tags_inter.at (idvec) != INTER::DEFAULT)
@@ -779,11 +779,11 @@ SolitonRoutines::PostProcess (MeshStorage * store, std::vector<SolitonFEContaine
         solstd = PlainVector2Vector (&sol_ana);
         store->GetMainMesh ()->GetPointsData ()->Add<real_t> ("sol_ana" + tagsolver, solstd);
 
-        PlainVector_eig erroabs = GetErrorAbs (store->GetMainMesh (), &sol_ana, solnum);
-        solstd                  = PlainVector2Vector (&erroabs);
+        DenseVector erroabs = GetErrorAbs (store->GetMainMesh (), &sol_ana, solnum);
+        solstd              = PlainVector2Vector (&erroabs);
         store->GetMainMesh ()->GetPointsData ()->Add<real_t> ("err_abs" + tagsolver, solstd);
 
-        //  PlainVector_eig errorelapercent = GetErrorRelaPercent (store->GetMainMesh (), &sol_ana, solnum);
+        //  DenseVector errorelapercent = GetErrorRelaPercent (store->GetMainMesh (), &sol_ana, solnum);
         //  solstd = PlainVector2Vector (&errorelapercent);
         //  store->GetMainMesh ()->GetPointsData ()->Add<real_t> ("err_rela_percent" + tagsolver, solstd);
 

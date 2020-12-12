@@ -3,57 +3,61 @@
 #endif
 
 #include <boost/test/unit_test.hpp>
-#include <Solver/solver.h>
-#include <Algorithms/Math/math.h>
-#include <Core/core.h>
 
-real_t fun1d (Point p)
+#include "Algorithms/Math/math.hpp"
+#include "Core/core.hpp"
+#include "Solver/solver.hpp"
+
+real_t
+fun1d (Point p)
 {
     return p.x;
 }
 
-real_t fun2d (Point p)
+real_t
+fun2d (Point p)
 {
     return p.x + p.y;
 }
 
-Point grad2d_1 (Point p)
+Point
+grad2d_1 (Point p)
 {
     return p;
 }
 
 Point grad2d_2 (Point)
 {
-    return Point(1, 1, 1);
+    return Point (1, 1, 1);
 }
-BOOST_AUTO_TEST_SUITE(Quadratures)
+BOOST_AUTO_TEST_SUITE (Quadratures)
 
-BOOST_AUTO_TEST_CASE(quadrature_1d)
+BOOST_AUTO_TEST_CASE (quadrature_1d)
 {
-    BOOST_TEST_MESSAGE("-- Tests quadrature 1D");
+    BOOST_TEST_MESSAGE ("-- Tests quadrature 1D");
     {
-        Point p0(0, 0, 0);
-        Point p1(4.5, 0, 0);
-        Cell cell;
+        Point p0 (0, 0, 0);
+        Point p1 (4.5, 0, 0);
+        Cell  cell;
         cell.AddPoint (&p0);
         cell.AddPoint (&p1);
         cell.SetType (GMSH_CELL_TYPE::GMSH_2_NODE_LINE);
 
-        FEStore festore;
-        FEBase* obj = festore.GetElementFor (&cell);
+        FEStore  festore;
+        FEBase * obj = festore.GetElementFor (&cell);
         obj->CastForCell (&cell);
 
         QuadStore quadstore;
 
-        QuadStore::QuadObject* quadobj = quadstore.Get (obj);
-        ul_t npts = quadobj->npts;
+        QuadStore::QuadObject * quadobj = quadstore.Get (obj);
+        ul_t                    npts    = quadobj->npts;
 
-        real_t value = 0.;
+        real_t       value = 0.;
         FELocalInfos loc;
 
         for (ul_t k = 0; k < npts; ++k)
         {
-            Point pk = quadobj->pts [k];
+            Point  pk = quadobj->pts [k];
             real_t wk = quadobj->w [k];
 
             Point intp = obj->TransformRefToEle (&pk);
@@ -61,14 +65,14 @@ BOOST_AUTO_TEST_CASE(quadrature_1d)
 
             //      INFOS << loc.detJac << ENDLINE;
 
-            value += loc.detJac * wk * fun1d(intp);
+            value += loc.detJac * wk * fun1d (intp);
         }
 
         real_t realvalue = 0.5 * (p1.x * p1.x - p0.x * p0.x);
 
         //    std::cout << realvalue << std::endl;
         //    std::cout << value << std::endl;
-        BOOST_CHECK_EQUAL (std::abs(value - realvalue) < 1e-3, true);
+        BOOST_CHECK_EQUAL (std::abs (value - realvalue) < 1e-3, true);
     }
 
     //  {
@@ -109,33 +113,30 @@ BOOST_AUTO_TEST_CASE(quadrature_1d)
     //    real_t realvalue = 0.5 * (p1.x * p1.x - p0.x * p0.x);
     ////    real_t realvalue = p1.x - p0.x;
 
-
     //    BOOST_CHECK_EQUAL (std::abs(value - realvalue) < 1e-3, true);
     //  }
 }
 
-
-
-BOOST_AUTO_TEST_CASE(quadrature_2d)
+BOOST_AUTO_TEST_CASE (quadrature_2d)
 {
-    BOOST_TEST_MESSAGE("-- Tests quadrature 2D");
+    BOOST_TEST_MESSAGE ("-- Tests quadrature 2D");
 
-    Point p0(0, 0, 0);
-    Point p1(5, 0, 0);
-    Point p2(0, 3, 0);
-    Cell cell;
+    Point p0 (0, 0, 0);
+    Point p1 (5, 0, 0);
+    Point p2 (0, 3, 0);
+    Cell  cell;
     cell.AddPoint (&p0);
     cell.AddPoint (&p1);
     cell.AddPoint (&p2);
     cell.SetType (GMSH_CELL_TYPE::GMSH_3_NODE_TRIANGLE);
 
-    FEStore festore;
-    FEBase* obj = festore.GetElementFor (&cell);
+    FEStore  festore;
+    FEBase * obj = festore.GetElementFor (&cell);
     obj->CastForCell (&cell);
 
-    QuadStore quadstore;
-    QuadStore::QuadObject* quadobj = quadstore.Get (obj);
-    ul_t npts = quadobj->npts;
+    QuadStore               quadstore;
+    QuadStore::QuadObject * quadobj = quadstore.Get (obj);
+    ul_t                    npts    = quadobj->npts;
 
     //  INFOS << "quadobj : type " << quadobj->type << ENDLINE;
     //  INFOS << "quadobj : npts " << quadobj->npts << ENDLINE;
@@ -147,28 +148,28 @@ BOOST_AUTO_TEST_CASE(quadrature_2d)
     //  for (ul_t i = 0; i < quadobj->npts; ++i)
     //    std::cout << "$ " << quadobj->pts [i] << ENDLINE;
 
-    std::vector<Triplet_eig> triplet;
+    std::vector<Triplet> triplet;
     triplet.push_back ({0, 0, 1});
     triplet.push_back ({0, 0, 1});
     triplet.push_back ({0, 0, 0.5});
-    Eigen::SparseMatrix<real_t> m(3, 3);
-    m.setFromTriplets(triplet.begin(), triplet.end());
+    Eigen::SparseMatrix<real_t> m (3, 3);
+    m.setFromTriplets (triplet.begin (), triplet.end ());
 
-    real_t value1 = 0.;
-    real_t value2 = 0.;
-    FELocalInfos loc;
-    std::function<Point(Point*)> gradphi_0 = obj->GetGradPhi (0);
+    real_t                         value1 = 0.;
+    real_t                         value2 = 0.;
+    FELocalInfos                   loc;
+    std::function<Point (Point *)> gradphi_0 = obj->GetGradPhi (0);
 
     for (ul_t k = 0; k < npts; ++k)
     {
-        Point pk = quadobj->pts [k];
-        real_t wk = quadobj->w [k];
-        Point intp = obj->TransformRefToEle (&pk);
+        Point  pk   = quadobj->pts [k];
+        real_t wk   = quadobj->w [k];
+        Point  intp = obj->TransformRefToEle (&pk);
         obj->LocalCompute (&pk, &loc);
 
-        value1 += loc.detJac * wk * fun2d(intp);
+        value1 += loc.detJac * wk * fun2d (intp);
 
-        value2 += loc.detJac * wk * ((loc.JacInvT * gradphi_0(&pk)) | (loc.JacInvT * gradphi_0(&pk)));
+        value2 += loc.detJac * wk * ((loc.JacInvT * gradphi_0 (&pk)) | (loc.JacInvT * gradphi_0 (&pk)));
     }
 
     real_t realvalue = 20.;
@@ -176,12 +177,8 @@ BOOST_AUTO_TEST_CASE(quadrature_2d)
     //  INFOS << "value1 = " << value1 << ENDLINE;
     //  INFOS << "value2 = " << value2 << ENDLINE;
 
-    BOOST_CHECK_EQUAL (std::abs(value1 - realvalue) < 1e-10, true);
+    BOOST_CHECK_EQUAL (std::abs (value1 - realvalue) < 1e-10, true);
     //  BOOST_CHECK_EQUAL (std::abs(value2 - realvalue) < 1e-10, true);
-
-
-
-
 }
 
-BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_SUITE_END ()

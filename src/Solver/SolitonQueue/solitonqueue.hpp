@@ -1,23 +1,24 @@
-#ifndef SUPERQUEUE_H
-#define SUPERQUEUE_H
+#ifndef SRC_SOLVER_SOLITONQUEUE_SOLITONQUEUE_HPP
+#define SRC_SOLVER_SOLITONQUEUE_SOLITONQUEUE_HPP
 
-#include <vector>
 #include <deque>
-#include <Algorithms/Math/math.h>
-#include <Core/core.h>
+#include <vector>
+
+#include "../../Algorithms/Math/math.hpp"
+#include "../../Core/core.hpp"
 
 class SolitonQueue
 {
 public:
-    SolitonQueue (Mesh **mesh);
+    SolitonQueue (Mesh ** mesh);
     ~SolitonQueue ();
-    PlainVector_eig *GetNumber(int num);
-    void New (PlainVector_eig& vec);
+    DenseVector * GetNumber (int num);
+    void          New (DenseVector & vec);
 
 protected:
-    Mesh** m_mesh;
-    std::deque<PlainVector_eig*> m_list;
-    void CutTheEnd ();
+    Mesh **                   m_mesh;
+    std::deque<DenseVector *> m_list;
+    void                      CutTheEnd ();
 };
 
-#endif // SUPERQUEUE_H
+#endif /* SRC_SOLVER_SOLITONQUEUE_SOLITONQUEUE_HPP */

@@ -1,14 +1,15 @@
-#include <Solver/FEStruct/ListOfElements/PhysicalElements/physicalelements.h>
+#include "physicalelements.hpp"
 
 /** @brief Constructor of FEPhysicalElement : line, 2 points.
  * @relates Lin2N
  */
-template<>
-void Lin2N::Build ()
+template <>
+void
+Lin2N::Build ()
 {
     m_type_physical = PHYSICAL_CELL_TYPE::LINE;
-    m_type_vtk = VTK_CELL_TYPE::VTK_LINE;
-    m_volref = 2.;
+    m_type_vtk      = VTK_CELL_TYPE::VTK_LINE;
+    m_volref        = 2.;
 
     // Points
     AddPointDefinition (-1., 0., 0.);

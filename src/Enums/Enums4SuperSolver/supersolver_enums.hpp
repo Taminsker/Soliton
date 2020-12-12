@@ -1,9 +1,9 @@
-#ifndef SUPERSOLVER_ENUMS_H
-#define SUPERSOLVER_ENUMS_H
+#ifndef SRC_ENUMS_ENUMS4SUPERSOLVER_SUPERSOLVER_ENUMS_HPP
+#define SRC_ENUMS_ENUMS4SUPERSOLVER_SUPERSOLVER_ENUMS_HPP
 
-#include "../common_head.h"
+#include "../common_head.hpp"
 
-enum class SCH_T
+enum class SCH_T : ul_t
 {
     NO_TIME = 0x0,
     EULER_IMPLICIT,
@@ -11,12 +11,12 @@ enum class SCH_T
     TVD_RK_2,
     TVD_RK_4,
     NEWMARK_SCHEME,
-    FIRST = NO_TIME,
-    LAST = NEWMARK_SCHEME,
+    FIRST   = NO_TIME,
+    LAST    = NEWMARK_SCHEME,
     DEFAULT = NO_TIME
 };
 
-enum class ITEM_T
+enum class ITEM_T : ul_t
 {
     /** Empty item */
     EMPTY = 0x0,
@@ -37,19 +37,18 @@ enum class ITEM_T
     /** Neumann Boundary with penalization and SBM item */
     NEUMANN_BOUNDARY_SBM,
     FIRST = EMPTY,
-    LAST = NEUMANN_BOUNDARY_SBM
+    LAST  = NEUMANN_BOUNDARY_SBM
 };
 
+template <>
+SCH_T from_string (const std::string & s);
 
-template<>
-SCH_T from_string (const std::string& s);
+template <>
+std::string to_string (const SCH_T & type);
 
-template<>
-std::string to_string(const SCH_T& type);
+template <>
+ITEM_T from_string (const std::string & s);
 
-template<>
-ITEM_T from_string (const std::string& s);
-
-template<>
-std::string to_string(const ITEM_T& type);
-#endif // SUPERSOLVER_ENUMS_H
+template <>
+std::string to_string (const ITEM_T & type);
+#endif /* SRC_ENUMS_ENUMS4SUPERSOLVER_SUPERSOLVER_ENUMS_HPP */

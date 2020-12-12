@@ -1,8 +1,8 @@
-#include "cell.h"
-#include "../Point/point.h"
-#include "../Edge/edge.h"
+#include "cell.hpp"
+#include "../Point/point.hpp"
+#include "../Edge/edge.hpp"
 
-#include <Enums/enums.h>
+#include "../../Enums/enums.hpp"
 
 Cell::Cell() :
     m_globalIndex (NONE_ID_SELECTED), // Il n'a pas encore d'indice global
